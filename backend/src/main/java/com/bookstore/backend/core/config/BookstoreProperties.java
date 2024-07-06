@@ -4,13 +4,23 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "bookstore")
 public record BookstoreProperties(
-        CloudinaryProperties cloudinary
+        CloudinaryProperties cloudinary,
+        VNPayProperties vnPay
 ) {
     public record CloudinaryProperties(
             String cloudName,
             String apiKey,
             String apiSecret
-    ) {
-    }
+    ) {}
+
+    record VNPayProperties(
+            String apiUrl,
+            String tmnCode,
+            String secretKey,
+            String returnUrl,
+            String version,
+            String command,
+            String orderType
+    ) {}
 
 }

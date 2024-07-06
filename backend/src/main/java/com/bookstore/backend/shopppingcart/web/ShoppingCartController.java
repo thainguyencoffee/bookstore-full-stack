@@ -10,6 +10,7 @@ import com.bookstore.backend.shopppingcart.ShoppingCartService;
 import com.bookstore.backend.shopppingcart.exception.ShoppingCartAlreadyExistingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
+@RequestMapping(value = "shopping-carts", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class ShoppingCartController {
 
@@ -28,7 +30,7 @@ public class ShoppingCartController {
     private final BookService bookService;
     private final ShoppingCartService shoppingCartService;
 
-    @GetMapping("/shopping-carts/my-cart")
+    @GetMapping("/my-cart")
     public ResponseEntity<ShoppingCart> getMyCart(@AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaim(StandardClaimNames.PREFERRED_USERNAME);
         try {
@@ -44,7 +46,7 @@ public class ShoppingCartController {
         }
     }
 
-    @PostMapping("/shopping-carts/{cartId}/add-to-cart")
+    @PostMapping("/{cartId}/add-to-cart")
     public ResponseEntity<ShoppingCart> addToCart(@PathVariable UUID cartId, @RequestBody CartItem cartItem) {
         ShoppingCart shoppingCart = shoppingCartService.findById(cartId);
         // find book by isbn

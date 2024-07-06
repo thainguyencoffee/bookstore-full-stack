@@ -37,11 +37,22 @@ public class DataTest {
         // fake data
 
         var list = new ArrayList<Book>();
-        for (long isbn: generatedNumbers) {
-            var book = Book.of(String.valueOf(isbn), generateRandomName(), generateRandomName(),
-                    generateRandomName(), generateRandomName(), 19000000L, 3, Language.ENGLISH,
-                    CoverType.PAPERBACK, 25, new Measure(120, 180, 10, 200));
-            book.setPhotos(listPhotos);
+        for (long isbn : generatedNumbers) {
+            var book = Book.builder()
+                    .isbn(String.valueOf(isbn))
+                    .title(generateRandomName())
+                    .author(generateRandomName())
+                    .publisher(generateRandomName())
+                    .supplier(generateRandomName())
+                    .price(19000000L)
+                    .inventory(3)
+                    .language(Language.ENGLISH)
+                    .coverType(CoverType.HARDCOVER)
+                    .numberOfPages(25)
+                    .measure(new Measure(120d, 180d, 10d, 200d))
+                    .purchases(0)
+                    .photos(listPhotos)
+                    .build();
             list.add(book);
         }
 

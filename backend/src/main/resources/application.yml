@@ -9,6 +9,9 @@ server:
     connection-timeout: 2s
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10000000
   application:
     name: backend
   profiles:
@@ -31,3 +34,11 @@ bookstore:
     cloud-name: dl0v8gbku
     api-key: 862736244281148
     api-secret: XuPt3no_rU3T5_fz_dCd5dhvOqo
+  vnPay:
+    api-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    tmn-code: VMJ3LJZY
+    secret-key: 90SLNCT497CFBIM299YG2ZRT439MIL8W
+    return-url: http://localhost:9001/orders/payment/return
+    version: 2.1.0
+    command: querydr
+    order-type: other

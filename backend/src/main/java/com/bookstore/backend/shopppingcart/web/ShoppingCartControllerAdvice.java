@@ -1,6 +1,7 @@
 package com.bookstore.backend.shopppingcart.web;
 
 import com.bookstore.backend.core.ApiError;
+import com.bookstore.backend.core.exception.ControllerAdviceConfig;
 import com.bookstore.backend.shopppingcart.ShoppingCart;
 import com.bookstore.backend.shopppingcart.exception.ShoppingCartAlreadyExistingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
 @RestControllerAdvice
-class ShoppingCartControllerAdvice {
+class ShoppingCartControllerAdvice implements ControllerAdviceConfig {
 
     @ExceptionHandler(ShoppingCartAlreadyExistingException.class)
     public ApiError handleDataIntegrityViolation(ShoppingCartAlreadyExistingException ex) {
