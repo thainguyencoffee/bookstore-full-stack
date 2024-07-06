@@ -1,0 +1,33 @@
+server:
+  port: 9001
+  shutdown: graceful
+  tomcat:
+    threads:
+      min-spare: 5
+      max: 50
+    keep-alive-timeout: 15s
+    connection-timeout: 2s
+
+spring:
+  application:
+    name: backend
+  profiles:
+    active: datatest
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bookstoredb
+    username: user
+    password: password
+    hikari:
+      connection-timeout: 2000 #ms
+      maximum-pool-size: 5
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bookstore
+
+bookstore:
+  cloudinary:
+    cloud-name: dl0v8gbku
+    api-key: 862736244281148
+    api-secret: XuPt3no_rU3T5_fz_dCd5dhvOqo
