@@ -37,8 +37,8 @@ create table shopping_carts
 create table cart_items
 (
     id       serial       not null primary key,
-    cart_id  uuid         not null references shopping_carts (id),
-    isbn     varchar(255) not null references books (isbn),
+    cart_id  uuid         not null references shopping_carts (id) ON DELETE CASCADE,
+    isbn     varchar(255) not null references books (isbn) ON DELETE CASCADE,
     quantity integer      not null
 );
 
@@ -63,7 +63,7 @@ CREATE table orders
 CREATE table line_items
 (
     id          bigserial primary key,
-    order_id    uuid         not null references orders (id),
+    order_id    uuid         not null references orders (id) ON DELETE CASCADE,
     isbn        VARCHAR(255) not null,
     quantity    int          not null,
     price       bigint       not null,

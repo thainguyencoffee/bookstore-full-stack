@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "books", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "api/books", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 class BookController {
 
@@ -34,6 +34,7 @@ class BookController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public Book save(@Valid @ModelAttribute BookRequestDto bookRequestDto) {
         Book book = bookRequestDto.convertToBook(cloudinary);
         return bookService.save(book);

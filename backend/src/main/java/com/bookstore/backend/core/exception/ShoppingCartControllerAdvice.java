@@ -1,7 +1,6 @@
-package com.bookstore.backend.shopppingcart.web;
+package com.bookstore.backend.core.exception;
 
 import com.bookstore.backend.core.ApiError;
-import com.bookstore.backend.core.exception.ControllerAdviceConfig;
 import com.bookstore.backend.shopppingcart.ShoppingCart;
 import com.bookstore.backend.shopppingcart.exception.ShoppingCartAlreadyExistingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

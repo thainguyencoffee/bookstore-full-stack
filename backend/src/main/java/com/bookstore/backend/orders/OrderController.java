@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "orders", produces = "application/json")
+@RequestMapping(path = "api/orders", produces = "application/json")
 @RequiredArgsConstructor
 public class OrderController {
 

@@ -16,7 +16,7 @@ import java.util.Optional;
  * The interface Book repository.
  */
 @Repository
-interface BookRepository extends CrudRepository<Book, Long> {
+public interface BookRepository extends CrudRepository<Book, Long> {
 
     /**
      * Exists by isbn boolean.

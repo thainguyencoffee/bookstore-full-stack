@@ -21,9 +21,8 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
-                        .mvcMatchers("/actuator/**").permitAll()
-                        .mvcMatchers(HttpMethod.GET, "/", "/books/**").permitAll()
-                        .mvcMatchers("/shopping-carts/**", "/orders/**").authenticated()
+                        .mvcMatchers(HttpMethod.GET, "/api/books/**").permitAll()
+                        .mvcMatchers("/api/shopping-carts/**", "/api/orders/**").authenticated()
                         .anyRequest().hasAnyRole("employee")
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
