@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/bookstore-fullstack.iml" filepath="$PROJECT_DIR$/.idea/bookstore-fullstack.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bookstore-ui.iml" filepath="$PROJECT_DIR$/bookstore-ui.iml" />
     </modules>
   </component>
 </project>
