@@ -31,6 +31,7 @@ services:
       - BPL_DEBUG_ENABLED=true
       - BPL_DEBUG_PORT=8000
       - BACKEND_URL=http://bookstore-backend:9001
+      - SPA_URL=http://bookstore-ui:9004
       - SPRING_REDIS_HOST=bookstore-redis
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI=http://bookstore-keycloak:8080/realms/bookstore
 

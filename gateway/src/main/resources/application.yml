@@ -1,0 +1,72 @@
+server:
+  port: 9000
+  netty:
+    idle-timeout: 15
+    connection-timeout: 2s
+  shutdown: graceful
+
+# Spring
+spring:
+  application:
+    name: gateway
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+  cloud:
+    gateway:
+      redis-rate-limiter:
+        include-headers: true
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 5s
+        pool:
+          type: elastic
+          max-idle-time: 15s
+          max-life-time: 60s
+      default-filters:
+        - SaveSession
+        - TokenRelay
+      routes:
+        - id: spa-route
+          uri: ${SPA_URL:http://localhost:4200}
+          predicates:
+            - Path=/,/*.css,/*.js,/favicon.ico,/@fs/**,/@vite/client
+        - id: backend-route
+          uri: ${BACKEND_URL:http://localhost:9001}/api
+          predicates:
+            - Path=/api/**
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: edge-service
+            client-secret: cT5pq7W3XStcuFVQMhjPbRj57Iqxcu4n
+            scope: openid,roles,profile
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/bookstore
+  session:
+    store-type: redis
+    timeout: 10m
+    redis:
+      namespace: bookstore:edge
+  redis:
+    connect-timeout: 2s
+    host: localhost
+    port: 6379
+    timeout: 1s
+
+
+# Resilience4j
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 20
+        permittedNumberOfCallsInHalfOpenState: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 15000
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 5s

@@ -1,12 +1,8 @@
-package com.bookstore.backend.shopppingcart.web;
+package com.bookstore.backend.shopppingcart;
 
 import com.bookstore.backend.book.Book;
 import com.bookstore.backend.book.BookService;
 import com.bookstore.backend.book.exception.BookNotEnoughInventoryException;
-import com.bookstore.backend.shopppingcart.CartItem;
-import com.bookstore.backend.shopppingcart.CartItemService;
-import com.bookstore.backend.shopppingcart.ShoppingCart;
-import com.bookstore.backend.shopppingcart.ShoppingCartService;
 import com.bookstore.backend.shopppingcart.exception.ShoppingCartAlreadyExistingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,7 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "shopping-carts", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "api/shopping-carts", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class ShoppingCartController {
 
