@@ -48,6 +48,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Build Angular project
+        run: |
+          cd bookstore-ui
+          npm run build
       - name: Set up Pack CLI
         uses: buildpacks/github-actions/setup-pack@v5.5.1
       - name: Build container image
