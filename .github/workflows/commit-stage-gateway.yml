@@ -1,4 +1,4 @@
-name: Commit Stage
+name: Commit Stage Gateway module
 on:
   push:
     paths:

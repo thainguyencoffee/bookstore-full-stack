@@ -1,4 +1,4 @@
-name: Commit Stage
+name: Commit Stage UI module
 on:
   push:
     paths:
