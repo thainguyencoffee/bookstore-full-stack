@@ -30,7 +30,12 @@ export class BookCardComponent {
 
   addToCart(cartId: string) {
     if (this.book && this.book.isbn) {
-      this.shoppingCartService.updateCart({cartId: cartId, isbn: this.book.isbn, quantity: 1})
+      this.shoppingCartService.updateCart({
+        cartId: cartId,
+        isbn: this.book.isbn,
+        quantity: 1,
+        inventory: this.book.inventory
+      })
     } else {
       console.log("Book#isbn is error")
     }

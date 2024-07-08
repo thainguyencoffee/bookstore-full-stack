@@ -5,7 +5,7 @@ export interface CartItem {
   cartId: string,
   isbn: string,
   quantity: number,
-  bookDetail: Book
+  bookDetail: Book | undefined
 }
 
 export class ShoppingCart {

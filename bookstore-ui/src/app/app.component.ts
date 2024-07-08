@@ -12,6 +12,7 @@ import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
 import {CommonModule} from "@angular/common";
 import {HttpClient} from "@angular/common/http";
+import {AuthState} from "./shared/model/auth-state";
 
 @Component({
   selector: 'app-root',
@@ -35,10 +36,10 @@ export class AppComponent implements OnInit{
   title = 'bookstore-ui';
 
   private breakpointObserver = inject(BreakpointObserver);
-  private http = inject(HttpClient)
   authService = inject(AuthService);
+  authState$ = this.authService.authState$;
+  authState: AuthState | undefined;
 
-  user: User | undefined;
   isAuthenticated: boolean = false;
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
@@ -47,12 +48,7 @@ export class AppComponent implements OnInit{
     );
 
   ngOnInit(): void {
-    this.authService.authenticate().subscribe({
-      next: user => {
-        this.user = user;
-        this.isAuthenticated = true;
-      }
-    })
+    this.authState$.subscribe(authState => this.authState = authState)
   }
 
   logInClicked(): void {

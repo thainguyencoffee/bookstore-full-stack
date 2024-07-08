@@ -30,7 +30,12 @@ export class BookQuantityComponent implements OnInit{
 
   addToCart(cartId: string) {
     if (this.book && this.book.isbn) {
-      this.shoppingCartService.updateCart({cartId: cartId, isbn: this.book.isbn, quantity: 1})
+      this.shoppingCartService.updateCart({
+        cartId: cartId,
+        isbn: this.book.isbn,
+        quantity: 1,
+        inventory: this.book.inventory
+      })
     } else {
       console.log("Book#isbn is error")
     }
@@ -38,7 +43,7 @@ export class BookQuantityComponent implements OnInit{
 
   removeFromCart(cartId: string) {
     if (this.shoppingCart && this.book && this.book.isbn) {
-      const body = {cartId: this.shoppingCart.id, isbn: this.book.isbn, quantity: -1};
+      const body = {cartId: this.shoppingCart.id, isbn: this.book.isbn, quantity: -1, inventory: this.book.inventory};
       if (this.shoppingCart.getQuantity(this.book.isbn) - 1 == 0) {
         const dialogRef = this.dialog.open(QuestionDialogComponent, {
           data: {
@@ -46,7 +51,6 @@ export class BookQuantityComponent implements OnInit{
             message: 'Do you want to delete this cart item ?'
           }
         });
-        const a = false;
         dialogRef.afterClosed().subscribe(result => {
           if (result) this.shoppingCartService.updateCart(body)
         })
