@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - 'bookstore-ui/**'
-      - '.github/**'
+      - '.github/workflows/commit-stage-ui.yml'
 
 env:
   REGISTRY: ghcr.io
@@ -48,6 +48,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Install dependencies
+        run: |
+          cd bookstore-ui
+          npm install
       - name: Build Angular project
         run: |
           cd bookstore-ui
