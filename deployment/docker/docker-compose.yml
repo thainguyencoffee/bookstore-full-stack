@@ -34,6 +34,13 @@ services:
       - SPA_URL=http://bookstore-ui:9004
       - SPRING_REDIS_HOST=bookstore-redis
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI=http://bookstore-keycloak:8080/realms/bookstore
+  bookstore-ui:
+    image: 'bookstore-ui'
+    container_name: bookstore-ui
+    ports:
+      - 9004:9004
+    environment:
+      - PORT=9004
 
   # Postgres service
   bookstore-postgres:
