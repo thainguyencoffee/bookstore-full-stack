@@ -1,16 +1,17 @@
 import {HttpClient} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
 import {User} from "../model/user";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
   private http = inject(HttpClient);
+  isAuthenticated = false;
+  user: User | undefined;
 
-  authenticate(): Observable<User> {
+  authenticate(): Observable<User>{
     return this.http.get<User>(`/user`);
   }
 
@@ -18,11 +19,15 @@ export class AuthService {
     window.open(`/oauth2/authorization/keycloak`, '_self');
   }
 
-  isEmployee(user: User | undefined): boolean {
-    return user ? user.roles.find(role => role === 'employee') !== undefined : false;
+  isEmployee(): boolean {
+    return this.user ? this.user.roles.find(role => role === 'employee') !== undefined : false;
   }
 
-  isAdmin(user: User | undefined): boolean {
-    return user ? user.roles.find(role => role === 'admin') !== undefined : false;
+  isAdmin(): boolean {
+    return this.user ? this.user.roles.find(role => role === 'admin') !== undefined : false;
+  }
+
+  isLoggedIn(): boolean {
+    return this.isAuthenticated;
   }
 }

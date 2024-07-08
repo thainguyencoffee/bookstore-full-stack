@@ -1,0 +1,23 @@
+<div *ngIf="shoppingCart">
+  <mat-grid-list cols="1" rowHeight="300px">
+    <mat-grid-tile *ngFor="let cartItem of shoppingCart.cartItems">
+      <mat-card class="dashboard-card" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>aaa</mat-card-title>
+          <mat-card-subtitle>ISBN: {{ cartItem.isbn }}</mat-card-subtitle>
+        </mat-card-header>
+<!--        <img mat-card-image [src]="cartItem.bookDetails?.imageUrl" alt="Book Image">-->
+        <mat-card-content>
+          <p>aaa</p>
+          <p>Quantity: aaa</p>
+          <p>Price: aaa</p>
+          <!-- Các thông tin khác về sách -->
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="warn" >Remove</button>
+          <!-- Nút xóa sản phẩm khỏi giỏ hàng -->
+        </mat-card-actions>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

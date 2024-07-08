@@ -4,19 +4,23 @@
                [mode]="(isHandset$ | async) ? 'over' : 'side'">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item routerLink="/manage-users" *ngIf="isAuthenticated && authService.isAdmin(user)">
+      <a mat-list-item routerLink="/manage-users" *ngIf="authService.isLoggedIn() && authService.isAdmin()">
         <mat-icon>edit</mat-icon>
         <span>Manager users</span>
       </a>
       <a mat-list-item routerLink="/manage-books"
-         *ngIf="isAuthenticated && authService.isEmployee(user) && !authService.isAdmin(user)">
+         *ngIf="authService.isLoggedIn() && authService.isEmployee() && !authService.isAdmin()">
         <mat-icon>edit</mat-icon>
         <span>Manager books</span>
       </a>
       <a mat-list-item routerLink="/purchase-orders"
-         *ngIf="isAuthenticated && !authService.isEmployee(user) && !authService.isAdmin(user)">
+         *ngIf="authService.isLoggedIn() && !authService.isEmployee() && !authService.isAdmin()">
         <mat-icon>local_mall</mat-icon>
         <span>Purchase orders</span>
+      </a>
+      <a mat-list-item routerLink="/shopping-carts">
+        <mat-icon>shopping_cart</mat-icon>
+        <span>Shopping cart</span>
       </a>
     </mat-nav-list>
   </mat-sidenav>
@@ -31,10 +35,10 @@
       </button>
       <a routerLink="" style="text-decoration: none; color: white;"><span>Bookstore</span></a>
       <span class="toolbar-spacer"></span>
-      <button mat-flat-button color="primary" (click)="logInClicked()" *ngIf="!isAuthenticated">
+      <button mat-flat-button color="primary" (click)="logInClicked()" *ngIf="!authService.isLoggedIn()">
         <span>Log In</span>
       </button>
-      <form ngNoForm action="/logout" method="post" *ngIf="isAuthenticated">
+      <form ngNoForm action="/logout" method="post" *ngIf="authService.isLoggedIn()">
         <button mat-flat-button color="primary">
           <span>Log Out</span>
         </button>

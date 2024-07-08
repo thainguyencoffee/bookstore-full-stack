@@ -1,0 +1,42 @@
+.dashboard-card {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  max-width: 300px;
+}
+
+.more-button {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+
+.dashboard-card-content {
+  text-align: left;
+}
+
+.mat-h1 {
+  text-align: center;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mat-card-image {
+  padding: 0 15px;
+  height: 180px;
+  object-fit: cover;
+}
+
+.book-title {
+  text-decoration: underline;
+  color: black;
+}
+
+.book-title:hover {
+  text-decoration: none;
+}
