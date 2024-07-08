@@ -5,7 +5,6 @@ import {HttpClient} from "@angular/common/http";
 import {CustomError} from "../model/api-error";
 import {SnackbarService} from "./snackbar.service";
 import {AuthService} from "./auth.service";
-import {AuthState} from "../model/auth-state";
 
 @Injectable({
   providedIn: 'root'
@@ -16,17 +15,10 @@ export class ShoppingCartService {
   private http = inject(HttpClient)
   private snackBarService = inject(SnackbarService);
   private authService = inject(AuthService);
-  private authState: AuthState | undefined;
-
-  constructor() {
-    this.authService.authState$
-      .subscribe({
-        next: authState => this.authState = authState
-      })
-  }
 
   getShoppingCart() {
-    if (this.authState && this.authState.isAuthenticated) {
+    console.log(this.authService && this.authService.isLoggedIn())
+    if (this.authService && this.authService.isLoggedIn()) {
       this.http.get<ShoppingCart>('/api/shopping-carts/my-cart').subscribe({
         next: cart => {
           this.shoppingCartSubject.next(new ShoppingCart(
@@ -39,12 +31,15 @@ export class ShoppingCartService {
           ))
         },
         error: err => {
-          console.error('Failed to load shopping cart', err)
+          if (err.status !== 401 && err.errors) {
+            err.errors.forEach((customError: CustomError) => {
+              this.snackBarService.show(customError.message)
+            })
+          }
         }
       });
     } else {
       this.loadShoppingCartFromLocalStorage();
-      this.snackBarService.show("Chưa đăng nhập");
     }
   }
 
@@ -54,7 +49,7 @@ export class ShoppingCartService {
     quantity: number,
     inventory: number
   }): void {
-    if (this.authState && this.authState.isAuthenticated) {
+    if (this.authService && this.authService.isLoggedIn()) {
       this.http.post<ShoppingCart>(`/api/shopping-carts/${body.cartId}/add-to-cart`, body)
         .subscribe({
           next: cart => {
@@ -166,4 +161,5 @@ export class ShoppingCartService {
     );
     return newCart;
   }
+
 }

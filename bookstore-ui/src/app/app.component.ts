@@ -2,7 +2,6 @@ import {Component, inject, OnInit} from '@angular/core';
 import {RouterModule, RouterOutlet} from '@angular/router';
 import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
 import {AuthService} from "./shared/service/auth.service";
-import {User} from "./shared/model/user";
 import {map, Observable, shareReplay} from "rxjs";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatToolbarModule} from "@angular/material/toolbar";
@@ -11,8 +10,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
 import {CommonModule} from "@angular/common";
-import {HttpClient} from "@angular/common/http";
-import {AuthState} from "./shared/model/auth-state";
+import {ShoppingCartService} from "./shared/service/shopping-cart.service";
 
 @Component({
   selector: 'app-root',
@@ -32,15 +30,13 @@ import {AuthState} from "./shared/model/auth-state";
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
   title = 'bookstore-ui';
 
   private breakpointObserver = inject(BreakpointObserver);
   authService = inject(AuthService);
-  authState$ = this.authService.authState$;
-  authState: AuthState | undefined;
+  private shoppingCartService = inject(ShoppingCartService);
 
-  isAuthenticated: boolean = false;
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
       map(result => result.matches),
@@ -48,7 +44,13 @@ export class AppComponent implements OnInit{
     );
 
   ngOnInit(): void {
-    this.authState$.subscribe(authState => this.authState = authState)
+    this.authService.authenticate().subscribe({
+      next: user => {
+        this.authService.user = user;
+        this.authService.isAuthenticated = true;
+        this.shoppingCartService.getShoppingCart();
+      }
+    })
   }
 
   logInClicked(): void {

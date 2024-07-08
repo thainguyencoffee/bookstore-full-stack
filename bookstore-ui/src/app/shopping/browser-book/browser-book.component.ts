@@ -30,9 +30,7 @@ import {ShoppingCartService} from "../../shared/service/shopping-cart.service";
 })
 export class BrowserBookComponent implements AfterViewInit, OnInit{
   private breakpointObserver = inject(BreakpointObserver);
-  private bookService = inject(BookService);
   private shoppingCartService = inject(ShoppingCartService);
-  private appComponent = inject(AppComponent);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   dataSource = new BrowserBookDataSource();
   books$: Observable<Book[]> | undefined;
