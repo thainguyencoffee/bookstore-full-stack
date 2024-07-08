@@ -24,7 +24,7 @@ public class DataTest {
         bookService.deleteAll();
 
         var listPhotos = List.of(
-                "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718951746/b32c6f28-36d5-4c46-9f61-d488ef59027f",
+                "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718216795/samples/ecommerce/accessories-bag.jpg",
                 "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718951748/22809e64-778d-4124-a0eb-dd45db254092",
                 "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718951750/d4a94418-f65a-40fc-9099-66e860c74866"
         );

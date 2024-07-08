@@ -53,7 +53,6 @@ export class AppComponent implements OnInit{
         this.isAuthenticated = true;
       }
     })
-    this.http.get('/api/books').subscribe(data => console.log(data))
   }
 
   logInClicked(): void {

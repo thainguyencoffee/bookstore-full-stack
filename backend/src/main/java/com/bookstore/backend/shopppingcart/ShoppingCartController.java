@@ -52,7 +52,8 @@ public class ShoppingCartController {
                 int quantityChanged = item.getQuantity() + cartItem.getQuantity();
                 if (quantityChanged <= 0) {
                     cartItemService.deleteById(item.getId());
-                    return ResponseEntity.noContent().build();
+                    shoppingCart.getCartItems().remove(item);
+                    return ResponseEntity.ok(shoppingCart);
                 } else if (quantityChanged > book.getInventory()) {
                     throw new BookNotEnoughInventoryException(cartItem.getIsbn());
                 } else {

@@ -1,0 +1,23 @@
+<mat-card class="dashboard-card" appearance="outlined" *ngIf="book">
+  <mat-card-header>
+    <mat-card-title>
+      <a class="book-title" [routerLink]="['/book-detail', book.isbn]">{{ book.title }}</a>
+    </mat-card-title>
+  </mat-card-header>
+  <img class="mat-card-image" mat-card-image [src]="book.photos?.at(0)" alt="Book photo">
+  <mat-card-content class="dashboard-card-content">
+    <strong style="color: green">{{ book.isbn }}</strong> <br>
+    <span><del>{{ book.price | currency }}</del></span> <br>
+    <strong>{{ book.price | currency }}</strong> <br>
+    <span *ngIf="book.inventory > 0">In stock</span>
+    <span *ngIf="book.inventory == 0">Out of stock</span>
+  </mat-card-content>
+  <mat-card-actions class="card-actions" *ngIf="shoppingCart$ | async as shoppingCart">
+    <button (click)="addToCart(shoppingCart.id)" *ngIf="shoppingCart.getQuantity(book.isbn) === 0; else updateQuantity" mat-stroked-button>
+      Add to cart
+    </button>
+    <ng-template #updateQuantity>
+      <app-book-quantity [book]="book" [shopping-cart]="shoppingCart$"></app-book-quantity>
+    </ng-template>
+  </mat-card-actions>
+</mat-card>

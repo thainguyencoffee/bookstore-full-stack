@@ -18,6 +18,11 @@
         <mat-icon>local_mall</mat-icon>
         <span>Purchase orders</span>
       </a>
+      <a mat-list-item routerLink="/shopping-carts"
+         *ngIf="isAuthenticated">
+        <mat-icon>shopping_cart</mat-icon>
+        <span>Shopping cart</span>
+      </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

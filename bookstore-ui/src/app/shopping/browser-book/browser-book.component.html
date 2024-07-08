@@ -1,0 +1,23 @@
+<div class="mat-elevation-z2">
+  <mat-paginator
+    [length]="(dataSource.totalElements$ | async)"
+    [pageIndex]="0"
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]"
+    aria-label="Select page">
+  </mat-paginator>
+</div>
+<div *ngIf="books$ | async as books">
+  <div class="grid-container" *ngIf="books">
+    <h1 class="mat-h1">Browse books</h1>
+    <mat-grid-list [cols]="colNumber | async" rowHeight="420px">
+      <mat-grid-tile *ngFor="let book of books" [colspan]="1" [rowspan]="1">
+        <app-book-card [book]="book" [shopping-cart]="shoppingCart$"></app-book-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+
+  <div class="grid-container" *ngIf="!books">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+</div>
