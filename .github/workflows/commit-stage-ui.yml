@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'bookstore-ui/**'
+      - '.github/**'
 
 env:
   REGISTRY: ghcr.io

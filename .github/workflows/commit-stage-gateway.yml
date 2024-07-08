@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'gateway/**'
+      - '.github/**'
 
 env:
   REGISTRY: ghcr.io
