@@ -29,6 +29,7 @@ jobs:
           npm install
       - name: Build Angular project
         run: |
+          cd bookstore-ui
           npm run build
   package:
     name: Package and Publish
