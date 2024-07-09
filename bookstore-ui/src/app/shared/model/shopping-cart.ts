@@ -1,11 +1,13 @@
-import {Book} from "./book";
-
 export interface CartItem {
   id: number,
   cartId: string,
   isbn: string,
+  title?: string,
+  price?: number,
   quantity: number,
-  bookDetail: Book | undefined
+  totalPrice?: number,
+  photo?: string | undefined,
+  inventory: number
 }
 
 export class ShoppingCart {

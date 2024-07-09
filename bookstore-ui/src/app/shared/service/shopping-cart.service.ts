@@ -5,6 +5,8 @@ import {HttpClient} from "@angular/common/http";
 import {CustomError} from "../model/api-error";
 import {SnackbarService} from "./snackbar.service";
 import {AuthService} from "./auth.service";
+import {QuestionDialogComponent} from "../component/dialog/question-dialog/question-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +17,7 @@ export class ShoppingCartService {
   private http = inject(HttpClient)
   private snackBarService = inject(SnackbarService);
   private authService = inject(AuthService);
+  private dialog = inject(MatDialog);
 
   getShoppingCart() {
     console.log(this.authService && this.authService.isLoggedIn())
@@ -41,6 +44,159 @@ export class ShoppingCartService {
     } else {
       this.loadShoppingCartFromLocalStorage();
     }
+  }
+
+  decrementCartItem(body: {
+    cartId: string,
+    isbn: string,
+    inventory: number,
+    shoppingCart: ShoppingCart,
+  }) {
+    const req = {
+      cartId: body.cartId,
+      isbn: body.isbn,
+      quantity: -1,
+      inventory: body.inventory
+    };
+    if (body.shoppingCart.getQuantity(body.isbn) - 1 == 0) {
+      const dialogRef = this.dialog.open(QuestionDialogComponent, {
+        data: {
+          title: 'Delete cart item',
+          message: 'Do you want to delete this cart item ?'
+        }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) this.updateCart(req)
+      })
+    } else {
+      this.updateCart(req)
+    }
+  }
+
+  incrementCartItem(body: {
+    cartId: string,
+    isbn: string,
+    inventory: number,
+    shoppingCart: ShoppingCart,
+  }) {
+    this.updateCart({
+      cartId: body.cartId,
+      isbn: body.isbn,
+      quantity: 1,
+      inventory: body.inventory
+    })
+  }
+
+  deleteAllCartItem(body: {
+    cartId: string,
+    isbn: string[],
+  }) {
+    if (this.authService && this.authService.isLoggedIn()) {
+      this.http.post<ShoppingCart>(`/api/shopping-carts/${body.cartId}/delete-all-cart-item`, {
+        isbn: body.isbn
+      }).subscribe({
+        next: cart => {
+          console.log("Delete cart item success" + body.isbn)
+          this.shoppingCartSubject.next(new ShoppingCart(
+            cart.id,
+            cart.cartItems,
+            cart.createdAt,
+            cart.createdBy,
+            cart.lastModifiedAt,
+            cart.lastModifiedBy
+          ))
+        },
+        error: err => {
+          if (err && err.error.errors) {
+            err.error.errors.forEach((customError: CustomError) => {
+              this.snackBarService.show(customError.message)
+            })
+          }
+        }})
+    }
+    else {
+      this.deleteAllCartItemLocal(body);
+    }
+  }
+
+  private deleteAllCartItemLocal(body: { cartId: string; isbn: string[] }) {
+    const shoppingCartLocal = this.loadShoppingCartFromLocalStorage();
+    body.isbn.forEach(i => {
+      const itemIndex = shoppingCartLocal.cartItems.findIndex((item: CartItem) => item.isbn === i);
+      if (itemIndex !== -1) {
+        shoppingCartLocal.cartItems.splice(itemIndex, 1);
+      } else {
+        this.snackBarService.show("Cart item local with isbn " + body.isbn + " not found!");
+      }
+    })
+
+    shoppingCartLocal.lastModifiedAt = new Date().toISOString();
+    this.shoppingCartSubject.next(new ShoppingCart(
+      shoppingCartLocal.id,
+      shoppingCartLocal.cartItems,
+      shoppingCartLocal.createdAt,
+      shoppingCartLocal.createdBy,
+      shoppingCartLocal.lastModifiedAt,
+      shoppingCartLocal.lastModifiedBy
+    ));
+    this.snackBarService.show("Delete cart item success")
+    this.saveShoppingCartToLocalStorage(shoppingCartLocal);
+  }
+
+  deleteCartItem(body: {
+    cartId: string,
+    isbn: string,
+  }) {
+    if (this.authService && this.authService.isLoggedIn()) {
+      this.http.delete<ShoppingCart>(`/api/shopping-carts/${body.cartId}/delete-cart-item`, {
+        params: {isbn: body.isbn}
+      }).subscribe({
+        next: cart => {
+          console.log("Delete cart item success" + body.isbn)
+          this.shoppingCartSubject.next(new ShoppingCart(
+            cart.id,
+            cart.cartItems,
+            cart.createdAt,
+            cart.createdBy,
+            cart.lastModifiedAt,
+            cart.lastModifiedBy
+          ))
+        },
+        error: err => {
+          if (err && err.error.errors) {
+            err.error.errors.forEach((customError: CustomError) => {
+              this.snackBarService.show(customError.message)
+            })
+          }
+        }})
+    }
+    else {
+      this.deleteCartItemLocal(body);
+    }
+  }
+
+  private deleteCartItemLocal(body: {
+    cartId: string,
+    isbn: string,
+  }) {
+    const shoppingCartLocal = this.loadShoppingCartFromLocalStorage();
+    const i = shoppingCartLocal.cartItems.findIndex((item: CartItem) => item.isbn === body.isbn);
+    if (i !== -1) {
+      shoppingCartLocal.cartItems.splice(i, 1);
+      this.snackBarService.show("Delete cart item success")
+    } else {
+      this.snackBarService.show("Cart item local with isbn " + body.isbn + " not found!");
+    }
+    shoppingCartLocal.lastModifiedAt = new Date().toISOString();
+    this.shoppingCartSubject.next(new ShoppingCart(
+      shoppingCartLocal.id,
+      shoppingCartLocal.cartItems,
+      shoppingCartLocal.createdAt,
+      shoppingCartLocal.createdBy,
+      shoppingCartLocal.lastModifiedAt,
+      shoppingCartLocal.lastModifiedBy
+    ));
+    this.saveShoppingCartToLocalStorage(shoppingCartLocal);
   }
 
   updateCart(body: {
@@ -105,7 +261,11 @@ export class ShoppingCartService {
           id: 0,
           isbn: body.isbn,
           quantity: body.quantity,
-          bookDetail: undefined
+          totalPrice: 0,
+          photo: undefined,
+          price: 0,
+          title: undefined,
+          inventory: 0,
         }
         shoppingCartLocal.cartItems.push(cartItemNew)
       }

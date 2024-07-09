@@ -1,0 +1,54 @@
+.full-width-table {
+  width: 80%;
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
+  cursor: pointer;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  border-color: currentColor;
+}
+
+.row-is-clicked {
+  font-weight: bold;
+  background: #25004d;
+  color: white;
+}
+
+.photo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.bottom-toolbar {
+  position: fixed;
+  bottom: 0;
+  z-index: 1000;
+  background-color: #4400a1;
+  color: white;
+}
+
+.toolbar-content {
+  z-index: 2000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.utils-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+
+.total-price-small {
+  font-size: small;
+}
