@@ -4,5 +4,5 @@ import {ShoppingCartComponent} from "./shopping/shopping-cart/shopping-cart.comp
 
 export const routes: Routes = [
   {path: "", component: BrowserBookComponent},
-  {path: "shopping-carts", component: ShoppingCartComponent}
+  {path: "shopping-carts", component: ShoppingCartComponent},
 ];

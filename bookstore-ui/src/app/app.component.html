@@ -1,7 +1,7 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #drawer class="sidenav" fixedInViewport
                [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-               [mode]="(isHandset$ | async) ? 'over' : 'side'">
+               mode="over">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
       <a mat-list-item routerLink="/manage-users" *ngIf="authService.isLoggedIn() && authService.isAdmin()">
@@ -33,7 +33,7 @@
         (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <a routerLink="" style="text-decoration: none; color: white;"><span>Bookstore</span></a>
+      <a routerLink="" style="text-decoration: none; color: black;"><span>Bookstore</span></a>
       <span class="toolbar-spacer"></span>
       <button mat-flat-button color="primary" (click)="logInClicked()" *ngIf="!authService.isLoggedIn()">
         <span>Log In</span>
@@ -46,9 +46,7 @@
     </mat-toolbar>
     <main>
       <div>
-        <mat-card>
-          <router-outlet></router-outlet>
-        </mat-card>
+        <router-outlet></router-outlet>
       </div>
     </main>
   </mat-sidenav-content>

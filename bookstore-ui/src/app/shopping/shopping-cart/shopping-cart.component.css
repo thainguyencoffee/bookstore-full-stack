@@ -1,10 +1,54 @@
-.mat-grid-tile {
-  display: flex; /* Sử dụng flexbox để các cart item nằm cạnh nhau */
-  justify-content: center; /* Căn giữa các cart item */
-  align-items: stretch; /* Co giãn các cart item để chiếm toàn bộ chiều rộng */
+.full-width-table {
+  width: 80%;
 }
 
-.dashboard-card {
-  width: 100%; /* Chiếm toàn bộ chiều rộng của grid tile */
-  max-width: none; /* Loại bỏ giới hạn max-width của mat-card */
+.mat-mdc-row .mat-mdc-cell {
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
+  cursor: pointer;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  border-color: currentColor;
+}
+
+.row-is-clicked {
+  font-weight: bold;
+  background: #25004d;
+  color: white;
+}
+
+.photo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.bottom-toolbar {
+  position: fixed;
+  bottom: 0;
+  z-index: 1000;
+  background-color: #4400a1;
+  color: white;
+}
+
+.toolbar-content {
+  z-index: 2000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.utils-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+
+.total-price-small {
+  font-size: small;
 }

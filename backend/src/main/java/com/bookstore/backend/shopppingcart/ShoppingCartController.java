@@ -3,6 +3,8 @@ package com.bookstore.backend.shopppingcart;
 import com.bookstore.backend.book.Book;
 import com.bookstore.backend.book.BookService;
 import com.bookstore.backend.book.exception.BookNotEnoughInventoryException;
+import com.bookstore.backend.shopppingcart.dto.DeleteAllCartRequest;
+import com.bookstore.backend.shopppingcart.exception.CartItemNotFoundException;
 import com.bookstore.backend.shopppingcart.exception.ShoppingCartAlreadyExistingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,6 +16,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -68,6 +71,37 @@ public class ShoppingCartController {
         }
         cartItem.setCartId(shoppingCart.getId());
         shoppingCart.getCartItems().add(cartItem);
+        return ResponseEntity.ok(shoppingCartService.save(shoppingCart));
+    }
+
+    @DeleteMapping("/{cartId}/delete-cart-item")
+    public ResponseEntity<ShoppingCart> deleteCartItem(@PathVariable UUID cartId, @RequestParam("isbn") String isbn) {
+        ShoppingCart shoppingCart = shoppingCartService.findById(cartId);
+        // find book by isbn
+        bookService.findByIsbn(isbn);
+        for (CartItem item : shoppingCart.getCartItems()) {
+            if (item.getIsbn().equals(isbn)) {
+                shoppingCart.getCartItems().remove(item);
+                return ResponseEntity.ok(shoppingCartService.save(shoppingCart));
+            }
+        }
+        throw new CartItemNotFoundException(isbn);
+    }
+
+    @PostMapping("/{cartId}/delete-all-cart-item")
+    public ResponseEntity<ShoppingCart> deleteCartItem(@PathVariable UUID cartId, @RequestBody DeleteAllCartRequest reqBody) {
+        ShoppingCart shoppingCart = shoppingCartService.findById(cartId);
+        // find book by isbn
+        reqBody.getIsbn().forEach(itemShouldDelete -> {
+            bookService.findByIsbn(itemShouldDelete);
+            Iterator<CartItem> iterator = shoppingCart.getCartItems().iterator();
+            while (iterator.hasNext()) {
+                CartItem item = iterator.next();
+                if (item.getIsbn().equals(itemShouldDelete)) {
+                    iterator.remove(); // Sử dụng iterator để xóa một cách an toàn
+                }
+            }
+        });
         return ResponseEntity.ok(shoppingCartService.save(shoppingCart));
     }
 

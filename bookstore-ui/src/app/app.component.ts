@@ -43,6 +43,12 @@ export class AppComponent implements OnInit {
       shareReplay()
     );
 
+  isSmall$: Observable<boolean> = this.breakpointObserver.observe([Breakpoints.Small, Breakpoints.Medium, Breakpoints.XSmall])
+    .pipe(
+      map(result => result.matches),
+      shareReplay()
+    );
+
   ngOnInit(): void {
     this.authService.authenticate().subscribe({
       next: user => {
