@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 interface CartItemRepository extends CrudRepository<CartItem, Long> {
-
+    void deleteByIsbn(String isbn);
 }
