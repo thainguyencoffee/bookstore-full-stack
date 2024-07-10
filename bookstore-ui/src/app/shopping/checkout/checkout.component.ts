@@ -13,6 +13,8 @@ import {cities} from "../../shared/model/cities";
 import {PurchaseOrderService} from "../../shared/service/purchase-order.service";
 import {OrderRequest} from "../../shared/model/order-request";
 import {SnackbarService} from "../../shared/service/snackbar.service";
+import {Order} from "../../shared/model/order";
+import {CustomError} from "../../shared/model/api-error";
 
 @Component({
   selector: 'app-checkout',
@@ -40,7 +42,6 @@ export class CheckoutComponent {
   private router = inject(Router);
   private orderService = inject(PurchaseOrderService)
   private snackbarService = inject(SnackbarService)
-  private activatedRoute = inject(ActivatedRoute)
   cities = cities
 
   constructor() {
@@ -63,6 +64,7 @@ export class CheckoutComponent {
     city: new FormControl('', Validators.required),
     zipCode: new FormControl('', [Validators.required, Validators.pattern(/^\d{5}(?:[-\s]\d{4})?$/)]),
     address: new FormControl('', [Validators.required]),
+    paymentMethod: new FormControl('CASH', Validators.required)
   })
 
   onSubmit() {
@@ -73,6 +75,7 @@ export class CheckoutComponent {
       && this.purchaseOrderFormGroup.value.city
       && this.purchaseOrderFormGroup.value.zipCode
       && this.purchaseOrderFormGroup.value.address
+      && this.purchaseOrderFormGroup.value.paymentMethod
     ) {
       let orderRequest: OrderRequest = {
         lineItems: [],
@@ -83,11 +86,32 @@ export class CheckoutComponent {
           city: this.purchaseOrderFormGroup.value.city,
           zipCode: this.purchaseOrderFormGroup.value.zipCode,
           address: this.purchaseOrderFormGroup.value.address,
-        }
+        },
+        paymentMethod: this.purchaseOrderFormGroup.value.paymentMethod
       }
       if (this.cartItemSelected && this.cartItemSelected.length > 0) {
         this.cartItemSelected.forEach(item => orderRequest.lineItems.push({isbn: item.isbn, quantity: item.quantity}))
-        this.orderService.submitOrder(orderRequest)
+        this.orderService.submitOrder(orderRequest).subscribe({
+          next: (order: Order) => {
+            this.snackbarService.show("Create order success: orderID " + order.id);
+            if (order.paymentMethod === 'VNPAY') {
+              this.orderService.getVNPayUrl(order.id).subscribe({
+                next: (payment: any) => {
+                  if (payment && payment.paymentUrl) {
+                    window.location.href = payment.paymentUrl
+                  }
+                }
+              });
+            }
+          },
+          error: err => {
+            if (err && err.errors) {
+              err.errors.forEach((err: CustomError) => {
+                this.snackbarService.show(err.message)
+              })
+            }
+          }
+        })
       }
       else {
         this.snackbarService.show("Not resolve the cart items")

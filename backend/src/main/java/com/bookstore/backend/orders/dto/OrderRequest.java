@@ -1,5 +1,6 @@
 package com.bookstore.backend.orders.dto;
 
+import com.bookstore.backend.orders.PaymentMethod;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,5 +16,7 @@ public class OrderRequest {
     private List<LineItemRequest> lineItems;
     @Valid
     private UserInformation userInformation;
+    @NotNull(message = "Payment method is required")
+    private PaymentMethod paymentMethod;
 }
 

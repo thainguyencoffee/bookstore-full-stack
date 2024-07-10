@@ -22,7 +22,8 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .mvcMatchers(HttpMethod.GET, "/api/books/**").permitAll()
-                        .mvcMatchers("/api/shopping-carts/**", "/api/orders/**").authenticated()
+                        .mvcMatchers("/api/orders/**").permitAll()
+                        .mvcMatchers("/api/shopping-carts/**").authenticated()
                         .anyRequest().hasAnyRole("employee")
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

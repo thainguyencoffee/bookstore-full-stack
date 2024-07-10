@@ -21,8 +21,15 @@ public class DataConfig {
         return () -> Optional.ofNullable(SecurityContextHolder.getContext())
                 .map(SecurityContext::getAuthentication)
                 .filter(Authentication::isAuthenticated)
-                .map(authentication -> (Jwt) authentication.getPrincipal())
-                .map(jwt -> jwt.getClaim(StandardClaimNames.PREFERRED_USERNAME));
+                .map(authentication -> {
+                    Object principal = authentication.getPrincipal();
+                    if (principal instanceof Jwt) {
+                        return ((Jwt) principal).getClaim(StandardClaimNames.PREFERRED_USERNAME);
+                    } else {
+                        return "guest";
+                    }
+                })
+                .orElse("guest").describeConstable();
     }
 
 }

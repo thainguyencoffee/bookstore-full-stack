@@ -24,6 +24,7 @@ public class Order  {
     private UUID id;
     private Long totalPrice;
     private OrderStatus status;
+    private PaymentMethod paymentMethod;
     @MappedCollection(idColumn = "order_id")
     private Set<LineItem> lineItems = new HashSet<>();
     /*User information*/
@@ -43,10 +44,15 @@ public class Order  {
     @Version
     private int version;
 
-    public static Order createOrder(List<LineItem> lineItems, UserInformation userInformation) {
+    public static Order createOrder(List<LineItem> lineItems, UserInformation userInformation, PaymentMethod paymentMethod) {
         Order order = new Order();
         order.setUserInformation(userInformation);
-        order.setStatus(OrderStatus.WAITING_FOR_PAYMENT);
+        order.setPaymentMethod(paymentMethod);
+        if (paymentMethod == PaymentMethod.VNPAY) {
+            order.setStatus(OrderStatus.WAITING_FOR_PAYMENT);
+        } else {
+            order.setStatus(OrderStatus.WAITING_FOR_ACCEPTANCE);
+        }
         Long totalPrice = 0L;
         for (LineItem lineItem : lineItems) {
             order.getLineItems().add(lineItem);

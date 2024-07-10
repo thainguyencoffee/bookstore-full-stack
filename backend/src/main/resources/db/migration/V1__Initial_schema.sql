@@ -47,6 +47,7 @@ CREATE table orders
     id                 uuid DEFAULT gen_random_uuid() primary key,
     total_price        bigint null,
     status             varchar(255) not null,
+    payment_method     varchar(255) not null,
     full_name          varchar(255) not null,
     email              varchar(255) not null,
     phone_number       varchar(255) not null,
