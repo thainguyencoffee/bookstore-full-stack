@@ -1,6 +1,7 @@
 package com.bookstore.backend;
 
 import com.bookstore.backend.book.*;
+import com.bookstore.backend.orders.PaymentMethod;
 import com.bookstore.backend.orders.dto.LineItemRequest;
 import com.bookstore.backend.orders.dto.OrderRequest;
 import com.bookstore.backend.orders.dto.UserInformation;
@@ -103,7 +104,7 @@ public class OrderServiceApplicationTests {
     }
 
     @Test
-    void whenAuthenticatedPostOrderThenCreated() {
+    void postOrderThenCreated() {
         Map.Entry<String, Integer> book1 = Map.entry("1234567891", 1);
         Map.Entry<String, Integer> book2 = Map.entry("1234567892", 2);
         OrderRequest orderRequest = buildOrderRequest(Map.of(book1.getKey(), book1.getValue(), book2.getKey(), book2.getValue()));
@@ -112,7 +113,6 @@ public class OrderServiceApplicationTests {
         when(bookService.findByIsbn(book2.getKey())).thenReturn(bookMock2);
         webTestClient.post()
                 .uri("/api/orders")
-                .headers(headers -> headers.setBearerAuth(customerToken.accessToken))
                 .bodyValue(orderRequest)
                 .exchange()
                 .expectStatus().isCreated();
@@ -168,6 +168,7 @@ public class OrderServiceApplicationTests {
         userInfo.setZipCode("100000");
         userInfo.setAddress("Ha Noi, Viet Nam");
         orderRequest.setUserInformation(userInfo);
+        orderRequest.setPaymentMethod(PaymentMethod.VNPAY);
         return orderRequest;
     }
 
