@@ -7,5 +7,6 @@ export interface OrderRequestLineIte {
 
 export interface OrderRequest {
   lineItems: OrderRequestLineIte[],
-  userInformation: UserInformation | undefined
+  userInformation: UserInformation | undefined,
+  paymentMethod: string
 }

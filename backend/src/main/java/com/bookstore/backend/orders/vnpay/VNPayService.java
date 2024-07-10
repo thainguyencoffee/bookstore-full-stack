@@ -50,7 +50,8 @@ public class VNPayService {
 
     public String generatePaymentUrl(HttpServletRequest request, UUID orderId) {
         Order order = orderService.findById(orderId);
-        if (order.getStatus() != OrderStatus.WAITING_FOR_PAYMENT) {
+        if (!order.getStatus().equals(OrderStatus.WAITING_FOR_PAYMENT)
+                && !order.getStatus().equals(OrderStatus.PAYMENT_FAILED)) {
             throw new ConsistencyDataException("Order is not waiting for payment");
         }
         long finalPrice = order.getTotalPrice() * 100L;

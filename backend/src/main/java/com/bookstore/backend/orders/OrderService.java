@@ -33,13 +33,13 @@ public class OrderService {
     }
 
     @Transactional
-    public Order submitOrder(List<LineItemRequest> lineItemRequests, UserInformation userInformation) {
+    public Order submitOrder(List<LineItemRequest> lineItemRequests, UserInformation userInformation, PaymentMethod paymentMethod) {
         List<LineItem> lineItems = new ArrayList<>();
         for (LineItemRequest lineItemRequest : lineItemRequests) {
             LineItem lineItem = convertLineItemRequestToLineItem(lineItemRequest);
             lineItems.add(lineItem);
         }
-        Order order = Order.createOrder(lineItems, userInformation);
+        Order order = Order.createOrder(lineItems, userInformation, paymentMethod);
         orderRepository.save(order);
         /*===== ORDER WAITING FOR PAYMENT =====*/
         return order;
@@ -48,8 +48,9 @@ public class OrderService {
     @Transactional
     public Order buildAcceptedOrder(UUID orderId) {
         Order order = findById(orderId);
-        if (order.getStatus() != OrderStatus.WAITING_FOR_PAYMENT) {
-            throw new ConsistencyDataException("Order's status is not waiting for payment");
+        if (!order.getStatus().equals(OrderStatus.WAITING_FOR_PAYMENT)
+                && !order.getStatus().equals(OrderStatus.WAITING_FOR_ACCEPTANCE)) {
+            throw new ConsistencyDataException("Order's status is not waiting action");
         }
         for (LineItem lineItem : order.getLineItems()) {
             var book = bookService.findByIsbn(lineItem.getIsbn());
@@ -57,12 +58,22 @@ public class OrderService {
                 throw new BookNotEnoughInventoryException(book.getIsbn());
             }
             var bookUpdate = book;
+            // Update book's inventory and purchases
             bookUpdate.setInventory(book.getInventory() - lineItem.getQuantity());
             bookUpdate.setPurchases(book.getPurchases() + lineItem.getQuantity());
             bookService.save(bookUpdate);
         }
         order.setStatus(OrderStatus.ACCEPTED);
         /*===== CREATED ORDER =====*/
+        orderRepository.save(order);
+        return order;
+    }
+
+
+    @Transactional
+    public Order buildOrderWithStatus(UUID orderId, OrderStatus status) {
+        Order order = findById(orderId);
+        order.setStatus(status);
         orderRepository.save(order);
         return order;
     }

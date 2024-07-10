@@ -1,7 +1,3 @@
-<!--<p>checkout works!</p>-->
-<!--<div *ngFor="let item of isbnSelected">-->
-<!--  <span>{{item.isbn}} + {{item.quantity}}</span>-->
-<!--</div>-->
 <form [formGroup]="purchaseOrderFormGroup" novalidate (ngSubmit)="onSubmit()">
   <mat-card class="shipping-card">
     <mat-card-header>
@@ -37,7 +33,8 @@
               <mat-error>Phone number is <strong>required</strong></mat-error>
             }
             @if (purchaseOrderFormGroup.controls['phoneNumber'].hasError('pattern')) {
-              <mat-error>Phone number is <strong>invalid, Vietnamese phone number start 09 or 033 and length must be 10 digits </strong></mat-error>
+              <mat-error>Phone number is <strong>invalid, Vietnamese phone number start 09 or 033 and length must be 10
+                digits </strong></mat-error>
             }
           </mat-form-field>
         </div>
@@ -74,15 +71,17 @@
           </mat-form-field>
         </div>
       </div>
-<!--      <div class="row">-->
-<!--        <div class="col">-->
-<!--          <mat-radio-group formControlName="shipping">-->
-<!--            <mat-radio-button value="free">Free Shipping</mat-radio-button>-->
-<!--            <mat-radio-button value="priority">Priority Shipping</mat-radio-button>-->
-<!--            <mat-radio-button value="nextday">Next Day Shipping</mat-radio-button>-->
-<!--          </mat-radio-group>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div class="row">
+        <div class="col">
+          <mat-radio-group formControlName="paymentMethod">
+            <mat-radio-button value="VNPAY">VNPay</mat-radio-button>
+            <mat-radio-button value="CASH">Cash</mat-radio-button>
+          </mat-radio-group>
+          @if (purchaseOrderFormGroup.controls['paymentMethod'].hasError('required')) {
+            <mat-error>Payment method is <strong>required</strong></mat-error>
+          }
+        </div>
+      </div>
     </mat-card-content>
     <mat-card-actions>
       <button mat-raised-button color="primary" type="submit">Submit</button>

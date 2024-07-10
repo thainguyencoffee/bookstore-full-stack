@@ -33,7 +33,8 @@ public class SecurityConfig {
         return http
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/", "/index.html", "/*.css", "/*.js", "/favicon.ico", "/@fs/**", "/@vite/client").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/api/**").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/api/**", "/shopping-carts/**", "/payment-callback-detail/**").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/orders/**").permitAll()
                         .anyExchange().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)))

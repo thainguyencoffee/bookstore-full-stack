@@ -1,0 +1,23 @@
+.order-card {
+  margin: 16px auto;
+  max-width: 800px;
+}
+
+.order-card-footer {
+  padding: 16px;
+}
+
+.mat-list-item {
+  border: 1px solid grey;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.mat-list-item:hover {
+  background-color: #25004d;
+}
+
+.mat-list-item:hover span {
+  font-weight: bold;
+  color: white;
+}
