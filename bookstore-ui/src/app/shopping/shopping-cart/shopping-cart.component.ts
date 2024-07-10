@@ -19,6 +19,7 @@ import {QuestionDialogComponent} from "../../shared/component/dialog/question-di
 import {MatDialog} from "@angular/material/dialog";
 import {CommonModule} from "@angular/common";
 import {AppComponent} from "../../app.component";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-data-table',
@@ -46,20 +47,26 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
   private snackbarService = inject(SnackbarService)
   shoppingCart: ShoppingCart | undefined;
   public appComponent = inject(AppComponent)
+  private route = inject(ActivatedRoute)
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSource!: MatTableDataSource<CartItem>;
   displayedColumns = ['isbn', 'photo', 'title', 'quantity', 'price', 'totalPrice', 'action_delete', 'action_checkout'];
-  clickedRows = new Set<CartItem>();
+  clickedRows = new Set<string>();
 
   private dialog = inject(MatDialog);
+  private router = inject(Router);
 
   constructor() {
     this.dataSource = new MatTableDataSource<CartItem>([]);
   }
 
   ngOnInit(): void {
+    this.route.params.subscribe(() => {
+      this.shoppingCartService.getShoppingCart();
+    });
+
     this.shoppingCartService.$shoppingCart
       .pipe(
         switchMap(cart => {
@@ -81,7 +88,7 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
                 item.photo = bookDetails[index].photos?.[0]
                 item.inventory = bookDetails[index].inventory;
               });
-              this.dataSource = new MatTableDataSource(this.shoppingCart.cartItems);
+              this.dataSource.data = [...this.shoppingCart.cartItems]
             }
           },
           error: err => {
@@ -104,14 +111,14 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   onRowClick(row: CartItem) {
-    this.clickedRows.has(row) ? this.clickedRows.delete(row) : this.clickedRows.add(row);
+    this.clickedRows.has(row.isbn) ? this.clickedRows.delete(row.isbn) : this.clickedRows.add(row.isbn);
   }
 
   removeSelected() {
     let isbnArray: string[] = []
-    this.clickedRows.forEach(row => {
-      isbnArray.push(row.isbn)
-      this.clickedRows.delete(row)
+    this.clickedRows.forEach(isbn => {
+      isbnArray.push(isbn)
+      this.clickedRows.delete(isbn)
     })
     if (this.shoppingCart) {
       this.shoppingCartService.deleteAllCartItem({
@@ -122,6 +129,7 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   increaseQuantity(event: MouseEvent, row: CartItem) {
+    // event.preventDefault();
     event.stopPropagation();
     if (this.shoppingCart) {
       this.shoppingCartService.incrementCartItem({
@@ -134,18 +142,35 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   decreaseQuantity(event: MouseEvent, row: CartItem) {
+    // event.preventDefault();
     event.stopPropagation();
     if (this.shoppingCart) {
-      this.shoppingCartService.decrementCartItem({
+      const req = {
         cartId: row.cartId,
         isbn: row.isbn,
-        inventory: row.inventory,
-        shoppingCart: this.shoppingCart
-      })
+        quantity: -1,
+        inventory: row.inventory
+      };
+      if (this.shoppingCart.getQuantity(row.isbn) - 1 == 0) {
+        const dialogRef = this.dialog.open(QuestionDialogComponent, {
+          data: {
+            title: 'Delete cart item',
+            message: 'Do you want to delete this cart item ?'
+          }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.shoppingCartService.updateCart(req)
+            this.clickedRows.delete(row.isbn)
+          }
+        })
+      } else {
+        this.shoppingCartService.updateCart(req)
+      }
     }
   }
 
-  getListItemClicked(): Set<CartItem> {
+  getListItemClicked(): Set<string> {
     return this.clickedRows;
   }
 
@@ -172,9 +197,44 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   getTotalPrice(): number {
-    return this.dataSource.data.reduce((total, item) => {
-      return total + (item.totalPrice ?? 0)
-    }, 0)
+    let total = 0;
+    this.clickedRows.forEach(isbn => {
+      if (this.shoppingCart) {
+        total += this.shoppingCart.getQuantity(isbn) * this.shoppingCart.getPrice(isbn);
+      }
+    })
+    return total
   }
 
+  checkoutSelected() {
+    if (this.shoppingCart) {
+      const selectedRows: CartItem[] = []
+      this.clickedRows.forEach(isbn => {
+        const cartItem = this.shoppingCart?.hasItem(isbn);
+        if (cartItem) selectedRows.push(cartItem);
+        else {
+          this.snackbarService.show("Not existing cart item with isbn " + isbn);
+          return;
+        }
+      })
+      if (selectedRows.length === 0) {
+        this.snackbarService.show('No items selected for checkout');
+        return;
+      }
+      this.router.navigate(['/checkout'], { state: { selectedRows } });
+    }
+  }
+
+  checkout(isbn: string) {
+    let selectedItem: CartItem | undefined;
+    if (this.shoppingCart) {
+      const cartItem = this.shoppingCart?.hasItem(isbn);
+      if (cartItem) selectedItem = cartItem
+      else {
+        this.snackbarService.show("Not existing cart item with isbn " + isbn)
+        return;
+      }
+    }
+    this.router.navigate(['/checkout'], { state: { selectedItem } });
+  }
 }

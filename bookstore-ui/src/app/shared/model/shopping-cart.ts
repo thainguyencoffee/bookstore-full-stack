@@ -39,4 +39,18 @@ export class ShoppingCart {
     }
     return 0;
   }
+
+  getPrice(isbn: string): number {
+    for (let item of this.cartItems) {
+      if (item.isbn === isbn) return item.price ?? 0;
+    }
+    return 0;
+  }
+
+  hasItem(isbn: string): CartItem | undefined {
+    for (let item of this.cartItems) {
+      if (item.isbn === isbn) return item;
+    }
+    return undefined;
+  }
 }

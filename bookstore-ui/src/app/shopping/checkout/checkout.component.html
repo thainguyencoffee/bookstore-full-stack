@@ -1,0 +1,91 @@
+<!--<p>checkout works!</p>-->
+<!--<div *ngFor="let item of isbnSelected">-->
+<!--  <span>{{item.isbn}} + {{item.quantity}}</span>-->
+<!--</div>-->
+<form [formGroup]="purchaseOrderFormGroup" novalidate (ngSubmit)="onSubmit()">
+  <mat-card class="shipping-card">
+    <mat-card-header>
+      <mat-card-title>User Information</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Full name" formControlName="fullName">
+            @if (purchaseOrderFormGroup.controls['fullName'].hasError('required')) {
+              <mat-error>Full name is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Email" formControlName="email">
+            @if (purchaseOrderFormGroup.controls['email'].hasError('required')) {
+              <mat-error>Email is <strong>required</strong></mat-error>
+            }
+            @if (purchaseOrderFormGroup.controls['email'].hasError('email')) {
+              <mat-error>Email is <strong>invalid</strong></mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Phone number" formControlName="phoneNumber">
+            @if (purchaseOrderFormGroup.controls['phoneNumber'].hasError('required')) {
+              <mat-error>Phone number is <strong>required</strong></mat-error>
+            }
+            @if (purchaseOrderFormGroup.controls['phoneNumber'].hasError('pattern')) {
+              <mat-error>Phone number is <strong>invalid, Vietnamese phone number start 09 or 033 and length must be 10 digits </strong></mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <textarea matInput placeholder="Address" formControlName="address"></textarea>
+            @if (purchaseOrderFormGroup.controls['address'].hasError('required')) {
+              <mat-error>Address is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="City" formControlName="city">
+              @for (city of cities; track city) {
+                <mat-option [value]="city.name">{{ city.name }}</mat-option>
+              }
+            </mat-select>
+            @if (purchaseOrderFormGroup.controls['city'].hasError('required')) {
+              <mat-error>City is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Zipcode" formControlName="zipCode">
+            @if (purchaseOrderFormGroup.controls['zipCode'].hasError('required')) {
+              <mat-error>Zipcode is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+<!--      <div class="row">-->
+<!--        <div class="col">-->
+<!--          <mat-radio-group formControlName="shipping">-->
+<!--            <mat-radio-button value="free">Free Shipping</mat-radio-button>-->
+<!--            <mat-radio-button value="priority">Priority Shipping</mat-radio-button>-->
+<!--            <mat-radio-button value="nextday">Next Day Shipping</mat-radio-button>-->
+<!--          </mat-radio-group>-->
+<!--        </div>-->
+<!--      </div>-->
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" type="submit">Submit</button>
+    </mat-card-actions>
+  </mat-card>
+</form>
