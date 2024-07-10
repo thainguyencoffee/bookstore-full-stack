@@ -20,7 +20,6 @@ export class ShoppingCartService {
   private dialog = inject(MatDialog);
 
   getShoppingCart() {
-    console.log(this.authService && this.authService.isLoggedIn())
     if (this.authService && this.authService.isLoggedIn()) {
       this.http.get<ShoppingCart>('/api/shopping-carts/my-cart').subscribe({
         next: cart => {
@@ -96,7 +95,6 @@ export class ShoppingCartService {
         isbn: body.isbn
       }).subscribe({
         next: cart => {
-          console.log("Delete cart item success" + body.isbn)
           this.shoppingCartSubject.next(new ShoppingCart(
             cart.id,
             cart.cartItems,
@@ -152,7 +150,6 @@ export class ShoppingCartService {
         params: {isbn: body.isbn}
       }).subscribe({
         next: cart => {
-          console.log("Delete cart item success" + body.isbn)
           this.shoppingCartSubject.next(new ShoppingCart(
             cart.id,
             cart.cartItems,
@@ -209,7 +206,6 @@ export class ShoppingCartService {
       this.http.post<ShoppingCart>(`/api/shopping-carts/${body.cartId}/add-to-cart`, body)
         .subscribe({
           next: cart => {
-            console.log("Add to cart success")
             this.shoppingCartSubject.next(new ShoppingCart(
               cart.id,
               cart.cartItems,
@@ -298,7 +294,6 @@ export class ShoppingCartService {
       this.shoppingCartSubject.next(shoppingCart);
       return shoppingCart;
     } else {
-      console.log('No shopping cart found in local storage, creating a new one.');
       const newCart = this.createEmptyShoppingCart();
       this.shoppingCartSubject.next(newCart);
       this.saveShoppingCartToLocalStorage(newCart);
