@@ -12,10 +12,18 @@ import {MatButtonModule} from "@angular/material/button";
 import {CdkCopyToClipboard} from "@angular/cdk/clipboard";
 import {MatAccordion, MatExpansionModule} from "@angular/material/expansion";
 import {MatListModule} from "@angular/material/list";
-import {combineLatest, of, Subject, switchMap, takeUntil} from "rxjs";
+import {combineLatest, interval, of, Subject, switchMap, take, takeUntil} from "rxjs";
 import {BookService} from "../../shared/service/book.service";
 import {ShoppingCartService} from "../../shared/service/shopping-cart.service";
 import {ShoppingCart} from "../../shared/model/shopping-cart";
+import {MatError, MatFormField} from "@angular/material/form-field";
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {MatInput} from "@angular/material/input";
+import {MatIcon} from "@angular/material/icon";
+import {MatDialog} from "@angular/material/dialog";
+import {
+  UserInformationFormDialog
+} from "../../shared/component/user-information-form-dialog/user-information-form-dialog.component";
 
 @Component({
   selector: 'app-payment-callback-detail',
@@ -29,7 +37,8 @@ import {ShoppingCart} from "../../shared/model/shopping-cart";
     MatAccordion,
     MatExpansionModule,
     RouterLink,
-    MatListModule
+    MatListModule,
+    MatFormField, FormsModule, MatInput, ReactiveFormsModule, MatError, MatIcon
   ],
   templateUrl: './payment-callback-detail.component.html',
   styleUrl: './payment-callback-detail.component.css'
@@ -39,6 +48,7 @@ export class PaymentCallbackDetailComponent implements OnInit, OnDestroy, AfterV
   orderDetail: Order | undefined;
 
   private route = inject(ActivatedRoute);
+  private matDialog = inject(MatDialog)
   private orderService = inject(PurchaseOrderService);
   private shoppingCartService = inject(ShoppingCartService);
   private $shoppingCart = this.shoppingCartService.$shoppingCart;
@@ -126,8 +136,82 @@ export class PaymentCallbackDetailComponent implements OnInit, OnDestroy, AfterV
     });
   }
 
+  sendOtp(orderId: string) {
+    if (this.isSendingOtp) {
+      return;
+    }
+    this.isSendingOtp = true;
+    this.startCountdown();
+    this.orderService.sendOTP(orderId).subscribe({
+      next: () => {
+        this.snackbarService.show('OTP sent successfully');
+        if (this.timeRemaining === 0) {
+          this.isSendingOtp = false;
+        }
+      },
+      error: err => {
+        if (err && err.errors) {
+          err.errors.forEach((error: CustomError) => this.snackbarService.show(error.message));
+          this.isSendingOtp = false;
+        }
+      }
+    });
+  }
+
+  verifyOtp(orderId: string) {
+    if (this.otpFormGroup.valid && this.otpFormGroup.value.otp) {
+      if (this.isVerifyingOtp) {
+        return;
+      }
+      this.isVerifyingOtp = true;
+      this.orderService.verifyOTP(orderId, this.otpFormGroup.value.otp).subscribe({
+        next: (order: Order) => {
+          this.orderDetail = order
+          this.snackbarService.show('OTP verified successfully');
+          this.isVerifyingOtp = false;
+        },
+        error: err => {
+          if (err.status >= 400 && err.status < 500) {
+            this.snackbarService.show('OTP is incorrect');
+            this.isVerifyingOtp = false;
+          }
+        }
+      });
+    }
+  }
+
+  updateOrder() {
+    this.matDialog.open(UserInformationFormDialog, {
+      data: this.orderDetail
+    });
+  }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  startCountdown() {
+    this.timeRemaining = 60;
+    this.countdownSubscription = interval(1000)
+      .pipe(take(60))
+      .subscribe(() => {
+        this.timeRemaining--;
+        if (this.timeRemaining === 0) {
+          this.isSendingOtp = false;
+          this.countdownSubscription.unsubscribe();
+        }
+      });
+  }
+
+  isSendingOtp = false;
+  isVerifyingOtp = false;
+  countdownSubscription: any;
+  timeRemaining = 0;
+
+  otpFormGroup = new FormGroup({
+    otp: new FormControl('', [Validators.required, Validators.pattern(/^\d{6}$/)])
+  })
+
+
 }

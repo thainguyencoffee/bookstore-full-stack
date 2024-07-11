@@ -31,7 +31,8 @@ public class Order  {
     @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL)
     private UserInformation userInformation;
     /*End user information*/
-
+    private Long otp;
+    private Instant otpExpiredAt;
     @CreatedDate
     private Instant createdDate;
     @CreatedBy

@@ -7,6 +7,9 @@
       @if(orderDetail.status == 'PAYMENT_FAILED') {
         <span style="color: #ff0000">Your order has not been successfully paid yet</span>
       }
+      @if(orderDetail.status === 'WAITING_FOR_ACCEPTANCE') {
+        <span style="color: #ff0000">Your order is waiting for acceptance, please verify email</span>
+      }
     </mat-card-title>
   </mat-card-header>
   <mat-card-content>
@@ -14,6 +17,27 @@
     <mat-card-subtitle>
       @if(orderDetail.status == 'PAYMENT_FAILED') {
         <button mat-raised-button (click)="onRepayment(orderDetail.id)">Repayment</button>
+      }
+      @if(orderDetail.status == 'WAITING_FOR_ACCEPTANCE') {
+        <button mat-raised-button [disabled]="isSendingOtp" (click)="sendOtp(orderDetail.id)">
+          <span *ngIf="isSendingOtp">Resend ... {{timeRemaining}} s</span>
+          <span *ngIf="!isSendingOtp">Send OTP</span>
+        </button>
+
+        <form [formGroup]="otpFormGroup">
+          <mat-form-field>
+            <input matInput placeholder="OTP" formControlName="otp">
+            @if (otpFormGroup.controls['otp'].hasError('required')) {
+              <mat-error>Otp is <strong>required</strong></mat-error>
+            }
+            @if (otpFormGroup.controls['otp'].hasError('pattern')) {
+              <mat-error>Otp is <strong> number with 6 digits</strong></mat-error>
+            }
+          </mat-form-field>
+          <button mat-raised-button [disabled]="isVerifyingOtp" (click)="verifyOtp(orderDetail.id)">
+            {{ isVerifyingOtp ? 'Verifying...' : 'Verify OTP' }}
+          </button>
+        </form>
       }
     </mat-card-subtitle>
     <br>
@@ -25,13 +49,14 @@
             Total price: {{orderDetail.totalPrice | currency:'VND':'symbol':'1.0-0'}}
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <p>User Information: <br>
+        <p>User Information: <button mat-icon-button (click)="updateOrder()"><mat-icon>edit</mat-icon></button><br>
           <span matListItemLine>Full name: {{orderDetail.userInformation.fullName}}</span>
           <span matListItemLine>Email: {{orderDetail.userInformation.email}}</span>
           <span matListItemLine>Phone number: {{orderDetail.userInformation.phoneNumber}}</span>
           <span matListItemLine>City: {{orderDetail.userInformation.city}}</span>
           <span matListItemLine>Zipcode: {{orderDetail.userInformation.zipCode}}</span>
           <span matListItemLine>Address: {{orderDetail.userInformation.address}}</span>
+          <span matListItemLine style="font-weight: bold">Payment method: {{orderDetail.paymentMethod}}</span>
         </p>
 
         <p>Order items:</p>

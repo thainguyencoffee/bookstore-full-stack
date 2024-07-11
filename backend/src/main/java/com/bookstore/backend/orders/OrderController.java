@@ -1,7 +1,11 @@
 package com.bookstore.backend.orders;
 
+import com.bookstore.backend.core.email.EmailService;
 import com.bookstore.backend.orders.dto.OrderRequest;
+import com.bookstore.backend.orders.dto.OrderUpdateDto;
+import com.bookstore.backend.orders.dto.OtpRequestDto;
 import com.bookstore.backend.orders.dto.PaymentUrlDto;
+import com.bookstore.backend.orders.exception.OrderStatusNotMatchException;
 import com.bookstore.backend.orders.vnpay.VNPayService;
 import com.bookstore.backend.orders.vnpay.VNPayStatusCodeEnum;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,7 @@ public class OrderController {
     private static final Logger log = LoggerFactory.getLogger(OrderController.class);
     private final OrderService orderService;
     private final VNPayService vnPayService;
+    private final EmailService emailService;
 
     @GetMapping
     public List<Order> getAllOrder(@AuthenticationPrincipal Jwt jwt, Pageable pageable) {
@@ -49,6 +54,30 @@ public class OrderController {
     @ResponseStatus(HttpStatus.CREATED)
     public Order submitOrder(@Valid @RequestBody OrderRequest orderRequest) {
         return orderService.submitOrder(orderRequest.getLineItems(), orderRequest.getUserInformation(), orderRequest.getPaymentMethod());
+    }
+
+    @GetMapping("/{orderId}/send-opt")
+    public ResponseEntity<?> verifyOrder(@PathVariable UUID orderId) {
+        log.info("OrderController attempt verify order by id.");
+        Order order = orderService.createOtp(orderId);
+        if (order.getStatus().equals(OrderStatus.WAITING_FOR_ACCEPTANCE)) {
+            String body = EmailService.buildEmailVerifyBody(order.getOtp());
+            emailService.sendConfirmationEmail(order.getUserInformation().getEmail(), "Xác thực đơn hàng", body);
+            return ResponseEntity.ok().build();
+        }
+        throw new OrderStatusNotMatchException(orderId, OrderStatus.WAITING_FOR_ACCEPTANCE, order.getStatus());
+    }
+
+    @PostMapping("/{orderId}/verify-otp")
+    public Order verifyOtp(@PathVariable UUID orderId, @RequestBody OtpRequestDto otpRequestDto) {
+        log.info("OrderController attempt verify otp by id.");
+        return orderService.verifyOtp(orderId, otpRequestDto.getOtp());
+    }
+
+    @PatchMapping("/{orderId}")
+    public Order updateOrder(@PathVariable UUID orderId, @RequestBody OrderUpdateDto orderUpdateDto) {
+        log.info("OrderController attempt update order by id. {}", orderUpdateDto.getUserInformation().toString());
+        return orderService.updateOrder(orderId, orderUpdateDto);
     }
 
     @PostMapping("/{orderId}/payment")
