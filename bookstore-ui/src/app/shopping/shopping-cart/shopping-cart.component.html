@@ -19,7 +19,14 @@
     <!-- Isbn Column -->
     <ng-container matColumnDef="isbn">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Isbn</th>
-      <td mat-cell *matCellDef="let row">{{row.isbn}}</td>
+      <td mat-cell *matCellDef="let row" style="font-weight: bold">{{row.isbn}}
+        @if(!copiedContent) {
+          <button (click)="onCopyIsbn($event)" [cdkCopyToClipboard]="row.isbn" mat-icon-button [matTooltip]="'Copy ISBN'"><mat-icon>content_copy</mat-icon></button>
+        }
+        @if(copiedContent) {
+          <span><mat-icon>check</mat-icon> Copied content!</span>
+        }
+      </td>
     </ng-container>
 
     <!-- Photo Column -->
@@ -39,22 +46,28 @@
     <!-- Quantity Column -->
     <ng-container matColumnDef="quantity">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Quantity</th>
-      <td mat-cell *matCellDef="let row">{{row.quantity}}
-        <button mat-flat-button (click)="increaseQuantity($event, row)">+</button>
-        <button mat-flat-button (click)="decreaseQuantity($event, row)">-</button>
+      <td mat-cell *matCellDef="let row">
+        @if(row.inventory > 0) {
+          {{row.quantity}}
+          <button mat-flat-button (click)="increaseQuantity($event, row)" [class.btn-quantity-disable]="row.quantity >= row.inventory">+</button>
+          <button mat-flat-button (click)="decreaseQuantity($event, row)">-</button>
+        }
+        @if(row.inventory == 0) {
+          <span style="color: red">Out of stock</span>
+        }
       </td>
     </ng-container>
 
     <!-- Price Column -->
     <ng-container matColumnDef="price">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th>
-      <td mat-cell *matCellDef="let row">{{row.price}}</td>
+      <td mat-cell *matCellDef="let row">{{row.price | currency:'VND':'symbol':'1.0-0'}}</td>
     </ng-container>
 
     <!-- TotalPrice Column -->
     <ng-container matColumnDef="totalPrice">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Total price</th>
-      <td mat-cell *matCellDef="let row">{{row.totalPrice}}</td>
+      <td mat-cell *matCellDef="let row">{{row.totalPrice | currency:'VND':'symbol':'1.0-0'}}</td>
     </ng-container>
 
     <!-- Delete Column -->
@@ -71,8 +84,8 @@
     <ng-container matColumnDef="action_checkout">
       <th mat-header-cell *matHeaderCellDef>Checkout</th>
       <td mat-cell *matCellDef="let row">
-        <button mat-icon-button (click)="checkout(row.isbn)">
-          <mat-icon color="primary">shopping_cart_checkout</mat-icon>
+        <button mat-icon-button (click)="checkout(row.isbn)" [disabled]="row.quantity == 0">
+          <mat-icon>shopping_cart_checkout</mat-icon>
         </button>
       </td>
     </ng-container>

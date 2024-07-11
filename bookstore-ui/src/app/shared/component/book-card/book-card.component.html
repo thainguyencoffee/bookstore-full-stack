@@ -6,18 +6,33 @@
   </mat-card-header>
   <img class="mat-card-image" mat-card-image [src]="book.photos?.at(0)" alt="Book photo">
   <mat-card-content class="dashboard-card-content">
-    <strong style="color: green">{{ book.isbn }}</strong> <br>
+    <strong style="color: green">{{ book.isbn }}</strong>
+    @if(!copiedContent) {
+      <button (click)="onCopyIsbn($event)" [cdkCopyToClipboard]="book.isbn" mat-icon-button [matTooltip]="'Copy ISBN'"><mat-icon>content_copy</mat-icon></button>
+    }
+    @if(copiedContent) {
+      <span><mat-icon>check</mat-icon> Copied content!</span>
+    }
+    <br>
     <span><del>{{ book.price | currency }}</del></span> <br>
     <strong>{{ book.price | currency }}</strong> <br>
-    <span *ngIf="book.inventory > 0">In stock</span>
-    <span *ngIf="book.inventory == 0">Out of stock</span>
+    <span style="text-decoration: underline" *ngIf="book.inventory > 0">In stock</span>
+    <span style="text-decoration: underline" *ngIf="book.inventory == 0">Out of stock</span>
   </mat-card-content>
   <mat-card-actions class="card-actions" *ngIf="shoppingCart$ | async as shoppingCart">
-    <button (click)="addToCart(shoppingCart.id)" *ngIf="shoppingCart.getQuantity(book.isbn) === 0; else updateQuantity" mat-stroked-button>
-      Add to cart
-    </button>
-    <ng-template #updateQuantity>
-      <app-book-quantity [book]="book" [shopping-cart]="shoppingCart$"></app-book-quantity>
-    </ng-template>
+    @if(book.inventory === 0) {
+      <button [disabled]="true" mat-stroked-button>
+        Add to cart
+      </button>
+    }
+    @if(book.inventory > 0) {
+      <button [disabled]="book.inventory === 0" (click)="addToCart(shoppingCart.id)" *ngIf="shoppingCart.getQuantity(book.isbn) === 0; else updateQuantity" mat-stroked-button>
+        Add to cart
+      </button>
+      <ng-template #updateQuantity>
+        <app-book-quantity [book]="book" [shopping-cart]="shoppingCart$"></app-book-quantity>
+      </ng-template>
+    }
+    <button [disabled]="book.inventory === 0" mat-flat-button (click)="checkoutNow(book)" >Buy now</button>
   </mat-card-actions>
 </mat-card>

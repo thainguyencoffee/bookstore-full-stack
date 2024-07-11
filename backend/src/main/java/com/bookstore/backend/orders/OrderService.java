@@ -74,7 +74,7 @@ public class OrderService {
         order.setStatus(OrderStatus.ACCEPTED);
         /*===== CREATED ORDER =====*/
         orderRepository.save(order);
-        String emailBody = emailService.buildEmailBody(order);
+        String emailBody = emailService.buildEmailBody(order, false);
         emailService.sendConfirmationEmail(order.getUserInformation().getEmail(), "The order has been successfully accepted", emailBody);
         return order;
     }
@@ -133,6 +133,8 @@ public class OrderService {
         Order order = findById(orderId);
         order.setUserInformation(orderUpdateDto.getUserInformation());
         orderRepository.save(order);
+        String emailBody = emailService.buildEmailBody(order, true);
+        emailService.sendConfirmationEmail(order.getUserInformation().getEmail(), "The order updated success fully", emailBody);
         return order;
     }
 }

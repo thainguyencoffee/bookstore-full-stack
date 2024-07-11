@@ -12,7 +12,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {ShoppingCartService} from "../../shared/service/shopping-cart.service";
 import {BookService} from "../../shared/service/book.service";
 import {CartItem, ShoppingCart} from "../../shared/model/shopping-cart";
-import {combineLatest, of, Subject, switchMap, takeUntil} from "rxjs";
+import {combineLatest, interval, of, Subject, switchMap, take, takeUntil} from "rxjs";
 import {SnackbarService} from "../../shared/service/snackbar.service";
 import {CustomError} from "../../shared/model/api-error";
 import {QuestionDialogComponent} from "../../shared/component/dialog/question-dialog/question-dialog.component";
@@ -20,6 +20,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {CommonModule} from "@angular/common";
 import {AppComponent} from "../../app.component";
 import {ActivatedRoute, Router} from "@angular/router";
+import {CdkCopyToClipboard} from "@angular/cdk/clipboard";
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-data-table',
@@ -38,6 +40,8 @@ import {ActivatedRoute, Router} from "@angular/router";
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    CdkCopyToClipboard,
+    MatTooltip,
   ]
 })
 export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
@@ -54,6 +58,7 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
   dataSource!: MatTableDataSource<CartItem>;
   displayedColumns = ['isbn', 'photo', 'title', 'quantity', 'price', 'totalPrice', 'action_delete', 'action_checkout'];
   clickedRows = new Set<string>();
+
 
   private dialog = inject(MatDialog);
   private router = inject(Router);
@@ -87,6 +92,10 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
                 item.totalPrice = bookDetails[index].price * item.quantity
                 item.photo = bookDetails[index].photos?.[0]
                 item.inventory = bookDetails[index].inventory;
+                if (item.quantity > bookDetails[index].inventory) {
+                  item.quantity = bookDetails[index].inventory;
+                  item.totalPrice = item.quantity * item.price;
+                }
               });
               this.dataSource.data = [...this.shoppingCart.cartItems]
             }
@@ -206,20 +215,29 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
     return total
   }
 
+  isOutOfStock(isbn: string): boolean {
+    for (let item of this.dataSource.data) {
+      if (item.isbn === isbn) {
+        return item.inventory === 0;
+      }
+    }
+    return false;
+  }
+
   checkoutSelected() {
     if (this.shoppingCart) {
       const selectedRows: CartItem[] = []
-      this.clickedRows.forEach(isbn => {
+      for (let isbn of this.clickedRows) {
+        if (this.isOutOfStock(isbn)) {
+          this.snackbarService.show('Out of stock item with isbn ' + isbn);
+          return;
+        }
         const cartItem = this.shoppingCart?.hasItem(isbn);
         if (cartItem) selectedRows.push(cartItem);
         else {
           this.snackbarService.show("Not existing cart item with isbn " + isbn);
           return;
         }
-      })
-      if (selectedRows.length === 0) {
-        this.snackbarService.show('No items selected for checkout');
-        return;
       }
       this.router.navigate(['/checkout'], { state: { selectedRows } });
     }
@@ -237,4 +255,29 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
     }
     this.router.navigate(['/checkout'], { state: { selectedItem } });
   }
+
+  onCopyIsbn(event: MouseEvent) {
+    event.stopPropagation();
+    if (this.copiedContent) {return;}
+    this.copiedContent = true;
+    this.startCountdown()
+  }
+
+  timeRemaining = 0;
+  copiedContent = false;
+  countdownSubscription: any;
+
+  startCountdown() {
+    this.timeRemaining = 5;
+    this.countdownSubscription = interval(1000)
+      .pipe(take(5))
+      .subscribe(() => {
+        this.timeRemaining--;
+        if (this.timeRemaining === 0) {
+          this.copiedContent = false;
+          this.countdownSubscription.unsubscribe();
+        }
+      });
+  }
+
 }
