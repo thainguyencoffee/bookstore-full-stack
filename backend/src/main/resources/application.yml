@@ -28,6 +28,19 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8080/realms/bookstore
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: nguyennt11032004@gmail.com
+    password: lwox kogu lkqj bome
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 15000
+          timeout: 15000
+          starttls:
+            enable: true
 
 bookstore:
   cloudinary:

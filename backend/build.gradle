@@ -35,6 +35,7 @@ dependencies {
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation "com.cloudinary:cloudinary-http44:${cloudinaryVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'

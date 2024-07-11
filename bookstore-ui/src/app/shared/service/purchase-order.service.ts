@@ -23,4 +23,16 @@ export class PurchaseOrderService {
   getOrderByOrderId(orderId: string): Observable<Order> {
     return this.http.get<Order>(`/api/orders/${orderId}`);
   }
+
+  sendOTP(orderId: string) {
+    return this.http.get(`/api/orders/${orderId}/send-opt`);
+  }
+
+  verifyOTP(orderId: string, otp: string): Observable<Order> {
+    return this.http.post<Order>(`/api/orders/${orderId}/verify-otp`, {otp: otp});
+  }
+
+  updateOrder(orderDetail: Order) {
+    return this.http.patch<Order>(`/api/orders/${orderDetail.id}`, orderDetail)
+  }
 }

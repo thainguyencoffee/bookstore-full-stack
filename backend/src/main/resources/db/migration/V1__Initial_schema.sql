@@ -54,6 +54,8 @@ CREATE table orders
     city               varchar(255) not null,
     zip_code           varchar(255) not null,
     address            varchar(255) not null,
+    otp                bigint null,
+    otp_expired_at     timestamp null,
     created_date       timestamp    not null,
     created_by         varchar(255),
     last_modified_date timestamp    not null,

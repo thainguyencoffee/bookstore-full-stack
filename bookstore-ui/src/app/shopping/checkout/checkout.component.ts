@@ -102,6 +102,8 @@ export class CheckoutComponent {
                   }
                 }
               });
+            } else {
+              this.router.navigate(['/payment-callback-detail', order.id])
             }
           },
           error: err => {

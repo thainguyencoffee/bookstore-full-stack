@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .pathMatchers("/", "/index.html", "/*.css", "/*.js", "/favicon.ico", "/@fs/**", "/@vite/client").permitAll()
                         .pathMatchers(HttpMethod.GET, "/api/**", "/shopping-carts/**", "/payment-callback-detail/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/orders/**").permitAll()
+                        .pathMatchers(HttpMethod.PATCH, "/api/orders/**").permitAll()
                         .anyExchange().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)))
