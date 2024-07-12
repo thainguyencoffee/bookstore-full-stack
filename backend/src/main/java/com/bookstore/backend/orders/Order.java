@@ -1,5 +1,6 @@
 package com.bookstore.backend.orders;
 
+import com.bookstore.backend.orders.dto.OrderRequest;
 import com.bookstore.backend.orders.dto.UserInformation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,11 +46,11 @@ public class Order  {
     @Version
     private int version;
 
-    public static Order createOrder(List<LineItem> lineItems, UserInformation userInformation, PaymentMethod paymentMethod) {
+    public static Order createOrder(List<LineItem> lineItems, OrderRequest orderRequest) {
         Order order = new Order();
-        order.setUserInformation(userInformation);
-        order.setPaymentMethod(paymentMethod);
-        if (paymentMethod == PaymentMethod.VNPAY) {
+        order.setUserInformation(orderRequest.getUserInformation());
+        order.setPaymentMethod(orderRequest.getPaymentMethod());
+        if (orderRequest.getPaymentMethod() == PaymentMethod.VNPAY) {
             order.setStatus(OrderStatus.WAITING_FOR_PAYMENT);
         } else {
             order.setStatus(OrderStatus.WAITING_FOR_ACCEPTANCE);

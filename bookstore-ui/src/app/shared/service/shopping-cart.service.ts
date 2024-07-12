@@ -7,6 +7,7 @@ import {SnackbarService} from "./snackbar.service";
 import {AuthService} from "./auth.service";
 import {QuestionDialogComponent} from "../component/dialog/question-dialog/question-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -270,8 +271,6 @@ export class ShoppingCartService {
       const quantityChanged = shoppingCartLocal.cartItems[i].quantity + body.quantity;
       if (quantityChanged <= 0)
         shoppingCartLocal.cartItems.splice(i, 1);
-        // else if (quantityChanged > body.inventory)
-      //   this.snackBarService.show("Not enough inventory for book with isbn " + body.isbn)
       else
         shoppingCartLocal.cartItems[i].quantity = quantityChanged;
     } else {
@@ -306,13 +305,16 @@ export class ShoppingCartService {
   }
 
   createEmptyShoppingCart() {
+    const usernameUUID = uuidv4()
+    const cartLocalId = uuidv4()
+
     const newCart = new ShoppingCart(
-      'local-cart-id',
+      cartLocalId,
       [],
       new Date().toISOString(),
-      'anonymous',
+      usernameUUID,
       new Date().toISOString(),
-      'anonymous'
+      usernameUUID
     );
     return newCart;
   }

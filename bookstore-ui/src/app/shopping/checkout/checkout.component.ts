@@ -1,5 +1,5 @@
 import {Component, inject, } from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {CartItem} from "../../shared/model/shopping-cart";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -109,7 +109,7 @@ export class CheckoutComponent {
                 }
               });
             } else {
-              this.router.navigate(['/payment-callback-detail', order.id])
+              this.router.navigate(['/order-detail-callback', order.id])
             }
           },
           error: err => {

@@ -5,8 +5,8 @@ import com.bookstore.backend.book.BookService;
 import com.bookstore.backend.book.exception.BookNotEnoughInventoryException;
 import com.bookstore.backend.core.email.EmailService;
 import com.bookstore.backend.orders.dto.LineItemRequest;
+import com.bookstore.backend.orders.dto.OrderRequest;
 import com.bookstore.backend.orders.dto.OrderUpdateDto;
-import com.bookstore.backend.orders.dto.UserInformation;
 import com.bookstore.backend.orders.exception.OrderNotFoundException;
 import com.bookstore.backend.orders.exception.OrderStatusNotMatchException;
 import com.bookstore.backend.orders.exception.OtpExpiredException;
@@ -29,8 +29,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
-    private final LineItemRepository lineItemRepository;
     private final OrderRepository orderRepository;
     private final BookService bookService;
     private final EmailService emailService;
@@ -41,13 +39,13 @@ public class OrderService {
     }
 
     @Transactional
-    public Order submitOrder(List<LineItemRequest> lineItemRequests, UserInformation userInformation, PaymentMethod paymentMethod) {
+    public Order submitOrder(OrderRequest orderRequest) {
         List<LineItem> lineItems = new ArrayList<>();
-        for (LineItemRequest lineItemRequest : lineItemRequests) {
+        for (LineItemRequest lineItemRequest : orderRequest.getLineItems()) {
             LineItem lineItem = convertLineItemRequestToLineItem(lineItemRequest);
             lineItems.add(lineItem);
         }
-        Order order = Order.createOrder(lineItems, userInformation, paymentMethod);
+        Order order = Order.createOrder(lineItems, orderRequest);
         orderRepository.save(order);
         /*===== ORDER WAITING FOR PAYMENT =====*/
         return order;
@@ -93,7 +91,7 @@ public class OrderService {
         Order order = findById(orderId);
         long otp = (long) Math.floor(Math.random() * 900_000L) + 100_000L;
         order.setOtp(otp);
-        order.setOtpExpiredAt(Instant.now().plus(15, ChronoUnit.MINUTES));
+        order.setOtpExpiredAt(Instant.now().plus(2, ChronoUnit.MINUTES));
         orderRepository.save(order);
         return order;
     }

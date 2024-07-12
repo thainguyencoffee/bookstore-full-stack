@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {OrderRequest} from "../model/order-request";
 import {Order} from "../model/order";
 import {Observable} from "rxjs";
+import {Page} from "../model/page";
 
 
 @Injectable({
@@ -11,6 +12,10 @@ import {Observable} from "rxjs";
 export class PurchaseOrderService {
 
   private http = inject(HttpClient)
+
+  getOrders(): Observable<Page<Order>> {
+    return this.http.get<Page<Order>>('/api/orders');
+  }
 
   submitOrder(orderRequest: OrderRequest): Observable<Order> {
     return this.http.post<Order>('/api/orders', orderRequest);
