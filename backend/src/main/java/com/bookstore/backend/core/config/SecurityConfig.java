@@ -7,7 +7,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -22,8 +21,9 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .mvcMatchers(HttpMethod.GET, "/api/books/**").permitAll()
-                        .mvcMatchers("/api/orders/**").permitAll()
-                        .mvcMatchers("/api/shopping-carts/**").authenticated()
+                        .mvcMatchers("/api/guest-orders/**", "/api/payment/vn-pay/**", "/api/email/orders/**").permitAll()
+                        .mvcMatchers(HttpMethod.POST, "/api/orders/**").permitAll()
+                        .mvcMatchers("/api/shopping-carts/**", "/api/orders/**").authenticated()
                         .anyRequest().hasAnyRole("employee")
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

@@ -11,6 +11,8 @@ import java.util.UUID;
 @Repository
 public interface OrderRepository extends CrudRepository<Order, UUID> {
 
+    Optional<Order> findByIdAndCreatedBy(UUID id, String createdBy);
+
     Page<Order> findAllByCreatedBy(String createdBy, Pageable pageable);
 
     Optional<Order> findByIdAndOtp(UUID id, long otp);

@@ -1,6 +1,8 @@
 package com.bookstore.backend.core.demo;
 
 import com.bookstore.backend.book.*;
+import com.bookstore.backend.orders.OrderRepository;
+import com.bookstore.backend.shopppingcart.ShoppingCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -17,11 +19,15 @@ import java.util.*;
 public class DataTest {
 
     private final BookService bookService;
+    private final OrderRepository orderRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
     private static final Random random = new Random();
 
     @EventListener(ApplicationReadyEvent.class)
     public void setupDataTest() {
         bookService.deleteAll();
+        orderRepository.deleteAll();
+        shoppingCartRepository.deleteAll();
 
         var listPhotos = List.of(
                 "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718216795/samples/ecommerce/accessories-bag.jpg",

@@ -25,6 +25,8 @@ import {
   UserInformationFormDialog
 } from "../../shared/component/user-information-form-dialog/user-information-form-dialog.component";
 import {AuthService} from "../../shared/service/auth.service";
+import {EmailService} from "../../shared/service/email.service";
+import {PaymentService} from "../../shared/service/payment.service";
 
 @Component({
   selector: 'app-order-detail',
@@ -51,6 +53,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   private route = inject(ActivatedRoute);
   private matDialog = inject(MatDialog)
   private orderService = inject(PurchaseOrderService);
+  private paymentService = inject(PaymentService);
+  private emailService = inject(EmailService);
   private shoppingCartService = inject(ShoppingCartService);
   private $shoppingCart = this.shoppingCartService.$shoppingCart;
   private shoppingCart: ShoppingCart | undefined;
@@ -64,8 +68,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy, AfterViewInit {
       next: params => {
         const orderId = params.get('orderId') ?? undefined;
         if (orderId) {
-          this.orderService.getOrderByOrderId(orderId)
-            .pipe(
+          let $orderDetailSubscription = this.orderService.getOrderByOrderId(orderId)
+          if (!this.authService.isLoggedIn()) {
+            $orderDetailSubscription = this.orderService.getOrderByOrderId(orderId, true)
+          }
+          $orderDetailSubscription.pipe(
               switchMap((order: Order) => {
                 this.orderDetail = order;
                 var bookDetailObservables = order.lineItems.map(lineItem => this.bookService.getBookByIsbn(lineItem.isbn));
@@ -115,7 +122,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onRepayment(orderId: string) {
-    this.orderService.getVNPayUrl(orderId).subscribe({
+    this.paymentService.getVNPayUrl(orderId).subscribe({
       next: (payment: any) => {
         if (payment && payment.paymentUrl) {
           window.location.href = payment.paymentUrl
@@ -130,7 +137,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.isSendingOtp = true;
     this.startCountdown();
-    this.orderService.sendOTP(orderId).subscribe({
+    this.emailService.sendOTP(orderId).subscribe({
       next: () => {
         this.snackbarService.show('OTP sent successfully', "Close");
         if (this.timeRemaining === 0) {
@@ -152,7 +159,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
       this.isVerifyingOtp = true;
-      this.orderService.verifyOTP(orderId, this.otpFormGroup.value.otp).subscribe({
+      this.emailService.verifyOTP(orderId, this.otpFormGroup.value.otp).subscribe({
         next: (order: Order) => {
           this.orderDetail = order
           this.snackbarService.show('OTP verified successfully', "Close");

@@ -21,12 +21,11 @@ import {CdkCopyToClipboard} from "@angular/cdk/clipboard";
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
-import {CartItem} from "../../shared/model/shopping-cart";
 import {CustomError} from "../../shared/model/api-error";
 import {BookService} from "../../shared/service/book.service";
 import {SnackbarService} from "../../shared/service/snackbar.service";
 import {MatCardAvatar} from "@angular/material/card";
-import {RouterLink} from "@angular/router";
+import {Router, RouterModule} from "@angular/router";
 
 @Component({
   selector: 'app-purchase-orders',
@@ -57,7 +56,7 @@ import {RouterLink} from "@angular/router";
     MatInput,
     MatLabel,
     MatCardAvatar,
-    RouterLink
+    RouterModule
   ],
   templateUrl: './purchase-orders.component.html',
   styleUrl: './purchase-orders.component.css'
@@ -68,6 +67,7 @@ export class PurchaseOrdersComponent implements OnInit, AfterViewInit, OnDestroy
   private bookService = inject(BookService);
   private orderService = inject(PurchaseOrderService);
   private snackbarService = inject(SnackbarService)
+  router = inject(Router);
 
   @ViewChild(MatPaginator) paginator !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
@@ -82,7 +82,6 @@ export class PurchaseOrdersComponent implements OnInit, AfterViewInit, OnDestroy
     this.orderService.getOrders().subscribe({
       next: page => {
         this.orders = page.content;
-        this.dataSource.data = [...this.orders]
         this.getDetailOrder(this.orders)
       }
     });
@@ -109,6 +108,7 @@ export class PurchaseOrdersComponent implements OnInit, AfterViewInit, OnDestroy
             order.lineItems.forEach((lineItem, index) => {
               lineItem.bookDetail = bookDetails[index];
             });
+            this.dataSource.data = [...this.orders]
           },
           error: err => {
             if (err && err.errors)
