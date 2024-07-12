@@ -7,7 +7,6 @@ import {SnackbarService} from "./snackbar.service";
 import {AuthService} from "./auth.service";
 import {QuestionDialogComponent} from "../component/dialog/question-dialog/question-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
