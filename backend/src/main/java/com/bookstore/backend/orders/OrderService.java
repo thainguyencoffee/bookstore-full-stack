@@ -12,8 +12,6 @@ import com.bookstore.backend.orders.exception.OrderStatusNotMatchException;
 import com.bookstore.backend.orders.exception.OtpExpiredException;
 import com.bookstore.backend.orders.exception.OtpIncorrectException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +33,11 @@ public class OrderService {
 
     public Order findById(UUID id) {
         return orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(id));
+    }
+
+    public Order findByIdAndUsername(UUID id, String username) {
+        return orderRepository.findByIdAndCreatedBy(id, username)
                 .orElseThrow(() -> new OrderNotFoundException(id));
     }
 

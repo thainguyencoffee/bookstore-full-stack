@@ -1,4 +1,4 @@
-import {Component, inject, } from '@angular/core';
+import {Component, inject,} from '@angular/core';
 import {Router} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {CartItem} from "../../shared/model/shopping-cart";
@@ -16,6 +16,8 @@ import {SnackbarService} from "../../shared/service/snackbar.service";
 import {Order} from "../../shared/model/order";
 import {CustomError} from "../../shared/model/api-error";
 import {Book} from "../../shared/model/book";
+import {AuthService} from "../../shared/service/auth.service";
+import {PaymentService} from "../../shared/service/payment.service";
 
 @Component({
   selector: 'app-checkout',
@@ -43,8 +45,10 @@ export class CheckoutComponent {
   bookItem: Book | undefined;
   private router = inject(Router);
   private orderService = inject(PurchaseOrderService)
+  private paymentService = inject(PaymentService)
   private snackbarService = inject(SnackbarService)
   cities = cities
+  private authService = inject(AuthService);
 
   constructor() {
     const navigation = this.router.getCurrentNavigation();
@@ -101,7 +105,7 @@ export class CheckoutComponent {
             // save order to localstorage
             this.orderService.saveOrderToLocalStorage(order);
             if (order.paymentMethod === 'VNPAY') {
-              this.orderService.getVNPayUrl(order.id).subscribe({
+              this.paymentService.getVNPayUrl(order.id).subscribe({
                 next: (payment: any) => {
                   if (payment && payment.paymentUrl) {
                     window.location.href = payment.paymentUrl
@@ -120,8 +124,7 @@ export class CheckoutComponent {
             }
           }
         })
-      }
-      else {
+      } else {
         this.snackbarService.show("Not resolve the cart items", "Close")
       }
     }

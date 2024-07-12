@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-interface ShoppingCartRepository extends CrudRepository<ShoppingCart, UUID> {
+public interface ShoppingCartRepository extends CrudRepository<ShoppingCart, UUID> {
 
     Optional<ShoppingCart> findByCreatedBy(String createdBy);
 

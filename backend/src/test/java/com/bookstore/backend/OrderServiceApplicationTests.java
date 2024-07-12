@@ -4,6 +4,7 @@ import com.bookstore.backend.book.*;
 import com.bookstore.backend.orders.PaymentMethod;
 import com.bookstore.backend.orders.dto.LineItemRequest;
 import com.bookstore.backend.orders.dto.OrderRequest;
+import com.bookstore.backend.orders.dto.PaymentRequest;
 import com.bookstore.backend.orders.dto.UserInformation;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -139,7 +140,8 @@ public class OrderServiceApplicationTests {
         UUID orderId = UUID.fromString(orderIdStr);
 
         webTestClient.post()
-                .uri("/api/orders/{orderId}/payment", orderId)
+                .uri("/api/payment/vn-pay/payment-url")
+                .body(BodyInserters.fromValue(new PaymentRequest(orderId)))
                 .headers(headers -> headers.setBearerAuth(customerToken.accessToken))
                 .exchange()
                 .expectStatus().isOk()

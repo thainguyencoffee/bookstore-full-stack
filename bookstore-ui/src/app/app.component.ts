@@ -65,22 +65,21 @@ export class AppComponent implements OnInit {
         this.saveOrderWhenLogin(username);
       }
     })
-
   }
 
   saveOrderWhenLogin(username: string) {
     const ordersLocalStorage: {id: string}[] = this.orderService.getOrdersFromLocalStorage();
     if (ordersLocalStorage.length > 0) {
       for (const ordersLocalStorageElement of ordersLocalStorage) {
-        this.orderService.getOrderByOrderId(ordersLocalStorageElement.id).subscribe({
+        this.orderService.getOrderByOrderId(ordersLocalStorageElement.id, true).subscribe({
           next: order => {
             order.createdBy = username;
             order.lastModifiedBy = username;
             console.log("app component update order")
             this.orderService.updateOrder(order).subscribe();
+            this.orderService.removeOrdersFromLocalStorage();
           }
         })
-        this.orderService.removeOrdersFromLocalStorage();
       }
     }
   }

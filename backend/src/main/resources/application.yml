@@ -51,7 +51,7 @@ bookstore:
     api-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
     tmn-code: VMJ3LJZY
     secret-key: 90SLNCT497CFBIM299YG2ZRT439MIL8W
-    return-url: http://localhost:9001/api/orders/payment/return
+    return-url: http://localhost:9001//api/payment/vn-pay/return
     version: 2.1.0
     command: querydr
     order-type: other
