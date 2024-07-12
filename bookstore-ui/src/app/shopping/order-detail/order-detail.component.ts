@@ -27,7 +27,7 @@ import {
 import {AuthService} from "../../shared/service/auth.service";
 
 @Component({
-  selector: 'app-payment-callback-detail',
+  selector: 'app-order-detail',
   standalone: true,
   imports: [CommonModule,
     MatCardModule,
@@ -41,10 +41,10 @@ import {AuthService} from "../../shared/service/auth.service";
     MatListModule,
     MatFormField, FormsModule, MatInput, ReactiveFormsModule, MatError, MatIcon
   ],
-  templateUrl: './payment-callback-detail.component.html',
-  styleUrl: './payment-callback-detail.component.css'
+  templateUrl: './order-detail.component.html',
+  styleUrl: './order-detail.component.css'
 })
-export class PaymentCallbackDetailComponent implements OnInit, OnDestroy, AfterViewInit {
+export class OrderDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();
   orderDetail: Order | undefined;
 

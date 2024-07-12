@@ -11,6 +11,7 @@ import com.bookstore.backend.orders.vnpay.VNPayStatusCodeEnum;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,10 +38,10 @@ public class OrderController {
     private final EmailService emailService;
 
     @GetMapping
-    public List<Order> getAllOrder(@AuthenticationPrincipal Jwt jwt, Pageable pageable) {
+    public Page<Order> getAllOrder(@AuthenticationPrincipal Jwt jwt, Pageable pageable) {
         log.info("OrderController attempt retrieve orders.");
         String username = jwt.getClaim(StandardClaimNames.PREFERRED_USERNAME).toString();
-        return orderService.findAllByCreatedBy(username, pageable).getContent();
+        return orderService.findAllByCreatedBy(username, pageable);
     }
 
     @GetMapping("/{orderId}")
@@ -53,7 +53,7 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Order submitOrder(@Valid @RequestBody OrderRequest orderRequest) {
-        return orderService.submitOrder(orderRequest.getLineItems(), orderRequest.getUserInformation(), orderRequest.getPaymentMethod());
+        return orderService.submitOrder(orderRequest);
     }
 
     @GetMapping("/{orderId}/send-opt")
@@ -99,7 +99,7 @@ public class OrderController {
         Order order = Optional.ofNullable(VNPayStatusCodeEnum.isMember(status))
                 .map(vnPayStatusCodeEnum -> vnPayStatusCodeEnum.handleCallback(orderService, request))
                 .orElseThrow(() -> new RuntimeException("Status code of VNPAY not matched!!!"));
-        URI paymentDetailUrl = URI.create("http://localhost:9000/payment-callback-detail/" + order.getId());
+        URI paymentDetailUrl = URI.create("http://localhost:9000/order-detail-callback/" + order.getId());
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(paymentDetailUrl);
         return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);

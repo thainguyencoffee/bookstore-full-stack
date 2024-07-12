@@ -50,6 +50,9 @@
         {{row.quantity}}
         <button mat-flat-button (click)="increaseQuantity($event, row)" [class.btn-quantity-disable]="row.quantity >= row.inventory">+</button>
         <button mat-flat-button (click)="decreaseQuantity($event, row)">-</button>
+        @if(row.quantity > row.inventory) {
+          <span style="color: red">If you want to checkout, please decrement quantity first!</span>
+        }
       </td>
     </ng-container>
 
@@ -115,21 +118,6 @@
   </table>
 </div>
 
-<div>
-  <h3>
-    Click Log
-  </h3>
-</div>
-
-@if (!clickedRows.size) {
-  <div>Clicked rows will be logged here</div>
-}
-
-<ul>
-  @for (clickedRow of getListItemClicked(); track clickedRow) {
-    <li>Clicked on {{clickedRow}}</li>
-  }
-</ul>
 
 <mat-toolbar class="bottom-toolbar">
   <div class="toolbar-content">

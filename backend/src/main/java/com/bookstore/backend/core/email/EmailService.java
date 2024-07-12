@@ -40,7 +40,7 @@ public class EmailService {
     }
 
     public static String buildEmailVerifyBody(long otp) {
-        return "Mã xác thực của bạn là: " + otp;
+        return "Mã xác thực của bạn là (Thời hạn 5 phút): " + otp;
     }
 
     public String buildEmailBody(Order order, boolean notifyUpdate) {
