@@ -305,16 +305,14 @@ export class ShoppingCartService {
   }
 
   createEmptyShoppingCart() {
-    const usernameUUID = uuidv4()
-    const cartLocalId = uuidv4()
 
     const newCart = new ShoppingCart(
-      cartLocalId,
+      'local-cart-id',
       [],
       new Date().toISOString(),
-      usernameUUID,
+      'anonymous',
       new Date().toISOString(),
-      usernameUUID
+      'anonymous'
     );
     return newCart;
   }
