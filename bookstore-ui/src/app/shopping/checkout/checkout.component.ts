@@ -97,7 +97,7 @@ export class CheckoutComponent {
         this.cartItemSelected.forEach(item => orderRequest.lineItems.push({isbn: item.isbn, quantity: item.quantity}))
         this.orderService.submitOrder(orderRequest).subscribe({
           next: (order: Order) => {
-            this.snackbarService.show("Create order success: orderID " + order.id);
+            this.snackbarService.show("Create order success: orderID " + order.id, "Close");
             if (order.paymentMethod === 'VNPAY') {
               this.orderService.getVNPayUrl(order.id).subscribe({
                 next: (payment: any) => {
@@ -113,14 +113,14 @@ export class CheckoutComponent {
           error: err => {
             if (err && err.errors) {
               err.errors.forEach((err: CustomError) => {
-                this.snackbarService.show(err.message)
+                this.snackbarService.show(err.message, "Close")
               })
             }
           }
         })
       }
       else {
-        this.snackbarService.show("Not resolve the cart items")
+        this.snackbarService.show("Not resolve the cart items", "Close")
       }
     }
   }

@@ -56,7 +56,7 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSource!: MatTableDataSource<CartItem>;
-  displayedColumns = ['isbn', 'photo', 'title', 'quantity', 'price', 'totalPrice', 'action_delete', 'action_checkout'];
+  displayedColumns = ['isbn', 'photo', 'title', 'quantity', 'inventory', 'price', 'totalPrice', 'action_delete', 'action_checkout'];
   clickedRows = new Set<string>();
 
 
@@ -92,17 +92,13 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
                 item.totalPrice = bookDetails[index].price * item.quantity
                 item.photo = bookDetails[index].photos?.[0]
                 item.inventory = bookDetails[index].inventory;
-                if (item.quantity > bookDetails[index].inventory) {
-                  item.quantity = bookDetails[index].inventory;
-                  item.totalPrice = item.quantity * item.price;
-                }
               });
               this.dataSource.data = [...this.shoppingCart.cartItems]
             }
           },
           error: err => {
             if (err && err.errors) {
-              err.errors.forEach((err: CustomError) => this.snackbarService.show(err.message))
+              err.errors.forEach((err: CustomError) => this.snackbarService.show(err.message, "Close"))
             }
           }
         }
@@ -218,7 +214,7 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
   isOutOfStock(isbn: string): boolean {
     for (let item of this.dataSource.data) {
       if (item.isbn === isbn) {
-        return item.inventory === 0;
+        return item.quantity > item.inventory;
       }
     }
     return false;
@@ -229,13 +225,13 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
       const selectedRows: CartItem[] = []
       for (let isbn of this.clickedRows) {
         if (this.isOutOfStock(isbn)) {
-          this.snackbarService.show('Out of stock item with isbn ' + isbn);
+          this.snackbarService.show('Out of stock item with isbn ' + isbn, 'Close');
           return;
         }
         const cartItem = this.shoppingCart?.hasItem(isbn);
         if (cartItem) selectedRows.push(cartItem);
         else {
-          this.snackbarService.show("Not existing cart item with isbn " + isbn);
+          this.snackbarService.show("Not existing cart item with isbn " + isbn, "Close");
           return;
         }
       }
@@ -249,7 +245,7 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
       const cartItem = this.shoppingCart?.hasItem(isbn);
       if (cartItem) selectedItem = cartItem
       else {
-        this.snackbarService.show("Not existing cart item with isbn " + isbn)
+        this.snackbarService.show("Not existing cart item with isbn " + isbn, "Close")
         return;
       }
     }

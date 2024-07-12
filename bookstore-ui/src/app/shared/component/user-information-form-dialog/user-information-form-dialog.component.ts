@@ -64,17 +64,17 @@ export class UserInformationFormDialog {
       }
       this.orderService.updateOrder(this.orderDetail).subscribe({
         next: () => {
-          this.snackBarService.show("Update Order successfully")
+          this.snackBarService.show("Update Order successfully", "Close")
           this.dialogRef.close()
         },
         error: err => {
           if (err && err.errors) {
-            err.errors.forEach((err: CustomError) => this.snackBarService.show(err.message))
+            err.errors.forEach((err: CustomError) => this.snackBarService.show(err.message, "Close"))
           }
         }
       })
     } else {
-      this.snackBarService.show("Cancel update success!")
+      this.snackBarService.show("Cancel update success!", "Close")
       this.dialogRef.close()
     }
   }

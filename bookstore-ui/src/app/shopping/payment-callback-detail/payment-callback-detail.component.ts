@@ -96,7 +96,7 @@ export class PaymentCallbackDetailComponent implements OnInit, OnDestroy, AfterV
               },
               error: err => {
                 if (err && err.errors)
-                  err.errors.forEach((error: CustomError) => this.snackbarService.show(error.message));
+                  err.errors.forEach((error: CustomError) => this.snackbarService.show(error.message, "Close"));
               }
             })
         }
@@ -122,7 +122,7 @@ export class PaymentCallbackDetailComponent implements OnInit, OnDestroy, AfterV
   }
 
   copySuccess() {
-    this.snackbarService.show('Order ID copied to clipboard')
+    this.snackbarService.show('Order ID copied to clipboard', "Close")
   }
 
 
@@ -144,14 +144,14 @@ export class PaymentCallbackDetailComponent implements OnInit, OnDestroy, AfterV
     this.startCountdown();
     this.orderService.sendOTP(orderId).subscribe({
       next: () => {
-        this.snackbarService.show('OTP sent successfully');
+        this.snackbarService.show('OTP sent successfully', "Close");
         if (this.timeRemaining === 0) {
           this.isSendingOtp = false;
         }
       },
       error: err => {
         if (err && err.errors) {
-          err.errors.forEach((error: CustomError) => this.snackbarService.show(error.message));
+          err.errors.forEach((error: CustomError) => this.snackbarService.show(error.message, "Close"));
           this.isSendingOtp = false;
         }
       }
@@ -167,12 +167,12 @@ export class PaymentCallbackDetailComponent implements OnInit, OnDestroy, AfterV
       this.orderService.verifyOTP(orderId, this.otpFormGroup.value.otp).subscribe({
         next: (order: Order) => {
           this.orderDetail = order
-          this.snackbarService.show('OTP verified successfully');
+          this.snackbarService.show('OTP verified successfully', "Close");
           this.isVerifyingOtp = false;
         },
         error: err => {
           if (err.status >= 400 && err.status < 500) {
-            this.snackbarService.show('OTP is incorrect');
+            this.snackbarService.show('OTP is incorrect', "Close");
             this.isVerifyingOtp = false;
           }
         }

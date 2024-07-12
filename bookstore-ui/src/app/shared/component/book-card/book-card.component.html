@@ -20,19 +20,12 @@
     <span style="text-decoration: underline" *ngIf="book.inventory == 0">Out of stock</span>
   </mat-card-content>
   <mat-card-actions class="card-actions" *ngIf="shoppingCart$ | async as shoppingCart">
-    @if(book.inventory === 0) {
-      <button [disabled]="true" mat-stroked-button>
-        Add to cart
-      </button>
-    }
-    @if(book.inventory > 0) {
-      <button [disabled]="book.inventory === 0" (click)="addToCart(shoppingCart.id)" *ngIf="shoppingCart.getQuantity(book.isbn) === 0; else updateQuantity" mat-stroked-button>
-        Add to cart
-      </button>
-      <ng-template #updateQuantity>
-        <app-book-quantity [book]="book" [shopping-cart]="shoppingCart$"></app-book-quantity>
-      </ng-template>
-    }
+    <button (click)="addToCart(shoppingCart.id)" *ngIf="shoppingCart.getQuantity(book.isbn) === 0; else updateQuantity" mat-stroked-button>
+      Add to cart
+    </button>
+    <ng-template #updateQuantity>
+      <app-book-quantity [book]="book" [shopping-cart]="shoppingCart$"></app-book-quantity>
+    </ng-template>
     <button [disabled]="book.inventory === 0" mat-flat-button (click)="checkoutNow(book)" >Buy now</button>
   </mat-card-actions>
 </mat-card>

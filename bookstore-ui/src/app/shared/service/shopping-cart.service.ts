@@ -35,7 +35,7 @@ export class ShoppingCartService {
         error: err => {
           if (err.status !== 401 && err.errors) {
             err.errors.forEach((customError: CustomError) => {
-              this.snackBarService.show(customError.message)
+              this.snackBarService.show(customError.message, "Close")
             })
           }
         }
@@ -107,12 +107,12 @@ export class ShoppingCartService {
         error: err => {
           if (err && err.error.errors) {
             err.error.errors.forEach((customError: CustomError) => {
-              this.snackBarService.show(customError.message)
+              this.snackBarService.show(customError.message, "Close")
             })
           }
-        }})
-    }
-    else {
+        }
+      })
+    } else {
       this.deleteAllCartItemLocal(body);
     }
   }
@@ -124,7 +124,7 @@ export class ShoppingCartService {
       if (itemIndex !== -1) {
         shoppingCartLocal.cartItems.splice(itemIndex, 1);
       } else {
-        this.snackBarService.show("Cart item local with isbn " + body.isbn + " not found!");
+        this.snackBarService.show("Cart item local with isbn " + body.isbn + " not found!", "Close");
       }
     })
 
@@ -137,7 +137,7 @@ export class ShoppingCartService {
       shoppingCartLocal.lastModifiedAt,
       shoppingCartLocal.lastModifiedBy
     ));
-    this.snackBarService.show("Delete cart item success")
+    this.snackBarService.show("Delete cart item success", "Close")
     this.saveShoppingCartToLocalStorage(shoppingCartLocal);
   }
 
@@ -162,12 +162,12 @@ export class ShoppingCartService {
         error: err => {
           if (err && err.error.errors) {
             err.error.errors.forEach((customError: CustomError) => {
-              this.snackBarService.show(customError.message)
+              this.snackBarService.show(customError.message, "Close")
             })
           }
-        }})
-    }
-    else {
+        }
+      })
+    } else {
       this.deleteCartItemLocal(body);
     }
   }
@@ -180,9 +180,9 @@ export class ShoppingCartService {
     const i = shoppingCartLocal.cartItems.findIndex((item: CartItem) => item.isbn === body.isbn);
     if (i !== -1) {
       shoppingCartLocal.cartItems.splice(i, 1);
-      this.snackBarService.show("Delete cart item success")
+      this.snackBarService.show("Delete cart item success", "Close")
     } else {
-      this.snackBarService.show("Cart item local with isbn " + body.isbn + " not found!");
+      this.snackBarService.show("Cart item local with isbn " + body.isbn + " not found!", "Close");
     }
     shoppingCartLocal.lastModifiedAt = new Date().toISOString();
     this.shoppingCartSubject.next(new ShoppingCart(
@@ -218,15 +218,14 @@ export class ShoppingCartService {
           error: err => {
             if (err.status === 400 && err.error.errors) {
               err.error.errors.forEach((customError: CustomError) => {
-                this.snackBarService.show(customError.message)
+                this.snackBarService.show(customError.message, "Close")
               })
             } else {
-              this.snackBarService.show(err.message)
+              this.snackBarService.show(err.message, "Close")
             }
           }
         })
-    }
-    else {
+    } else {
       this.updateLocalCart(body);
     }
   }
@@ -244,27 +243,23 @@ export class ShoppingCartService {
       const quantityChanged = shoppingCartLocal.cartItems[i].quantity + body.quantity;
       if (quantityChanged <= 0)
         shoppingCartLocal.cartItems.splice(i, 1);
-      else if (quantityChanged > body.inventory)
-        this.snackBarService.show("Not enough inventory for book with isbn " + body.isbn)
+        // else if (quantityChanged > body.inventory)
+      //   this.snackBarService.show("Not enough inventory for book with isbn " + body.isbn)
       else
         shoppingCartLocal.cartItems[i].quantity = quantityChanged;
     } else {
-      if (body.quantity > body.inventory)
-        this.snackBarService.show("Not enough inventory for book with isbn " + body.isbn)
-      else {
-        const cartItemNew: CartItem = {
-          cartId: shoppingCartLocal.id,
-          id: 0,
-          isbn: body.isbn,
-          quantity: body.quantity,
-          totalPrice: 0,
-          photo: undefined,
-          price: 0,
-          title: undefined,
-          inventory: 0,
-        }
-        shoppingCartLocal.cartItems.push(cartItemNew)
+      const cartItemNew: CartItem = {
+        cartId: shoppingCartLocal.id,
+        id: 0,
+        isbn: body.isbn,
+        quantity: body.quantity,
+        totalPrice: 0,
+        photo: undefined,
+        price: 0,
+        title: undefined,
+        inventory: 0,
       }
+      shoppingCartLocal.cartItems.push(cartItemNew)
     }
 
     shoppingCartLocal.lastModifiedAt = new Date().toISOString();

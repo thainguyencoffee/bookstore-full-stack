@@ -16,6 +16,10 @@
   font-weight: bold;
 }
 
+.row-is-disable {
+  background-color: #f0f0f0;
+}
+
 .photo {
   width: 64px;
   height: 64px;
