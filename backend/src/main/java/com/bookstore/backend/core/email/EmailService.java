@@ -43,7 +43,7 @@ public class EmailService {
         return "Mã xác thực của bạn là: " + otp;
     }
 
-    public String buildEmailBody(Order order) {
+    public String buildEmailBody(Order order, boolean notifyUpdate) {
         var userInfo = order.getUserInformation();
         var lineItemsString = new StringBuilder();
         for (LineItem lineItem : order.getLineItems()) {
@@ -53,9 +53,15 @@ public class EmailService {
                     .append(NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
                             .format(book.getPrice())).append(" VND \n");
         }
-        return new StringBuilder().append("Chào ").append(userInfo.getFullName()).append(", \n\n")
-                .append("Cảm ơn bạn đã đặt hàng tại Bookstore! \n\n")
-                .append("Đây là thông tin đơn hàng của bạn: \n\n")
+        StringBuilder result;
+        if (notifyUpdate) {
+            result = new StringBuilder().append("Chào ").append(userInfo.getFullName()).append(", \n\n")
+                    .append("Đơn hàng của bạn đã được cập nhật: \n\n");
+        } else {
+            result = new StringBuilder().append("Chào ").append(userInfo.getFullName()).append(", \n\n")
+                    .append("Cảm ơn bạn đã đặt hàng tại Bookstore! \n\n");
+        }
+        return result.append("Đây là thông tin đơn hàng của bạn: \n\n")
                 .append("Mã đơn hàng: ").append(order.getId()).append(" \n")
                 .append("Kiểu nhận hàng: ").append(order.getPaymentMethod()).append(" \n")
                 .append("Ngày đặt: ").append(order.getCreatedDate()).append(" \n")

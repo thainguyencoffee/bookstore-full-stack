@@ -1,8 +1,6 @@
 package com.bookstore.backend.shopppingcart;
 
-import com.bookstore.backend.book.Book;
 import com.bookstore.backend.book.BookService;
-import com.bookstore.backend.book.exception.BookNotEnoughInventoryException;
 import com.bookstore.backend.shopppingcart.dto.DeleteAllCartRequest;
 import com.bookstore.backend.shopppingcart.exception.CartItemNotFoundException;
 import com.bookstore.backend.shopppingcart.exception.ShoppingCartAlreadyExistingException;
@@ -49,7 +47,7 @@ public class ShoppingCartController {
     public ResponseEntity<ShoppingCart> addToCart(@PathVariable UUID cartId, @RequestBody CartItem cartItem) {
         ShoppingCart shoppingCart = shoppingCartService.findById(cartId);
         // find book by isbn
-        Book book = bookService.findByIsbn(cartItem.getIsbn());
+        bookService.findByIsbn(cartItem.getIsbn());
         for (CartItem item : shoppingCart.getCartItems()) {
             if (item.getIsbn().equals(cartItem.getIsbn())) {
                 int quantityChanged = item.getQuantity() + cartItem.getQuantity();
@@ -57,17 +55,12 @@ public class ShoppingCartController {
                     cartItemService.deleteById(item.getId());
                     shoppingCart.getCartItems().remove(item);
                     return ResponseEntity.ok(shoppingCart);
-                } else if (quantityChanged > book.getInventory()) {
-                    throw new BookNotEnoughInventoryException(cartItem.getIsbn());
                 } else {
                     item.setQuantity(quantityChanged);
                     cartItemService.save(item);
                     return ResponseEntity.ok(shoppingCart);
                 }
             }
-        }
-        if (cartItem.getQuantity() > book.getInventory()) {
-            throw new BookNotEnoughInventoryException(cartItem.getIsbn());
         }
         cartItem.setCartId(shoppingCart.getId());
         shoppingCart.getCartItems().add(cartItem);

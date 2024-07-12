@@ -4,12 +4,18 @@ import {Observable} from "rxjs";
 import {ShoppingCart} from "../../model/shopping-cart";
 import {ShoppingCartService} from "../../service/shopping-cart.service";
 import {CommonModule} from "@angular/common";
+import {SnackbarService} from "../../service/snackbar.service";
+import {MatIconModule} from "@angular/material/icon";
+import {MatIconButton, MatMiniFabButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-book-quantity',
   standalone: true,
   imports: [
     CommonModule,
+    MatIconButton,
+    MatIconModule,
+    MatMiniFabButton
   ],
   templateUrl: './book-quantity.component.html',
   styleUrl: './book-quantity.component.css'
@@ -19,6 +25,7 @@ export class BookQuantityComponent implements OnInit {
   @Input("shopping-cart") shoppingCart$: Observable<ShoppingCart | undefined> | undefined;
   shoppingCart: ShoppingCart | undefined;
   private shoppingCartService = inject(ShoppingCartService);
+  private snackBarService = inject(SnackbarService);
 
   ngOnInit(): void {
     this.shoppingCart$?.subscribe(cart => this.shoppingCart = cart);
@@ -26,6 +33,9 @@ export class BookQuantityComponent implements OnInit {
 
   addToCart(cartId: string) {
     if (this.shoppingCart && this.book && this.book.isbn) {
+      if (this.book.inventory < (this.shoppingCart.getQuantity(this.book.isbn) + 1)) {
+        this.snackBarService.show("You adding more than the inventory, if you want to checkout, please remove some items from the cart first.", "Close")
+      }
       const body = {
         cartId: cartId,
         isbn: this.book.isbn,

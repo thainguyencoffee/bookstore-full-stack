@@ -15,6 +15,7 @@ import {OrderRequest} from "../../shared/model/order-request";
 import {SnackbarService} from "../../shared/service/snackbar.service";
 import {Order} from "../../shared/model/order";
 import {CustomError} from "../../shared/model/api-error";
+import {Book} from "../../shared/model/book";
 
 @Component({
   selector: 'app-checkout',
@@ -39,6 +40,7 @@ import {CustomError} from "../../shared/model/api-error";
 })
 export class CheckoutComponent {
   cartItemSelected: CartItem[] | undefined;
+  bookItem: Book | undefined;
   private router = inject(Router);
   private orderService = inject(PurchaseOrderService)
   private snackbarService = inject(SnackbarService)
@@ -48,13 +50,15 @@ export class CheckoutComponent {
     const navigation = this.router.getCurrentNavigation();
     const selectedRows = navigation?.extras?.state?.['selectedRows'];
     const selectedItem = navigation?.extras?.state?.['selectedItem'];
+    const singleItem = navigation?.extras?.state?.['singleItem'];
 
     if (Array.isArray(selectedRows) && selectedRows.length > 0) {
       this.cartItemSelected = selectedRows;
     } else if (selectedItem) {
       this.cartItemSelected = [selectedItem];
+    } else if (singleItem) {
+      this.bookItem = singleItem;
     }
-
   }
 
   purchaseOrderFormGroup = new FormGroup({
@@ -93,7 +97,7 @@ export class CheckoutComponent {
         this.cartItemSelected.forEach(item => orderRequest.lineItems.push({isbn: item.isbn, quantity: item.quantity}))
         this.orderService.submitOrder(orderRequest).subscribe({
           next: (order: Order) => {
-            this.snackbarService.show("Create order success: orderID " + order.id);
+            this.snackbarService.show("Create order success: orderID " + order.id, "Close");
             if (order.paymentMethod === 'VNPAY') {
               this.orderService.getVNPayUrl(order.id).subscribe({
                 next: (payment: any) => {
@@ -109,14 +113,14 @@ export class CheckoutComponent {
           error: err => {
             if (err && err.errors) {
               err.errors.forEach((err: CustomError) => {
-                this.snackbarService.show(err.message)
+                this.snackbarService.show(err.message, "Close")
               })
             }
           }
         })
       }
       else {
-        this.snackbarService.show("Not resolve the cart items")
+        this.snackbarService.show("Not resolve the cart items", "Close")
       }
     }
   }

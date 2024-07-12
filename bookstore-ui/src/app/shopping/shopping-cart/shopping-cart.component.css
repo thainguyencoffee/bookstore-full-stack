@@ -14,8 +14,10 @@
 
 .row-is-clicked {
   font-weight: bold;
-  background: #25004d;
-  color: white;
+}
+
+.row-is-disable {
+  background-color: #f0f0f0;
 }
 
 .photo {
@@ -51,4 +53,9 @@
 
 .total-price-small {
   font-size: small;
+}
+
+.btn-quantity-disable {
+  background-color: gray;
+  color: white;
 }
