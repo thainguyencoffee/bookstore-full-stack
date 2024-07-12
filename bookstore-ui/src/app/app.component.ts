@@ -11,6 +11,8 @@ import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
 import {CommonModule} from "@angular/common";
 import {ShoppingCartService} from "./shared/service/shopping-cart.service";
+import {PurchaseOrderService} from "./shared/service/purchase-order.service";
+import {SnackbarService} from "./shared/service/snackbar.service";
 
 @Component({
   selector: 'app-root',
@@ -36,6 +38,8 @@ export class AppComponent implements OnInit {
   private breakpointObserver = inject(BreakpointObserver);
   authService = inject(AuthService);
   private shoppingCartService = inject(ShoppingCartService);
+  private orderService = inject(PurchaseOrderService);
+  private snackBarService = inject(SnackbarService);
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
@@ -52,15 +56,36 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.authService.authenticate().subscribe({
       next: user => {
+        this.snackBarService.show("Welcome back, " + user.username + "!", "Close");
         this.authService.user = user;
         this.authService.isAuthenticated = true;
         this.shoppingCartService.getShoppingCart();
+        // save orders
+        const username = user.username;
+        this.saveOrderWhenLogin(username);
       }
     })
+
+  }
+
+  saveOrderWhenLogin(username: string) {
+    const ordersLocalStorage: {id: string}[] = this.orderService.getOrdersFromLocalStorage();
+    if (ordersLocalStorage.length > 0) {
+      for (const ordersLocalStorageElement of ordersLocalStorage) {
+        this.orderService.getOrderByOrderId(ordersLocalStorageElement.id).subscribe({
+          next: order => {
+            order.createdBy = username;
+            order.lastModifiedBy = username;
+            console.log("app component update order")
+            this.orderService.updateOrder(order).subscribe();
+          }
+        })
+        this.orderService.removeOrdersFromLocalStorage();
+      }
+    }
   }
 
   logInClicked(): void {
     this.authService.login();
   }
-
 }

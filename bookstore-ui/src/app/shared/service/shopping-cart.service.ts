@@ -21,27 +21,54 @@ export class ShoppingCartService {
 
   getShoppingCart() {
     if (this.authService && this.authService.isLoggedIn()) {
-      this.http.get<ShoppingCart>('/api/shopping-carts/my-cart').subscribe({
-        next: cart => {
-          this.shoppingCartSubject.next(new ShoppingCart(
-            cart.id,
-            cart.cartItems,
-            cart.createdAt,
-            cart.createdBy,
-            cart.lastModifiedAt,
-            cart.lastModifiedBy
-          ))
-        },
-        error: err => {
-          if (err.status !== 401 && err.errors) {
-            err.errors.forEach((customError: CustomError) => {
-              this.snackBarService.show(customError.message, "Close")
-            })
-          }
-        }
-      });
+      this.loadShoppingCartFromDB();
     } else {
       this.loadShoppingCartFromLocalStorage();
+    }
+  }
+
+  loadShoppingCartFromDB() {
+    this.http.get<ShoppingCart>('/api/shopping-carts/my-cart').subscribe({
+      next: cart => {
+        const shoppingCart = new ShoppingCart(
+          cart.id,
+          cart.cartItems,
+          cart.createdAt,
+          cart.createdBy,
+          cart.lastModifiedAt,
+          cart.lastModifiedBy
+        );
+        this.shoppingCartSubject.next(shoppingCart)
+      },
+      error: err => {
+        if (err.status !== 401 && err.errors) {
+          err.errors.forEach((customError: CustomError) => {
+            this.snackBarService.show(customError.message, "Close")
+          })
+        }
+      }
+    });
+  }
+
+  loadShoppingCartFromLocalStorage(): ShoppingCart {
+    const cartData = localStorage.getItem('shoppingCart');
+    if (cartData) {
+      const cart = JSON.parse(cartData);
+      const shoppingCart = new ShoppingCart(
+        cart.id,
+        cart.cartItems,
+        cart.createdAt,
+        cart.createdBy,
+        cart.lastModifiedAt,
+        cart.lastModifiedBy
+      );
+      this.shoppingCartSubject.next(shoppingCart);
+      return shoppingCart;
+    } else {
+      const newCart = this.createEmptyShoppingCart();
+      this.shoppingCartSubject.next(newCart);
+      this.saveShoppingCartToLocalStorage(newCart);
+      return newCart;
     }
   }
 
@@ -272,28 +299,6 @@ export class ShoppingCartService {
       shoppingCartLocal.lastModifiedBy
     ));
     this.saveShoppingCartToLocalStorage(shoppingCartLocal);
-  }
-
-  loadShoppingCartFromLocalStorage(): ShoppingCart {
-    const cartData = localStorage.getItem('shoppingCart');
-    if (cartData) {
-      const cart = JSON.parse(cartData);
-      const shoppingCart = new ShoppingCart(
-        cart.id,
-        cart.cartItems,
-        cart.createdAt,
-        cart.createdBy,
-        cart.lastModifiedAt,
-        cart.lastModifiedBy
-      );
-      this.shoppingCartSubject.next(shoppingCart);
-      return shoppingCart;
-    } else {
-      const newCart = this.createEmptyShoppingCart();
-      this.shoppingCartSubject.next(newCart);
-      this.saveShoppingCartToLocalStorage(newCart);
-      return newCart;
-    }
   }
 
   saveShoppingCartToLocalStorage(cart: ShoppingCart) {

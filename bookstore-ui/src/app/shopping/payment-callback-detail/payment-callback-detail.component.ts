@@ -24,6 +24,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {
   UserInformationFormDialog
 } from "../../shared/component/user-information-form-dialog/user-information-form-dialog.component";
+import {AuthService} from "../../shared/service/auth.service";
 
 @Component({
   selector: 'app-payment-callback-detail',
@@ -55,6 +56,7 @@ export class PaymentCallbackDetailComponent implements OnInit, OnDestroy, AfterV
   private shoppingCart: ShoppingCart | undefined;
   private bookService = inject(BookService)
   private snackbarService = inject(SnackbarService);
+  authService = inject(AuthService);
 
   ngOnInit() {
     this.$shoppingCart.subscribe(shoppingCart => this.shoppingCart = shoppingCart)
@@ -66,19 +68,6 @@ export class PaymentCallbackDetailComponent implements OnInit, OnDestroy, AfterV
             .pipe(
               switchMap((order: Order) => {
                 this.orderDetail = order;
-                // handle delete cart item if order accepted
-                // if (order && order.status == "ACCEPTED") {
-                //   let isbnArray: string[] = []
-                //   order.lineItems.forEach(lineItem => {
-                //     isbnArray.push(lineItem.isbn)
-                //   })
-                //   if (this.shoppingCart) {
-                //     this.shoppingCartService.deleteAllCartItem({
-                //       cartId: this.shoppingCart.id,
-                //       isbn: isbnArray
-                //     })
-                //   }
-                // }
                 var bookDetailObservables = order.lineItems.map(lineItem => this.bookService.getBookByIsbn(lineItem.isbn));
                 return bookDetailObservables.length > 0
                   ? combineLatest(bookDetailObservables)
@@ -124,7 +113,6 @@ export class PaymentCallbackDetailComponent implements OnInit, OnDestroy, AfterV
   copySuccess() {
     this.snackbarService.show('Order ID copied to clipboard', "Close")
   }
-
 
   onRepayment(orderId: string) {
     this.orderService.getVNPayUrl(orderId).subscribe({

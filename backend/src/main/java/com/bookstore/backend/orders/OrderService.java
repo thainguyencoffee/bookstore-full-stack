@@ -132,6 +132,12 @@ public class OrderService {
     public Order updateOrder(UUID orderId, OrderUpdateDto orderUpdateDto) {
         Order order = findById(orderId);
         order.setUserInformation(orderUpdateDto.getUserInformation());
+        if (!orderUpdateDto.getCreatedBy().isEmpty()) {
+            order.setCreatedBy(orderUpdateDto.getCreatedBy());
+        }
+        if (!orderUpdateDto.getLastModifiedBy().isEmpty()) {
+            order.setLastModifiedBy(orderUpdateDto.getLastModifiedBy());
+        }
         orderRepository.save(order);
         String emailBody = emailService.buildEmailBody(order, true);
         emailService.sendConfirmationEmail(order.getUserInformation().getEmail(), "The order updated success fully", emailBody);
