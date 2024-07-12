@@ -10,4 +10,6 @@ import javax.validation.Valid;
 public class OrderUpdateDto {
     @Valid
     private UserInformation userInformation;
+    private String createdBy;
+    private String lastModifiedBy;
 }

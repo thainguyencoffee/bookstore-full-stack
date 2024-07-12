@@ -74,8 +74,8 @@
         <mat-expansion-panel-header>
           <mat-panel-title> Log in / Sign up to persist the orders </mat-panel-title>
         </mat-expansion-panel-header>
-        <p>When you logged in or create a new account, this order and shopping cart will save automatically</p>
-        <button mat-flat-button>Login/Signup</button>
+        <p>When you logged in or create a new account, orders you placed will save automatically</p>
+        <button mat-flat-button (click)="authService.login()">Login/Signup</button>
       </mat-expansion-panel>
     </mat-accordion>
 

@@ -98,6 +98,8 @@ export class CheckoutComponent {
         this.orderService.submitOrder(orderRequest).subscribe({
           next: (order: Order) => {
             this.snackbarService.show("Create order success: orderID " + order.id, "Close");
+            // save order to localstorage
+            this.orderService.saveOrderToLocalStorage(order);
             if (order.paymentMethod === 'VNPAY') {
               this.orderService.getVNPayUrl(order.id).subscribe({
                 next: (payment: any) => {

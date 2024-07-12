@@ -16,6 +16,16 @@ export class PurchaseOrderService {
     return this.http.post<Order>('/api/orders', orderRequest);
   }
 
+  saveOrderToLocalStorage(order: Order) {
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    orders.push({id: order.id});
+    localStorage.setItem('orders', JSON.stringify(orders));
+  }
+
+  getOrdersFromLocalStorage(): {id: string}[] {
+    return JSON.parse(localStorage.getItem("orders") || "[]");
+  }
+
   getVNPayUrl(orderId: string): Observable<any> {
     return this.http.post<string>(`/api/orders/${orderId}/payment`, {})
   }
@@ -34,5 +44,9 @@ export class PurchaseOrderService {
 
   updateOrder(orderDetail: Order) {
     return this.http.patch<Order>(`/api/orders/${orderDetail.id}`, orderDetail)
+  }
+
+  removeOrdersFromLocalStorage() {
+    localStorage.setItem("orders", "[]")
   }
 }
