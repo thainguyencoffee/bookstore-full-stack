@@ -84,4 +84,8 @@ public class BookService {
     public void deleteByIsbn(String isbn) {
         bookRepository.deleteByIsbn(isbn);
     }
+
+    public Page<Book> findBestSellers(Pageable pageable) {
+        return bookRepository.findAllByOrderByPurchasesDesc(pageable);
+    }
 }

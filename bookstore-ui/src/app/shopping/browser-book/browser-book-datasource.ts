@@ -17,6 +17,18 @@ export class BrowserBookDataSource extends DataSource<Book> {
 
   private totalElementsSubject = new BehaviorSubject<number>(0);
   public totalElements$ = this.totalElementsSubject.asObservable();
+  catalogFilterQuerySubject = new BehaviorSubject<string>('');
+  catalogFilterQuery$ = this.catalogFilterQuerySubject.asObservable();
+
+  constructor() {
+    super();
+    this.catalogFilterQuery$.subscribe(query => {
+      this.currentCatalogFilterQuery = query;
+      this.refreshData();
+    });
+  }
+
+  private currentCatalogFilterQuery: string | null = null; // Lưu query hiện tại
 
   connect(): Observable<Book[]> {
     if (this.paginator) {
@@ -39,7 +51,7 @@ export class BrowserBookDataSource extends DataSource<Book> {
   }
 
   private loadData(params: any): Observable<Page<Book>> {
-    return this.bookService.getAllBook(params)
+    return this.bookService.getAllBook(params, this.currentCatalogFilterQuery ?? '')
       .pipe(
         tap((page: Page<Book>) => {
           this.paginator!.length = page.totalElements;
@@ -50,6 +62,17 @@ export class BrowserBookDataSource extends DataSource<Book> {
   }
 
   disconnect(): void {
+  }
+
+  refreshData() {
+    if (this.paginator) {
+      this.paginator.pageIndex = 0; // Reset về trang đầu tiên khi filter thay đổi
+      this.paginator.page.next({
+        pageIndex: this.paginator.pageIndex,
+        pageSize: this.paginator.pageSize,
+        length: this.paginator.length
+      });
+    }
   }
 
 }

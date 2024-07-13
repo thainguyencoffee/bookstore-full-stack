@@ -71,4 +71,8 @@ class BookController {
         bookService.deleteByIsbn(isbn);
     }
 
+    @GetMapping("/best-sellers")
+    public Page<Book> bestSellers(Pageable pageable) {
+        return bookService.findBestSellers(pageable);
+    }
 }

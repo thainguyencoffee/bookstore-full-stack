@@ -110,4 +110,12 @@ public interface BookRepository extends CrudRepository<Book, Long> {
     @Query("select * from books b order by b.purchases desc limit :size offset :page * :size")
     List<Book> findAllBookBestSeller(int size, int page);
 
+    /**
+     * Find all book best seller list.
+     *
+     * @param pageable the pageable
+     * @return the page
+     */
+//    @Query("select * from books b order by b.purchases desc limit :size offset :page * :size")
+    Page<Book> findAllByOrderByPurchasesDesc(Pageable pageable);
 }

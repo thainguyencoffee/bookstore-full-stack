@@ -1,4 +1,12 @@
-<div class="mat-elevation-z2">
+<div class="mat-elevation-z2" style="margin-bottom: 30px">
+  <mat-form-field>
+    <mat-label>Catalog filter</mat-label>
+    <mat-select (selectionChange)="onSelectChange()" [formControl]="catalogControl">
+      @for (catalog of catalogs; track catalog) {
+        <mat-option [value]="catalog">{{catalog.name}}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
   <mat-paginator
     [length]="(dataSource.totalElements$ | async)"
     [pageIndex]="0"
@@ -6,11 +14,11 @@
     [pageSizeOptions]="[5, 10, 20]"
     aria-label="Select page">
   </mat-paginator>
+
 </div>
 <div *ngIf="books$ | async as books">
   <div class="grid-container" *ngIf="books">
-    <h1 class="mat-h1">Browse books</h1>
-    <mat-grid-list [cols]="colNumber | async" rowHeight="420px">
+    <mat-grid-list [cols]="colNumber | async" rowHeight="430px">
       <mat-grid-tile *ngFor="let book of books" [colspan]="1" [rowspan]="1">
         <app-book-card [book]="book" [shopping-cart]="shoppingCart$"></app-book-card>
       </mat-grid-tile>

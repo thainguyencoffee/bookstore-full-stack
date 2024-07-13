@@ -14,11 +14,11 @@ export class BookService {
   getAllBook(params: {
     page: number,
     size: number
-  }): Observable<Page<Book>> {
+  }, query: string = ''): Observable<Page<Book>> {
     let httpParams = new HttpParams()
       .set('page', params.page)
       .set('size', params.size);
-    return this.http.get<Page<Book>>('/api/books', { params: httpParams });
+    return this.http.get<Page<Book>>('/api/books' + query, { params: httpParams });
   }
 
   getBookByIsbn(isbn: string): Observable<Book> {
