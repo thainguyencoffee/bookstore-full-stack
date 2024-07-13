@@ -1,12 +1,36 @@
 <div class="mat-elevation-z2" style="margin-bottom: 30px">
-  <mat-form-field>
-    <mat-label>Catalog filter</mat-label>
-    <mat-select (selectionChange)="onSelectChange()" [formControl]="catalogControl">
-      @for (catalog of catalogs; track catalog) {
-        <mat-option [value]="catalog">{{catalog.name}}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  <mat-grid-list [cols]="colNumberFilter | async" [rowHeight]="100">
+    <mat-grid-tile colspan="1" rowspan="1">
+      <mat-form-field appearance="fill" class="filter">
+        <mat-label>Catalog filter</mat-label>
+        <mat-select (selectionChange)="onSelectChange()" [formControl]="catalogControl">
+          @for (catalog of catalogs; track catalog) {
+            <mat-option [value]="catalog">{{catalog.name}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1" rowspan="1">
+      <mat-form-field appearance="outline" style="margin-right: 3px">
+        <mat-label>Sort by</mat-label>
+        <mat-select (selectionChange)="onSelectChange()" [formControl]="searchByControl">
+          <mat-option value="title">Title</mat-option>
+          <mat-option value="author">Author</mat-option>
+          <mat-option value="supplier">Supplier</mat-option>
+          <mat-option value="publisher">Publisher</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="filter">
+        <mat-label>Search</mat-label>
+        <input matInput (keyup.enter)="onSearch()" [(ngModel)]="searchValue">
+        <mat-icon matSuffix (click)="onClearSearch()" class="clear-icon">close</mat-icon>
+        <button matSuffix mat-icon-button aria-label="Search" (click)="onSearch()">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </mat-grid-tile>
+  </mat-grid-list>
+
   <mat-paginator
     [length]="(dataSource.totalElements$ | async)"
     [pageIndex]="0"
@@ -18,7 +42,7 @@
 </div>
 <div *ngIf="books$ | async as books">
   <div class="grid-container" *ngIf="books">
-    <mat-grid-list [cols]="colNumber | async" rowHeight="430px">
+    <mat-grid-list [cols]="colNumber | async" rowHeight="440px">
       <mat-grid-tile *ngFor="let book of books" [colspan]="1" [rowspan]="1">
         <app-book-card [book]="book" [shopping-cart]="shoppingCart$"></app-book-card>
       </mat-grid-tile>

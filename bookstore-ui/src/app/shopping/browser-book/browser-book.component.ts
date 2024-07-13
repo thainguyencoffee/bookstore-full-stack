@@ -12,7 +12,10 @@ import {ShoppingCart} from "../../shared/model/shopping-cart";
 import {ShoppingCartService} from "../../shared/service/shopping-cart.service";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
-import {FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormControl, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {MatInputModule} from "@angular/material/input";
+import {MatIconButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
 
 interface Catalog {
   name: string;
@@ -31,7 +34,11 @@ interface Catalog {
     BookCardComponent,
     MatFormFieldModule,
     MatSelectModule,
-    ReactiveFormsModule
+    MatInputModule,
+    ReactiveFormsModule,
+    MatIconButton,
+    MatIcon,
+    FormsModule,
   ],
   templateUrl: './browser-book.component.html',
   styleUrl: './browser-book.component.css'
@@ -53,6 +60,7 @@ export class BrowserBookComponent implements AfterViewInit, OnInit {
     {name: 'Best sellers', queryName: '/best-sellers'},
     {name: 'Latest release', queryName: '?sort=createdAt,desc'},
   ]
+  searchByControl = new FormControl<string>('title');
 
   ngOnInit(): void {
     this.shoppingCartService.getShoppingCart();
@@ -84,4 +92,30 @@ export class BrowserBookComponent implements AfterViewInit, OnInit {
       distinctUntilChanged()
     );
 
+  colNumberFilter = this.breakpointObserver
+    .observe([Breakpoints.XSmall, Breakpoints.Small])
+    .pipe(
+      map(result => {
+        if (result.matches) {
+          return 1;
+        } else {
+          return 2;
+        }
+      }),
+      distinctUntilChanged()
+    );
+
+  searchValue: any;
+
+  onSearch() {
+    if (this.searchValue.trim()) {
+      this.catalogFilterQuerySubject.next(`/search?query=${this.searchValue}&type=${this.searchByControl.value}`)
+    }
+  }
+
+  onClearSearch() {
+    this.searchByControl.reset('title');
+    this.searchValue = '';
+    this.catalogFilterQuerySubject.next('')
+  }
 }

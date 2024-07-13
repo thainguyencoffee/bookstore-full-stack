@@ -4,6 +4,8 @@ import com.bookstore.backend.book.dto.BookRequestDto;
 import com.bookstore.backend.core.cloudinary.CloudinaryUtils;
 import com.cloudinary.Cloudinary;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 class BookController {
 
+    private static final Logger log = LoggerFactory.getLogger(BookController.class);
     private final BookService bookService;
     private final Cloudinary cloudinary;
 
@@ -74,5 +77,17 @@ class BookController {
     @GetMapping("/best-sellers")
     public Page<Book> bestSellers(Pageable pageable) {
         return bookService.findBestSellers(pageable);
+    }
+
+    @GetMapping("/search")
+    public Page<Book> search(@RequestParam String query, @RequestParam String type, Pageable pageable) {
+        log.info("Searching for {} with query: {}", type, query);
+        return switch (type) {
+            case "title" -> bookService.findByTitleContaining(query, pageable);
+            case "author" -> bookService.findByAuthorContaining(query, pageable);
+            case "publisher" -> bookService.findByPublisherContaining(query, pageable);
+            case "supplier" -> bookService.findBySupplierContaining(query, pageable);
+            default -> throw new IllegalArgumentException("Invalid search type");
+        };
     }
 }
