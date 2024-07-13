@@ -1,7 +1,7 @@
 package com.bookstore.backend.core.demo;
 
 import com.bookstore.backend.book.*;
-import com.bookstore.backend.orders.OrderRepository;
+import com.bookstore.backend.purchaseorder.OrderRepository;
 import com.bookstore.backend.shopppingcart.ShoppingCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
