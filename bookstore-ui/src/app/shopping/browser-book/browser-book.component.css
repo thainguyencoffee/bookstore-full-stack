@@ -1,0 +1,12 @@
+.filter {
+  width: 99%;
+}
+
+.clear-icon {
+  position: absolute;
+  right: 60%;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  pointer-events: auto;
+}
