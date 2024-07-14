@@ -1,1 +1,49 @@
-<p>book-detail works!</p>
+<!-- product-detail.component.html -->
+<div class="container mt-5" *ngIf="book">
+  <div class="row">
+    <div class="col-md-6">
+      <div id="carouselBookPhotos" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item" *ngFor="let photo of book.photos; let i = index" [ngClass]="{'active': i === 0}">
+            <img [src]="photo" class="d-block w-100" alt="{{ book.title }}">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselBookPhotos" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselBookPhotos" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <h1>{{ book.title }}</h1>
+      <p><strong>Tác giả:</strong> {{ book.author }}</p>
+      <p><strong>Nhà xuất bản:</strong> {{ book.publisher }}</p>
+      <p><strong>Nhà cung cấp:</strong> {{ book.supplier }}</p>
+      <p><strong>Ngôn ngữ:</strong> {{ book.language }}</p>
+      <p><strong>Loại bìa:</strong> {{ book.coverType }}</p>
+      <p><strong>Số trang:</strong> {{ book.numberOfPages }}</p>
+      <p><strong>Kích thước:</strong> {{ book.measure.width }} x {{ book.measure.height }} x {{ book.measure.thickness }} mm</p>
+      <p><strong>Trọng lượng:</strong> {{ book.measure.weight }} g</p>
+      <p><strong>Giá:</strong> {{ book.price | currency:'VND':'symbol':'1.0-0' }}</p>
+      <p><strong>Đã bán:</strong> {{ book.purchases }}</p>
+      <p><strong>Tồn kho:</strong> {{ book.inventory }}</p>
+      <p *ngIf="book.description"><strong>Mô tả:</strong> {{ book.description }}</p>
+
+      <div class="mt-3 d-flex align-items-center" *ngIf="shoppingCart$ | async as shoppingCart">
+        <button [disabled]="book.inventory === 0 || shoppingCart.getQuantity(book.isbn) > book.inventory" mat-flat-button color="primary" (click)="checkout(book.isbn)">Buy now</button>
+        <button class="ms-2" (click)="addToCart(shoppingCart.id)" *ngIf="shoppingCart.getQuantity(book.isbn) === 0; else updateQuantity" mat-stroked-button color="primary">
+          Add to cart
+        </button>
+        <ng-template #updateQuantity>
+          <div class="quantity-container ms-2">
+            <app-book-quantity [book]="book" [shopping-cart]="shoppingCart$"></app-book-quantity>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

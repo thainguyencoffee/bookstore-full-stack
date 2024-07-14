@@ -27,7 +27,7 @@ public class SecurityConfig {
         return http
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/", "/index.html", "/*.css", "/*.js", "/favicon.ico", "/@fs/**", "/@vite/client").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/api/**", "/shopping-carts/**", "/order-detail-callback/**").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/api/**", "/book-detail/**", "/shopping-carts/**", "/order-detail-callback/**").permitAll()
                         .pathMatchers("/api/guest-orders/**", "/api/email/orders/**", "/api/payment/vn-pay/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/orders").permitAll()
                         .anyExchange().authenticated())
