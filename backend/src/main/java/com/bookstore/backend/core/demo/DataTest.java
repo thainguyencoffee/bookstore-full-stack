@@ -1,7 +1,7 @@
 package com.bookstore.backend.core.demo;
 
 import com.bookstore.backend.book.*;
-import com.bookstore.backend.orders.OrderRepository;
+import com.bookstore.backend.purchaseorder.OrderRepository;
 import com.bookstore.backend.shopppingcart.ShoppingCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +31,8 @@ public class DataTest {
 
         var listPhotos = List.of(
                 "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718216795/samples/ecommerce/accessories-bag.jpg",
-                "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718951748/22809e64-778d-4124-a0eb-dd45db254092",
-                "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718951750/d4a94418-f65a-40fc-9099-66e860c74866"
+                "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718216795/samples/ecommerce/leather-bag-gray.jpg",
+                "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718216793/samples/landscapes/beach-boat.jpg"
         );
         Set<Long> generatedNumbers = new HashSet<>();
 

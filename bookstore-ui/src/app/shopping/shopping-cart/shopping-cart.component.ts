@@ -175,10 +175,6 @@ export class ShoppingCartComponent implements AfterViewInit, OnDestroy, OnInit {
     }
   }
 
-  getListItemClicked(): Set<string> {
-    return this.clickedRows;
-  }
-
   applyFilter(event: KeyboardEvent) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();

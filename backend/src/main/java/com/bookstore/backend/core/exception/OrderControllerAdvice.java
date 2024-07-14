@@ -2,7 +2,7 @@ package com.bookstore.backend.core.exception;
 
 import com.bookstore.backend.book.Book;
 import com.bookstore.backend.core.ApiError;
-import com.bookstore.backend.orders.exception.*;
+import com.bookstore.backend.purchaseorder.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

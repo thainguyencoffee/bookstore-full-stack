@@ -18,8 +18,8 @@
       <span><mat-icon>check</mat-icon> Copied content!</span>
     }
     <br>
-    <span><del>{{ book.price | currency }}</del></span> <br>
-    <strong>{{ book.price | currency }}</strong> <br>
+    <span><del>{{ book.price | currency:'VND':'symbol':'1.0-0' }}</del></span> <br>
+    <strong>{{ book.price | currency:'VND':'symbol':'1.0-0' }}</strong> <br>
     <span style="text-decoration: underline" *ngIf="book.inventory > 0" class="mat-typography">In stock</span>
     <span style="text-decoration: underline" *ngIf="book.inventory == 0" class="mat-typography">Out of stock</span><br>
     <section class="example-section" [matTooltip]="'Đã bán ' + book.purchases">

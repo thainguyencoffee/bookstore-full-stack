@@ -1,0 +1,33 @@
+.carousel-item img {
+  height: 400px;
+  object-fit: cover;
+}
+
+.quantity-container {
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+}
+
+.quantity-container app-book-quantity {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-container .mat-icon-button {
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  margin: 0 1px;
+}
+
+.quantity-container .quantity {
+  font-size: 0.9em;
+  margin: 0 5px;
+}
+
+.d-flex.align-items-center > * {
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+}

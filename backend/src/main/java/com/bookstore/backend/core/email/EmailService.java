@@ -2,9 +2,8 @@ package com.bookstore.backend.core.email;
 
 import com.bookstore.backend.book.Book;
 import com.bookstore.backend.book.BookService;
-import com.bookstore.backend.orders.LineItem;
-import com.bookstore.backend.orders.Order;
-import lombok.RequiredArgsConstructor;
+import com.bookstore.backend.purchaseorder.LineItem;
+import com.bookstore.backend.purchaseorder.Order;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
