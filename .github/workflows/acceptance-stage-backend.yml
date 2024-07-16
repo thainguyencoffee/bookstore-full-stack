@@ -1,0 +1,31 @@
+name: Acceptance stage Backend module
+on:
+  workflow_run:
+    workflows: ["Commit Stage Backend module"]
+    types: [completed]
+    branches: main
+
+concurrency: acceptance
+
+env:
+  OWNER: thainguyencoffee
+  REGISTRY: ghcr.io
+  APP_REPO: bookstore-fullstack
+  APP_NAME: backend
+  DEPLOY_REPO: bookstore-fullstack/deployment
+  VERSION: ${{ github.sha }}
+
+jobs:
+  delivery:
+    name: Delivery
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Trigger production stage deployment
+        run: |
+          gh workflow run production-stage-deployment.yml \
+            -d VERSION=${{ env.VERSION }} \
+            -d REGISTRY=${{ env.REGISTRY }} \
+            -d APP_REPO=${{ env.APP_REPO }} \
+            -d APP_NAME=${{ env.APP_NAME }} \
+            -d DEPLOY_REPO=${{ env.DEPLOY_REPO }} \
+            -d OWNER=${{ env.OWNER }} \

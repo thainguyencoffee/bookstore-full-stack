@@ -1,0 +1,56 @@
+name: Production Stage Deployment
+on:
+  workflow_dispatch:
+    inputs:
+      VERSION:
+        description: 'Version of the application'
+        required: true
+        default: ${{ github.sha }}
+      REGISTRY:
+        description: 'Container registry'
+        required: true
+        default: ghcr.io
+      APP_REPO:
+        description: 'Repository of the application'
+        required: true
+        default: bookstore-fullstack
+      APP_NAME:
+        description: 'Name of the application'
+        required: true
+        default: backend
+      DEPLOY_REPO:
+        description: 'Repository of the deployment'
+        required: true
+        default: bookstore-fullstack/deployment
+      OWNER:
+        description: 'Owner of the repositories'
+        required: true
+        default: thainguyencoffee
+
+jobs:
+  update:
+    name: Update application version
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    env:
+      APP_IMAGE: ${{ github.event.inputs.REGISTRY }}/${{ github.event.inputs.OWNER }}/${{ github.event.inputs.APP_REPO }}/${{ github.event.inputs.APP_NAME }}
+      APP_NAME: ${{ github.event.inputs.APP_NAME }}
+      IMAGE_NAME: bookstore-${{ github.event.inputs.APP_NAME }}
+      VERSION: ${{ github.event.inputs.VERSION }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Update image version
+        run: |
+          cd \
+            deployment/k8s/applications/${{ env.APP_NAME }}/production
+          kustomize edit set image \
+            ${{ env.IMAGE_NAME }}=${{ env.APP_IMAGE }}:${{ env.VERSION }}
+          sed -i 's/ref=[\w+]/${{ env.APP_VERSION }}' \
+            kustomization.yml
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Update ${{ env.APP_NAME }} to version ${{ env.VERSION }}"
+          branch: main

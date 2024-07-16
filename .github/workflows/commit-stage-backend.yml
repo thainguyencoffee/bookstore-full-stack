@@ -1,4 +1,4 @@
-name: Commit Stage Backend modulel
+name: Commit Stage Backend module
 on:
   push:
     paths:
