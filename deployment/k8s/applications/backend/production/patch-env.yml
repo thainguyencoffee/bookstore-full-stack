@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-backend
+spec:
+  template:
+    metadata:
+      name: bookstore-backend
+    spec:
+      containers:
+        - name: bookstore-backend
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
