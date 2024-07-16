@@ -5,7 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "bookstore")
 public record BookstoreProperties(
         CloudinaryProperties cloudinary,
-        VNPayProperties vnPay
+        VNPayProperties vnPay,
+        String gatewayUrl
 ) {
     public record CloudinaryProperties(
             String cloudName,

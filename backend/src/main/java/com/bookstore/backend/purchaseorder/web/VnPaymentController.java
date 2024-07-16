@@ -11,6 +11,7 @@ import com.bookstore.backend.purchaseorder.web.user.OrderController;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,8 @@ public class VnPaymentController {
     private static final Logger log = LoggerFactory.getLogger(OrderController.class);
     private final OrderService orderService;
     private final VNPayService vnPayService;
+    @Value("${bookstore.gateway-url}")
+    private String gatewayUrl;
 
     @PostMapping("/payment-url")
     @ResponseStatus(HttpStatus.OK)
@@ -49,7 +52,7 @@ public class VnPaymentController {
         Order order = Optional.ofNullable(VNPayStatusCodeEnum.isMember(status))
                 .map(vnPayStatusCodeEnum -> vnPayStatusCodeEnum.handleCallback(orderService, request))
                 .orElseThrow(() -> new RuntimeException("Status code of VNPAY not matched!!!"));
-        URI paymentDetailUrl = URI.create("http://localhost:9000/order-detail-callback/" + order.getId());
+        URI paymentDetailUrl = URI.create(gatewayUrl + "/order-detail-callback/" + order.getId());
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(paymentDetailUrl);
         return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);

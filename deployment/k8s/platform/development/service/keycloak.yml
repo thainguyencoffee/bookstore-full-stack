@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-keycloak
+  labels:
+    app: bookstore-keycloak
+spec:
+  selector:
+    matchLabels:
+      app: bookstore-keycloak
+  template:
+    metadata:
+      labels:
+        app: bookstore-keycloak
+    spec:
+      containers:
+        - name: bookstore-keycloak
+          image: quay.io/keycloak/keycloak:23.0
+          args:
+            - "start-dev"
+            - "--import-realm"
+            - "--features=preview"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_USERNAME
+              value: user
+            - name: KC_DB_PASSWORD
+              value: password
+            - name: KC_DB_URL
+              value: jdbc:postgresql://bookstore-postgres:5432/bookstoredb_keycloak
+            - name: KC_FEATURES
+              value: preview
+            - name: KEYCLOAK_ADMIN
+              value: admin
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: password
+          volumeMounts:
+            - mountPath: /opt/keycloak/data/import
+              name: bookstore-keycloak-config-volume
+      volumes:
+        - name: bookstore-keycloak-config-volume
+          configMap:
+            name: bookstore-keycloak-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookstore-keycloak
+  labels:
+    app: bookstore-keycloak
+spec:
+  type: ClusterIP
+  selector:
+    app: bookstore-keycloak
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bookstore-keycloak-ingress
+  labels:
+    app: bookstore-keycloak
+spec:
+  rules:
+    - host: bookstore-keycloak
+      http:
+        paths:
+          - path: /
+            backend:
+              service:
+                name: bookstore-keycloak
+                port:
+                  number: 80
+            pathType: Prefix

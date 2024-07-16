@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookstore-gateway
+  labels:
+    app: bookstore-gateway
+spec:
+  type: ClusterIP
+  selector:
+    app: bookstore-gateway
+  ports:
+    - port: 80
+      targetPort: 9000
+      protocol: TCP

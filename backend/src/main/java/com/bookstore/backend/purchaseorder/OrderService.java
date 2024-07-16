@@ -95,7 +95,7 @@ public class OrderService {
         Order order = findById(orderId);
         long otp = (long) Math.floor(Math.random() * 900_000L) + 100_000L;
         order.setOtp(otp);
-        order.setOtpExpiredAt(Instant.now().plus(2, ChronoUnit.MINUTES));
+        order.setOtpExpiredAt(Instant.now().plus(5, ChronoUnit.MINUTES));
         orderRepository.save(order);
         return order;
     }

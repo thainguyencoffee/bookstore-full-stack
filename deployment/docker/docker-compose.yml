@@ -22,6 +22,8 @@ services:
       - bookstore-backend
       - bookstore-keycloak
       - bookstore-redis
+      - bookstore-postgres
+      - bookstore-ui
     image: "bookstore-gateway"
     container_name: bookstore-gateway
     ports:

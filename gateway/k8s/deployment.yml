@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-gateway
+  labels:
+    app: bookstore-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookstore-gateway
+  template:
+    metadata:
+      labels:
+        app: bookstore-gateway
+    spec:
+      containers:
+        - name: bookstore-gateway
+          image: bookstore-gateway
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh", "-c", "sleep 5" ]
+          ports:
+            - containerPort: 9000
+          env:
+            - name: BPL_JVM_THREAD_COUNT
+              value: '50'
+            - name: BACKEND_URL
+              value: http://bookstore-backend
+            - name: SPA_URL
+              value: http://bookstore-ui
+          volumeMounts:
+            - mountPath: /workspace/config
+              name: bookstore-gateway-config-volume
+      volumes:
+        - name: bookstore-gateway-config-volume
+          configMap:
+            name: bookstore-gateway-config
