@@ -56,6 +56,10 @@ jobs:
         run: |
           cd bookstore-ui
           npm run build
+      - name:  Copy files from nginx to dist
+        run: |
+          cd bookstore-ui
+          cp -r nginx/* /dist
       - name: Set up Pack CLI
         uses: buildpacks/github-actions/setup-pack@v5.5.1
       - name: Build container image
