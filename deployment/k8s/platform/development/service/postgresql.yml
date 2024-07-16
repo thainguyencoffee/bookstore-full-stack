@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-config
+  labels:
+    db: bookstore-postgres
+data:
+  init.sql: |
+    CREATE DATABASE bookstoredb;
+    CREATE DATABASE bookstoredb_keycloak;
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-postgres
+  labels:
+    db: bookstore-postgres
+spec:
+  selector:
+    matchLabels:
+      db: bookstore-postgres
+  template:
+    metadata:
+      labels:
+        db: bookstore-postgres
+    spec:
+      containers:
+        - name: bookstore-postgres
+          image: postgres:16
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+          volumeMounts:
+            - mountPath: /docker-entrypoint-initdb.d
+              name: postgresql-config-volume
+      volumes:
+        - name: postgresql-config-volume
+          configMap:
+            name: postgresql-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookstore-postgres
+  labels:
+    db: bookstore-postgres
+spec:
+  type: ClusterIP
+  selector:
+    db: bookstore-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP

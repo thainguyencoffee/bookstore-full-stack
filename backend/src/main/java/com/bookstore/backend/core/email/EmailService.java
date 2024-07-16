@@ -4,6 +4,7 @@ import com.bookstore.backend.book.Book;
 import com.bookstore.backend.book.BookService;
 import com.bookstore.backend.purchaseorder.LineItem;
 import com.bookstore.backend.purchaseorder.Order;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,17 +14,13 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
     private final JavaMailSender emailSender;
     private final BookService bookService;
-    private static String from;
-
-    public EmailService(@Value("${spring.mail.username}") String from, JavaMailSender emailSender, BookService bookService) {
-        this.emailSender = emailSender;
-        this.bookService = bookService;
-        from = from;
-    }
+    @Value("${spring.mail.username}")
+    private String from;
 
     public void sendConfirmationEmail(String to, String subject, String body) {
         try {

@@ -26,10 +26,12 @@ public class SecurityConfig {
             ReactiveClientRegistrationRepository clientRegistrationRepository) {
         return http
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/", "/index.html", "/*.css", "/*.js", "/favicon.ico", "/@fs/**", "/@vite/client").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/api/**", "/book-detail/**", "/shopping-carts/**", "/order-detail-callback/**").permitAll()
-                        .pathMatchers("/api/guest-orders/**", "/api/email/orders/**", "/api/payment/vn-pay/**").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/orders").permitAll()
+                        .pathMatchers("/", "/*.css", "/*.js", "/favicon.ico", "/@fs/**", "/@vite/**",
+                                "/book-detail/**", "/purchase-orders/**", "/shopping-carts/**",
+                                "/checkout", "/order-detail-callback/**", "/order-detail/**").permitAll()
+
+                        .pathMatchers(HttpMethod.GET, "/api/books/**", "/api/guest-orders/**", "/api/payment/vn-pay/**", "/api/email/orders/**").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/orders/**", "/api/email/orders/**", "/api/payment/vn-pay/**").permitAll()
                         .anyExchange().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)))

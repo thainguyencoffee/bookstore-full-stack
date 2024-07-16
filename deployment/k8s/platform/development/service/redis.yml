@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-redis
+  labels:
+    db: bookstore-redis
+spec:
+  selector:
+    matchLabels:
+      db: bookstore-redis
+  template:
+    metadata:
+      labels:
+        db: bookstore-redis
+    spec:
+      containers:
+        - name: bookstore-redis
+          image: "redis:7.0"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookstore-redis
+  labels:
+    db: bookstore-redis
+spec:
+  type: ClusterIP
+  selector:
+    db: bookstore-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP

@@ -70,3 +70,9 @@ resilience4j:
     configs:
       default:
         timeoutDuration: 5s
+
+logging:
+  group:
+    cloud-gateway: org.springframework.cloud.gateway
+  level:
+    cloud-gateway: debug

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-backend
+  labels:
+    app: bookstore-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookstore-backend
+  template:
+    metadata:
+      labels:
+        app: bookstore-backend
+    spec:
+      containers:
+        - name: bookstore-backend
+          image: bookstore-backend
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh", "-c", "sleep 5" ]
+          ports:
+            - containerPort: 9001
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: datatest
+          volumeMounts:
+            - mountPath: /workspace/config
+              name: bookstore-backend-config-volume
+      volumes:
+        - name: bookstore-backend-config-volume
+          configMap:
+            name: bookstore-backend-config

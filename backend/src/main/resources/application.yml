@@ -34,15 +34,15 @@ spring:
     username: nguyennt11032004@gmail.com
     password: lwox kogu lkqj bome
     properties:
-      mail:
-        smtp:
-          auth: true
-          connectiontimeout: 15000
-          timeout: 15000
-          starttls:
-            enable: true
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.connectiontimeout: 15000
+      mail.smtp.timeout: 15000
+      mail.smtp.writetimeout: 15000
 
 bookstore:
+  gateway-url: http://localhost:9000
   cloudinary:
     cloud-name: dl0v8gbku
     api-key: 862736244281148
@@ -51,7 +51,7 @@ bookstore:
     api-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
     tmn-code: VMJ3LJZY
     secret-key: 90SLNCT497CFBIM299YG2ZRT439MIL8W
-    return-url: http://localhost:9001//api/payment/vn-pay/return
+    return-url: http://localhost:9001/api/payment/vn-pay/return
     version: 2.1.0
     command: querydr
     order-type: other
