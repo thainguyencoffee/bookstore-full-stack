@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - 'gateway/**'
-      - '.github/**'
+      - '.github/workflows/commit-stage-gateway.yml'
 
 env:
   REGISTRY: ghcr.io
@@ -43,6 +43,17 @@ jobs:
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
+#      - name: Setup tools
+#        uses: alexellis/setup-arkade@v3
+#      - name: Install tools
+#        uses: alexellis/arkade-get@master
+#        with:
+#          kubectl: latest
+#          kustomize: latest
+#          kubeconform: latest
+#      - name: Validate Kubernetes manifests
+#        run: |
+#          kustomize build k8s | kubeconform --strict -
   package:
     name: Package and Publish
     if: ${{ github.ref == 'refs/heads/main' }}
