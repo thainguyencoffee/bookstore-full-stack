@@ -12,7 +12,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {CommonModule} from "@angular/common";
 import {ShoppingCartService} from "./shared/service/shopping-cart.service";
 import {PurchaseOrderService} from "./shared/service/purchase-order.service";
-import {SnackbarService} from "./shared/service/snackbar.service";
+import {AuthState} from "./shared/model/auth-state";
 
 @Component({
   selector: 'app-root',
@@ -37,9 +37,9 @@ export class AppComponent implements OnInit {
 
   private breakpointObserver = inject(BreakpointObserver);
   authService = inject(AuthService);
+  authState: AuthState | undefined;
   private shoppingCartService = inject(ShoppingCartService);
   private orderService = inject(PurchaseOrderService);
-  private snackBarService = inject(SnackbarService);
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
@@ -54,15 +54,16 @@ export class AppComponent implements OnInit {
     );
 
   ngOnInit(): void {
-    this.authService.authenticate().subscribe({
-      next: user => {
-        this.snackBarService.show("Welcome back, " + user.username + "!", "Close");
-        this.authService.user = user;
-        this.authService.isAuthenticated = true;
+    this.authService.authenticate();
+    this.authService.$authState.subscribe({
+      next: authState => {
+        this.authState = authState;
         this.shoppingCartService.getShoppingCart();
         // save orders
-        const username = user.username;
-        this.saveOrderWhenLogin(username);
+        if (this.authState.user) {
+          const username = this.authState.user.username;
+          this.saveOrderWhenLogin(username);
+        }
       }
     })
   }
@@ -71,6 +72,7 @@ export class AppComponent implements OnInit {
     const ordersLocalStorage: {id: string}[] = this.orderService.getOrdersFromLocalStorage();
     if (ordersLocalStorage.length > 0) {
       for (const ordersLocalStorageElement of ordersLocalStorage) {
+        console.log(ordersLocalStorageElement)
         this.orderService.getOrderByOrderId(ordersLocalStorageElement.id, true).subscribe({
           next: order => {
             order.createdBy = username;

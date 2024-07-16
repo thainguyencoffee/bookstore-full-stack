@@ -27,6 +27,7 @@ import {
 import {AuthService} from "../../shared/service/auth.service";
 import {EmailService} from "../../shared/service/email.service";
 import {PaymentService} from "../../shared/service/payment.service";
+import {AuthState} from "../../shared/model/auth-state";
 
 @Component({
   selector: 'app-order-detail',
@@ -61,40 +62,42 @@ export class OrderDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   private bookService = inject(BookService)
   private snackbarService = inject(SnackbarService);
   authService = inject(AuthService);
+  authState: AuthState | undefined;
 
   ngOnInit() {
-    this.$shoppingCart.subscribe(shoppingCart => this.shoppingCart = shoppingCart)
-    this.route.paramMap.subscribe({
-      next: params => {
+    combineLatest([
+      this.authService.$authState,
+      this.route.paramMap,
+      this.$shoppingCart
+    ]).pipe(
+      takeUntil(this.destroy$),
+      switchMap(([authState, params, shoppingCart]) => {
+        this.authState = authState;
+        this.shoppingCart = shoppingCart;
         const orderId = params.get('orderId') ?? undefined;
-        if (orderId) {
-          let $orderDetailSubscription = this.orderService.getOrderByOrderId(orderId)
-          if (!this.authService.isLoggedIn()) {
-            $orderDetailSubscription = this.orderService.getOrderByOrderId(orderId, true)
-          }
-          $orderDetailSubscription.pipe(
-              switchMap((order: Order) => {
-                this.orderDetail = order;
-                var bookDetailObservables = order.lineItems.map(lineItem => this.bookService.getBookByIsbn(lineItem.isbn));
-                return bookDetailObservables.length > 0
-                  ? combineLatest(bookDetailObservables)
-                  : of([]);
-              }),
-              takeUntil(this.destroy$)
-            )
-            .subscribe({
-              next: bookDetails => {
-                if (this.orderDetail) {
-                  this.orderDetail.lineItems.forEach((lineItem, index) => {
-                    lineItem.bookDetail = bookDetails[index];
-                  });
-                }
-              },
-              error: err => {
-                if (err && err.errors)
-                  err.errors.forEach((error: CustomError) => this.snackbarService.show(error.message, "Close"));
-              }
-            })
+        if (!orderId || !this.authState) {
+          return of(null);
+        }
+        const orderObservable = this.authState.isAuthenticated
+          ? this.orderService.getOrderByOrderId(orderId)
+          : this.orderService.getOrderByOrderId(orderId, true);
+        return orderObservable.pipe(switchMap((order: Order) => {
+          this.orderDetail = order;
+          var bookDetailObservables = order.lineItems.map(lineItem => this.bookService.getBookByIsbn(lineItem.isbn));
+          return bookDetailObservables.length > 0 ? combineLatest(bookDetailObservables) : of([]);
+        }))
+      })
+    ).subscribe({
+      next: bookDetails => {
+        if (this.orderDetail && bookDetails) {
+          this.orderDetail.lineItems.forEach((lineItem, index) => {
+            lineItem.bookDetail = bookDetails[index];
+          });
+        }
+      },
+      error: err => {
+        if (err && err.errors) {
+          err.errors.forEach((error: CustomError) => this.snackbarService.show(error.message, "Close"));
         }
       }
     })
