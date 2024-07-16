@@ -13,11 +13,11 @@ import {cities} from "../../shared/model/cities";
 import {PurchaseOrderService} from "../../shared/service/purchase-order.service";
 import {OrderRequest} from "../../shared/model/order-request";
 import {SnackbarService} from "../../shared/service/snackbar.service";
-import {Order} from "../../shared/model/order";
 import {CustomError} from "../../shared/model/api-error";
 import {Book} from "../../shared/model/book";
 import {AuthService} from "../../shared/service/auth.service";
 import {PaymentService} from "../../shared/service/payment.service";
+import {catchError, combineLatest, of, switchMap} from "rxjs";
 
 @Component({
   selector: 'app-checkout',
@@ -99,31 +99,44 @@ export class CheckoutComponent {
       }
       if (this.cartItemSelected && this.cartItemSelected.length > 0) {
         this.cartItemSelected.forEach(item => orderRequest.lineItems.push({isbn: item.isbn, quantity: item.quantity}))
-        this.orderService.submitOrder(orderRequest).subscribe({
-          next: (order: Order) => {
+        combineLatest([
+          this.orderService.submitOrder(orderRequest),
+          this.authService.$authState
+        ]).pipe(
+          switchMap(([order, authState]) => {
             this.snackbarService.show("Create order success: orderID " + order.id, "Close");
-            // save order to localstorage
-            this.orderService.saveOrderToLocalStorage(order);
+
+            if (!authState.isAuthenticated) {
+              this.orderService.saveOrderToLocalStorage(order);
+            }
+
             if (order.paymentMethod === 'VNPAY') {
-              this.paymentService.getVNPayUrl(order.id).subscribe({
-                next: (payment: any) => {
+              return this.paymentService.getVNPayUrl(order.id).pipe(
+                switchMap((payment: any) => {
                   if (payment && payment.paymentUrl) {
-                    window.location.href = payment.paymentUrl
+                    window.location.href = payment.paymentUrl;
+                    return of(null); // End the observable chain
+                  } else {
+                    // Handle case where paymentUrl is not returned as expected
+                    this.router.navigate(['/order-detail-callback', order.id]);
+                    return of(null);
                   }
-                }
-              });
+                })
+              );
             } else {
-              this.router.navigate(['/order-detail-callback', order.id])
+              this.router.navigate(['/order-detail-callback', order.id]);
+              return of(null); // End the observable chain
             }
-          },
-          error: err => {
+          }),
+          catchError(err => {
             if (err && err.errors) {
-              err.errors.forEach((err: CustomError) => {
-                this.snackbarService.show(err.message, "Close")
-              })
+              err.errors.forEach((error: CustomError) => {
+                this.snackbarService.show(error.message, "Close");
+              });
             }
-          }
-        })
+            return of(null); // Handle the error and end the observable chain
+          })
+        ).subscribe();
       } else {
         this.snackbarService.show("Not resolve the cart items", "Close")
       }
