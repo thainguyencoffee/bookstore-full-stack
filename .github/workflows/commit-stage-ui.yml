@@ -56,6 +56,10 @@ jobs:
         run: |
           cd bookstore-ui
           npm run build
+      - name:  Copy files from nginx to dist
+        run: |
+          cd bookstore-ui
+          cp -r nginx/* /dist
       - name: Set up Pack CLI
         uses: buildpacks/github-actions/setup-pack@v5.5.1
       - name: Build container image
@@ -64,8 +68,6 @@ jobs:
           pack build ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }} \
             --buildpack gcr.io/paketo-buildpacks/nginx \
             --builder paketobuildpacks/builder:base \
-            -e BP_WEB_SERVER=nginx \
-            -e BP_WEB_SERVER_ROOT=bookstore-ui/browser \
             -p dist
       - name: OCI image vulnerability scanning
         uses: anchore/scan-action@v3
