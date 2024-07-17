@@ -3,7 +3,6 @@ on:
   push:
     paths:
       - 'bookstore-ui/**'
-      - 'deployment/**'
       - '.github/workflows/commit/commit-stage-ui.yml'
 
 env:

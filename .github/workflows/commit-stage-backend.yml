@@ -3,7 +3,6 @@ on:
   push:
     paths:
       - 'backend/**'
-      - 'deployment/**'
       - '.github/workflows/commit-stage-backend.yml'
 
 env:
