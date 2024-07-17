@@ -4,10 +4,10 @@ kind: Kustomization
 resources:
 - github.com/thainguyencoffee/bookstore-fullstack/backend/k8s?ref=8b1803ad3e14496c1d6ed835f8a6ad23cd9b7b14
 
-patchesStrategicMerge:
-- patch-env.yml
-- patch-volumes.yml
-- patch-resource.yml
+patches:
+  - path: patch-resource.yml
+  - path: patch-env.yml
+  - path: patch-volumes.yml
 
 configMapGenerator:
 - behavior: merge
