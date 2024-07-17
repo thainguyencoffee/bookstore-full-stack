@@ -23,9 +23,9 @@ jobs:
       - name: Trigger production stage deployment
         run: |
           gh workflow run production-stage-deployment.yml \
-            -d VERSION=${{ env.VERSION }} \
-            -d REGISTRY=${{ env.REGISTRY }} \
-            -d APP_REPO=${{ env.APP_REPO }} \
-            -d APP_NAME=${{ env.APP_NAME }} \
-            -d DEPLOY_REPO=${{ env.DEPLOY_REPO }} \
-            -d OWNER=${{ env.OWNER }} \
+            -f VERSION=${{ env.VERSION }} \
+            -f REGISTRY=${{ env.REGISTRY }} \
+            -f APP_REPO=${{ env.APP_REPO }} \
+            -f APP_NAME=${{ env.APP_NAME }} \
+            -f DEPLOY_REPO=${{ env.DEPLOY_REPO }} \
+            -f OWNER=${{ env.OWNER }} \
