@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- github.com/thainguyencoffee/bookstore-fullstack/gateway/k8s?ref=698b6ffdd914ce3b196a1863b3e7bfd66e7ff118
+- github.com/thainguyencoffee/bookstore-fullstack/gateway/k8s?ref=d53c302e7080a5923e50599d790535d502bc8a0f
 
 patches:
 - path: patch-volumes.yml
@@ -19,7 +19,7 @@ configMapGenerator:
 images:
 - name: bookstore-gateway
   newName: ghcr.io/thainguyencoffee/bookstore-fullstack/gateway
-  newTag: 698b6ffdd914ce3b196a1863b3e7bfd66e7ff118
+  newTag: d53c302e7080a5923e50599d790535d502bc8a0f
 
 replicas:
 - count: 2
