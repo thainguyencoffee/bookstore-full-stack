@@ -30,4 +30,4 @@ jobs:
             --field APP_NAME=${{ env.APP_NAME }} \
             --field OWNER=${{ env.OWNER }} \
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
