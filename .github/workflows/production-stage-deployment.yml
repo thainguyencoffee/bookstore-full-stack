@@ -5,23 +5,18 @@ on:
       VERSION:
         description: 'Version of the application'
         required: true
-        default: ${{ github.sha }}
       REGISTRY:
         description: 'Container registry'
         required: true
-        default: ghcr.io
       APP_REPO:
         description: 'Repository of the application'
         required: true
-        default: bookstore-fullstack
       APP_NAME:
         description: 'Name of the application'
         required: true
-        default: backend
       OWNER:
         description: 'Owner of the repositories'
         required: true
-        default: thainguyencoffee
 
 jobs:
   update:
