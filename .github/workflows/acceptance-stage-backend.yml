@@ -1,7 +1,7 @@
 name: Acceptance stage Backend module
 on:
   workflow_run:
-    workflows: [".github/workflows/commit/commit-stage-backend.yml"]
+    workflows: [".github/workflows/commit-stage-backend.yml"]
     types: [completed]
     branches: main
 
@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Trigger production stage deployment
         run: |
-          gh workflow run .github/workflows/production/production-stage-deployment.yml \
+          gh workflow run .github/workflows/production-stage-deployment.yml \
             --field VERSION=${{ env.VERSION }} \
             --field REGISTRY=${{ env.REGISTRY }} \
             --field APP_REPO=${{ env.APP_REPO }} \
