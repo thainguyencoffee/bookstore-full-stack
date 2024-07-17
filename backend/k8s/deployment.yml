@@ -27,6 +27,18 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: datatest
+          livenessProbe:
+            httpGet:
+              port: 9001
+              path: /actuator/health/liveness
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              port: 9001
+              path: /actuator/health/readiness
+            initialDelaySeconds: 5
+            periodSeconds: 15
           volumeMounts:
             - mountPath: /workspace/config
               name: bookstore-backend-config-volume

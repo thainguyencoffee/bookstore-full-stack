@@ -26,6 +26,7 @@ public class SecurityConfig {
             ReactiveClientRegistrationRepository clientRegistrationRepository) {
         return http
                 .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers("/", "/*.css", "/*.js", "/favicon.ico", "/@fs/**", "/@vite/**",
                                 "/book-detail/**", "/purchase-orders/**", "/shopping-carts/**",
                                 "/checkout", "/order-detail-callback/**", "/order-detail/**").permitAll()
