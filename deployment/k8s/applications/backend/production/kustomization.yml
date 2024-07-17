@@ -13,7 +13,7 @@ configMapGenerator:
 - behavior: merge
   files:
   - application-prod.yml
-  name: bookstore-backend
+  name: bookstore-backend-config
 
 images:
 - name: bookstore-backend
