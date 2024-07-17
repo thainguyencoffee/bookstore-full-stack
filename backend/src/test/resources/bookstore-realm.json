@@ -1451,12 +1451,12 @@
     "auth" : "true",
     "envelopeFrom" : "",
     "ssl" : "false",
-    "password" : "nratvhfenqrherqh",
+    "password" : "evcw uiui bulu mfmk",
     "port" : "587",
     "host" : "smtp.gmail.com",
     "replyTo" : "",
     "from" : "nguyennt11032004@gmail.com",
-    "fromDisplayName" : "Chat app",
+    "fromDisplayName" : "Bookstore app",
     "user" : "nguyennt11032004@gmail.com"
   },
   "eventsEnabled" : false,
@@ -1507,7 +1507,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-role-list-mapper", "oidc-usermodel-attribute-mapper", "saml-user-attribute-mapper", "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-property-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-property-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-attribute-mapper", "oidc-usermodel-attribute-mapper", "oidc-full-name-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper" ]
       }
     }, {
       "id" : "bd0a4fc0-c9f2-4c2d-b16e-b6100ab6b7c9",
@@ -1532,7 +1532,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-full-name-mapper", "saml-role-list-mapper", "oidc-usermodel-attribute-mapper", "oidc-usermodel-property-mapper", "saml-user-property-mapper", "oidc-address-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-attribute-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper", "saml-role-list-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-property-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper" ]
       }
     }, {
       "id" : "49bb21a3-be6e-4462-b3d9-9e2630808c26",

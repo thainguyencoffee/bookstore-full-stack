@@ -5,9 +5,10 @@ resources:
 - github.com/thainguyencoffee/bookstore-fullstack/gateway/k8s?ref=b58375cebdef90453125c16a276dc49005743aaf
 
 patches:
-- path: patch-volumes.yml
-- path: patch-env.yml
-- path: patch-resource.yml
+  - path: patch-volumes.yml
+  - path: patch-ingress.yml
+  - path: patch-env.yml
+  - path: patch-resource.yml
 
 configMapGenerator:
 - behavior: merge

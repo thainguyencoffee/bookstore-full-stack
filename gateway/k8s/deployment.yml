@@ -31,6 +31,18 @@ spec:
               value: http://bookstore-backend
             - name: SPA_URL
               value: http://bookstore-ui
+          livenessProbe:
+            httpGet:
+              port: 9000
+              path: /actuator/health/liveness
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              port: 9000
+              path: /actuator/health/readiness
+            initialDelaySeconds: 5
+            periodSeconds: 15
           volumeMounts:
             - mountPath: /workspace/config
               name: bookstore-gateway-config-volume

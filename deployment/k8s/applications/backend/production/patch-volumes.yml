@@ -12,6 +12,10 @@ spec:
               name: bookstore-postgres-backend-volume
             - mountPath: /workspace/secrets/keycloak
               name: keycloak-issuer-resourceserver-secret-volume
+            - mountPath: /workspace/secrets/cloudinary
+              name: bookstore-cloudinary-credentials-volume
+            - mountPath: /workspace/secrets/email
+              name: bookstore-google-email-credential-volume
       volumes:
         - name: bookstore-postgres-backend-volume
           secret:
@@ -19,3 +23,9 @@ spec:
         - name: keycloak-issuer-resourceserver-secret-volume
           secret:
             secretName: keycloak-issuer-resourceserver-secret
+        - name: bookstore-cloudinary-credentials-volume
+          secret:
+            secretName: bookstore-cloudinary-credentials
+        - name: bookstore-google-email-credential-volume
+          secret:
+            secretName: bookstore-google-email-credential

@@ -559,7 +559,8 @@ data:
           "requiredActions": [],
           "realmRoles": [
             "employee",
-            "default-roles-chat"],
+            "default-roles-chat"
+          ],
           "notBefore": 0,
           "groups": []
         },
@@ -577,7 +578,8 @@ data:
           "realmRoles": [
             "admin",
             "employee",
-            "default-roles-chat"],
+            "default-roles-chat"
+          ],
           "clientRoles": {
             "realm-management": [
               "realm-admin"],
@@ -818,8 +820,7 @@ data:
             "acr",
             "profile",
             "roles",
-            "email"
-          ],
+            "email"],
           "optionalClientScopes": [
             "address",
             "phone",
@@ -929,19 +930,20 @@ data:
                 "claim.name": "clientAddress",
                 "jsonType.label": "String"
               }
-            }],
+            }
+          ],
           "defaultClientScopes": [
             "web-origins",
             "acr",
             "profile",
             "roles",
-            "email"],
+            "email"
+          ],
           "optionalClientScopes": [
             "address",
             "phone",
             "offline_access",
-            "microprofile-jwt"
-          ],
+            "microprofile-jwt"],
           "authorizationSettings": {
             "allowRemoteResourceManagement": true,
             "policyEnforcementMode": "ENFORCING",
@@ -1069,8 +1071,7 @@ data:
               {
                 "id": "c462a0dd-d0bd-43f5-bbaa-a9b997a7790d",
                 "name": "manage-group-membership"
-              }
-            ],
+              }],
             "decisionStrategy": "UNANIMOUS"
           }
         },
@@ -1132,9 +1133,9 @@ data:
             "address",
             "phone",
             "offline_access",
-            "microprofile-jwt"
-          ]
-        }],
+            "microprofile-jwt"]
+        }
+      ],
       "clientScopes": [
         {
           "id": "46e38fd5-20b3-4ff0-bcbd-99727a0020f8",
@@ -1209,8 +1210,7 @@ data:
                 "access.token.claim": "true",
                 "user.attribute.locality": "locality"
               }
-            }
-          ]
+            }]
         },
         {
           "id": "837ded34-ba5e-4c17-b4fb-b585ae839510",
@@ -1503,8 +1503,7 @@ data:
                 "claim.name": "preferred_username",
                 "jsonType.label": "String"
               }
-            }
-          ]
+            }]
         },
         {
           "id": "e0a6a1c3-7418-4dc2-aaaf-f4d7729a80c2",
@@ -1548,8 +1547,7 @@ data:
                 "claim.name": "upn",
                 "jsonType.label": "String"
               }
-            }
-          ]
+            }]
         },
         {
           "id": "2f5cd4dc-26b3-42c0-9a23-1be37604ffeb",
@@ -1573,7 +1571,8 @@ data:
                 "access.token.claim": "true",
                 "userinfo.token.claim": "true"
               }
-            }]
+            }
+          ]
         },
         {
           "id": "5df30b17-a3e0-4e3c-8cb1-db2e167137f0",
@@ -1704,12 +1703,12 @@ data:
         "auth": "true",
         "envelopeFrom": "",
         "ssl": "false",
-        "password": "nratvhfenqrherqh",
+        "password": "evcw uiui bulu mfmk",
         "port": "587",
         "host": "smtp.gmail.com",
         "replyTo": "",
         "from": "nguyennt11032004@gmail.com",
-        "fromDisplayName": "Chat app",
+        "fromDisplayName": "Bookstore app",
         "user": "nguyennt11032004@gmail.com"
       },
       "eventsEnabled": false,
@@ -1768,15 +1767,14 @@ data:
             "subComponents": {},
             "config": {
               "allowed-protocol-mapper-types": [
-                "saml-role-list-mapper",
-                "oidc-usermodel-attribute-mapper",
-                "saml-user-attribute-mapper",
-                "oidc-full-name-mapper",
-                "oidc-sha256-pairwise-sub-mapper",
                 "saml-user-property-mapper",
+                "oidc-sha256-pairwise-sub-mapper",
+                "saml-user-attribute-mapper",
+                "oidc-usermodel-attribute-mapper",
+                "oidc-full-name-mapper",
+                "saml-role-list-mapper",
                 "oidc-usermodel-property-mapper",
-                "oidc-address-mapper"
-              ]
+                "oidc-address-mapper"]
             }
           },
           {
@@ -1806,14 +1804,14 @@ data:
             "subComponents": {},
             "config": {
               "allowed-protocol-mapper-types": [
-                "oidc-full-name-mapper",
-                "saml-role-list-mapper",
-                "oidc-usermodel-attribute-mapper",
+                "saml-user-attribute-mapper",
                 "oidc-usermodel-property-mapper",
-                "saml-user-property-mapper",
                 "oidc-address-mapper",
+                "saml-role-list-mapper",
                 "oidc-sha256-pairwise-sub-mapper",
-                "saml-user-attribute-mapper"]
+                "saml-user-property-mapper",
+                "oidc-full-name-mapper",
+                "oidc-usermodel-attribute-mapper"]
             }
           },
           {
@@ -1837,8 +1835,7 @@ data:
               "allow-default-scopes": [
                 "true"]
             }
-          }
-        ],
+          }],
         "org.keycloak.userprofile.UserProfileProvider": [
           {
             "id": "a399022f-60c3-4b80-9cb5-32cdcfddada4",
@@ -1848,8 +1845,7 @@ data:
               "kc.user.profile.config": [
                 "{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"group\":\"userinfo\"},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"annotations\":{},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"group\":\"userinfo\"},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"annotations\":{},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"group\":\"userinfo\"},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"annotations\":{},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"group\":\"userinfo\"},{\"name\":\"birthdate\",\"displayName\":\"Birthdate\",\"validations\":{},\"annotations\":{\"inputType\":\"html5-date\"},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"group\":\"userinfo\"},{\"name\":\"gender\",\"displayName\":\"Gender\",\"validations\":{\"options\":{\"options\":[\"Male\",\"Female\"]}},\"annotations\":{\"inputType\":\"select-radiobuttons\"},\"required\":{\"roles\":[\"admin\",\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"group\":\"userinfo\"},{\"name\":\"pictures\",\"displayName\":\"Pictures\",\"validations\":{},\"annotations\":{},\"permissions\":{\"view\":[\"admin\"],\"edit\":[\"admin\"]},\"group\":\"userinfo\"}],\"groups\":[{\"name\":\"userinfo\",\"displayHeader\":\"User information\",\"displayDescription\":\"\",\"annotations\":{}}]}"]
             }
-          }
-        ],
+          }],
         "org.keycloak.keys.KeyProvider": [
           {
             "id": "7ff5486c-7e17-4c15-b2fa-9f09f158b1d4",
@@ -1876,8 +1872,7 @@ data:
               "kid": [
                 "58f14ae5-d39e-4720-adb2-35491824007b"],
               "secret": [
-                "uFrsHveTrLdn2wUeX9mfNsxcYrK2oVInb0T6XjUNzas8OihRUs67jYZ6kuirZyOyjjrRqy6ebS4JDTF1o0q9Bg"
-              ],
+                "uFrsHveTrLdn2wUeX9mfNsxcYrK2oVInb0T6XjUNzas8OihRUs67jYZ6kuirZyOyjjrRqy6ebS4JDTF1o0q9Bg"],
               "priority": [
                 "100"],
               "algorithm": [
@@ -1891,8 +1886,7 @@ data:
             "subComponents": {},
             "config": {
               "privateKey": [
-                "MIIEpAIBAAKCAQEA7TKLzl5acs6BehHGExQPIjQMtctl41h6Mh7xOGiBYVNyKONBHFQQ/PcbJG3DVXjFsifcrR4YQceJnJkkmUUSxgmUmnadfkeue9ezw00OlyJdDth8HVswMmuZRjmmuBbOhzotXDP3bHEz0Cb8/YP9BN/kp31QdFG5uBUQEuRAF7BymAtOT3fkMH50cCazN9vSZpyHg/MXJwD5nGg0vqSgKpnA6s2Tynddfu8XwTeqCVWwi2aAs/Ah0VPryfg0kU4QCj1/xbnlXw/TnWZwXaKesp2cgIgT7XSIHiUrkJ7003kfSKvJ9Dmo5cArZl2vk+p6j4pbiCsFCceSu5H6b7HIwQIDAQABAoIBAC77oFwp7c4IT/azLxIH2uCKQUtAJOgllhy36s1iy9/QlM/7BaJcF3pX4ukyEassLzKU+T3UNHdRFBWv8uMmHqwZ6TS4UoVZIvtWVD3W1VFD5f1jDaCN96vBCtzxXe/gWpvH/wSgqX1yJdJw6pM3seYliAfSB13m8zu+dk7bpcNbFxGYljZ9xUgvitC08wcpwXjcnxSLrjfFkly3Ji5yK7wklSQo+dO54hsEV316CNT5c1wsfhDi9L4X4rBBy2nqkEV3Gmz3qKbOxUTGtmeQy3Xf0fbY4z1phaR887vcuNvhOqWohLsdQpqsHQ0oeze7hadPg3eNoVXwzfxAtmqnAJ0CgYEA+m9H6RE/v5bESB5TgugFLlZulqZr1vM/C4TEnWWupzDtK0SY1eiwHhaPmFnikKU6Kyx6DsS+yVSER9NOSK89RebreWMDggt3UZ5igGmUMaFHQ/DsuuG9k9/AO1rc5oZAosMsToudkHOqMj1B5qkeMiBTUvvpu47vbFgqo38kdN0CgYEA8nf1b4usQh+SDR3SMC0xfyOCRdvF4PJsAk9wTLATQl1kC8lbH50vddvRwS+PyDSZfZQiE2pIyUE3pus4m4gZl1n+ZXU7xtzeVSFp5l+Ze0ImhXi/m47VMJlQoGJRZEwBjwRPGrSPOTA4GwGCNP4XCqhVNKHd9zVbAipCRqrzAzUCgYEAkM2jYMoOeDMuzxxp4TlTNZXYX9deZ21CuOBN50ySDi4mFGyXiqf+nYciBE+Ex2oiFjCjasKsJjFuQzGVBEX/QdnhsdBkiN8kYNcZ0XI6s++zCz/VQcGhIk2wEyHYtJpP6Uy847Wqp4mZkW8GGd8TjJxQUZ1DaqWdHqJkFSFA7SkCgYBUxoB36bvmuqcUEvMkiQifTUkFJ9w91ETTYfb/uShisciDHnnPyeOIL71c8EYzV8C62Yo4g5bDVxwgLmnyZ1mbQ4ng62ZlF2BdH3upYo+FOxHA5QEJYJ1FirVX/kg66yA4YudNjQfulN9pAdQGtzhTL5vq9RVok60oSqI1lxu0aQKBgQCSBOWeHUCMenNNbyaYTblhslOOh/5raCD7EwJotDfxcQ1Ji1adAhclhm3SzONNoMkc6sVxrwKNqd1V58JrhO5YPWodSXcrVc/mBCgKaVCGYMwRmRUd77IJz0jRrl3w9VuReiL4cDv/3UTRfcxBhgJkvjbqsHdKk+JoX0N24sWAUA=="
-              ],
+                "MIIEpAIBAAKCAQEA7TKLzl5acs6BehHGExQPIjQMtctl41h6Mh7xOGiBYVNyKONBHFQQ/PcbJG3DVXjFsifcrR4YQceJnJkkmUUSxgmUmnadfkeue9ezw00OlyJdDth8HVswMmuZRjmmuBbOhzotXDP3bHEz0Cb8/YP9BN/kp31QdFG5uBUQEuRAF7BymAtOT3fkMH50cCazN9vSZpyHg/MXJwD5nGg0vqSgKpnA6s2Tynddfu8XwTeqCVWwi2aAs/Ah0VPryfg0kU4QCj1/xbnlXw/TnWZwXaKesp2cgIgT7XSIHiUrkJ7003kfSKvJ9Dmo5cArZl2vk+p6j4pbiCsFCceSu5H6b7HIwQIDAQABAoIBAC77oFwp7c4IT/azLxIH2uCKQUtAJOgllhy36s1iy9/QlM/7BaJcF3pX4ukyEassLzKU+T3UNHdRFBWv8uMmHqwZ6TS4UoVZIvtWVD3W1VFD5f1jDaCN96vBCtzxXe/gWpvH/wSgqX1yJdJw6pM3seYliAfSB13m8zu+dk7bpcNbFxGYljZ9xUgvitC08wcpwXjcnxSLrjfFkly3Ji5yK7wklSQo+dO54hsEV316CNT5c1wsfhDi9L4X4rBBy2nqkEV3Gmz3qKbOxUTGtmeQy3Xf0fbY4z1phaR887vcuNvhOqWohLsdQpqsHQ0oeze7hadPg3eNoVXwzfxAtmqnAJ0CgYEA+m9H6RE/v5bESB5TgugFLlZulqZr1vM/C4TEnWWupzDtK0SY1eiwHhaPmFnikKU6Kyx6DsS+yVSER9NOSK89RebreWMDggt3UZ5igGmUMaFHQ/DsuuG9k9/AO1rc5oZAosMsToudkHOqMj1B5qkeMiBTUvvpu47vbFgqo38kdN0CgYEA8nf1b4usQh+SDR3SMC0xfyOCRdvF4PJsAk9wTLATQl1kC8lbH50vddvRwS+PyDSZfZQiE2pIyUE3pus4m4gZl1n+ZXU7xtzeVSFp5l+Ze0ImhXi/m47VMJlQoGJRZEwBjwRPGrSPOTA4GwGCNP4XCqhVNKHd9zVbAipCRqrzAzUCgYEAkM2jYMoOeDMuzxxp4TlTNZXYX9deZ21CuOBN50ySDi4mFGyXiqf+nYciBE+Ex2oiFjCjasKsJjFuQzGVBEX/QdnhsdBkiN8kYNcZ0XI6s++zCz/VQcGhIk2wEyHYtJpP6Uy847Wqp4mZkW8GGd8TjJxQUZ1DaqWdHqJkFSFA7SkCgYBUxoB36bvmuqcUEvMkiQifTUkFJ9w91ETTYfb/uShisciDHnnPyeOIL71c8EYzV8C62Yo4g5bDVxwgLmnyZ1mbQ4ng62ZlF2BdH3upYo+FOxHA5QEJYJ1FirVX/kg66yA4YudNjQfulN9pAdQGtzhTL5vq9RVok60oSqI1lxu0aQKBgQCSBOWeHUCMenNNbyaYTblhslOOh/5raCD7EwJotDfxcQ1Ji1adAhclhm3SzONNoMkc6sVxrwKNqd1V58JrhO5YPWodSXcrVc/mBCgKaVCGYMwRmRUd77IJz0jRrl3w9VuReiL4cDv/3UTRfcxBhgJkvjbqsHdKk+JoX0N24sWAUA=="],
               "keyUse": [
                 "ENC"],
               "certificate": [
