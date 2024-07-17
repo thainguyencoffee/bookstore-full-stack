@@ -81,4 +81,3 @@ management:
       enabled: true
     git:
       enabled: true
-#
