@@ -2,8 +2,8 @@ name: Commit Stage Backend module  #
 on:
   push:
     paths:
-      - 'backend/**'
       - '.github/workflows/commit/commit-stage-backend.yml'
+      - 'backend/**'
 
 env:
   REGISTRY: ghcr.io
