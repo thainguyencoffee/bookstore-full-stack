@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'gateway/**'
+      - 'deployment/**'
       - '.github/workflows/commit/commit-stage-gateway.yml'
 
 env:

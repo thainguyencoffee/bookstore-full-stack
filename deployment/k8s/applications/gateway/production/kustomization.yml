@@ -21,5 +21,5 @@ images:
     newTag: a167ff65908ff4603fb2b1a528c4a67b8281ae0b
 
 replicas:
-- count: 1
+- count: 2
   name: bookstore-gateway
