@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - 'gateway/**'
-      - '.github/workflows/commit-stage-gateway.yml'
+      - '.github/workflows/commit/commit-stage-gateway.yml'
 
 env:
   REGISTRY: ghcr.io

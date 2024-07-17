@@ -1,4 +1,0 @@
-include('../../../../backend/Tiltfile')
-include('../../../../gateway/Tiltfile')
-
-update_settings(max_parallel_updates=1)

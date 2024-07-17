@@ -12,3 +12,5 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: prod
+            - name: BPL_JVM_THREAD_COUNT
+              value: "100"

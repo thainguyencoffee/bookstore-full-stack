@@ -2,7 +2,24 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - github.com/thainguyencoffee/bookstore-fullstack/backend/k8s?ref=main
+- github.com/thainguyencoffee/bookstore-fullstack/backend/k8s?ref=95297f29fc7ab074ffa69f82df97e7093b36f51f
 
 patchesStrategicMerge:
-  - patch-env.yml
+- patch-env.yml
+- patch-volumes.yml
+- patch-resource.yml
+
+configMapGenerator:
+- behavior: merge
+  files:
+  - application-prod.yml
+  name: bookstore-backend
+
+images:
+- name: bookstore-backend
+  newName: ghcr.io/thainguyencoffee/bookstore-fullstack/backend
+  newTag: 95297f29fc7ab074ffa69f82df97e7093b36f51f
+
+replicas:
+  - name: bookstore-backend
+    count: 2

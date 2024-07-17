@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-backend
+spec:
+  selector:
+  template:
+    spec:
+      containers:
+        - name: bookstore-backend
+          volumeMounts:
+            - mountPath: /workspace/secrets/postgres
+              name: bookstore-postgres-backend-volume
+            - mountPath: /workspace/secrets/keycloak
+              name: keycloak-issuer-resourceserver-secret-volume
+      volumes:
+        - name: bookstore-postgres-backend-volume
+          secret:
+            secretName: bookstore-postgres-backend-credentials
+        - name: keycloak-issuer-resourceserver-secret-volume
+          secret:
+            secretName: keycloak-issuer-resourceserver-secret

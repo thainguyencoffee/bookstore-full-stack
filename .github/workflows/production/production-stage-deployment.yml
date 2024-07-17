@@ -18,10 +18,6 @@ on:
         description: 'Name of the application'
         required: true
         default: backend
-      DEPLOY_REPO:
-        description: 'Repository of the deployment'
-        required: true
-        default: bookstore-fullstack/deployment
       OWNER:
         description: 'Owner of the repositories'
         required: true
@@ -47,8 +43,7 @@ jobs:
             deployment/k8s/applications/${{ env.APP_NAME }}/production
           kustomize edit set image \
             ${{ env.IMAGE_NAME }}=${{ env.APP_IMAGE }}:${{ env.VERSION }}
-          sed -i 's/ref=[\w+]/${{ env.APP_VERSION }}' \
-            kustomization.yml
+          sed -i 's/ref=[^"]*/ref=${{ env.VERSION }}/' kustomization.yml
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
