@@ -23,5 +23,5 @@ images:
 
 
 replicas:
-- count: 2
+- count: 1
   name: bookstore-gateway
