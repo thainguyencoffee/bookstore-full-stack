@@ -21,6 +21,7 @@ images:
     newName: ghcr.io/thainguyencoffee/bookstore-fullstack/gateway
     newTag: f91fb8a828b86e7a18ca6f64175d9196a5ffb71c
 
+
 replicas:
   - count: 2
     name: bookstore-gateway
