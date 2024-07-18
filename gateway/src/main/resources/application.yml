@@ -71,7 +71,7 @@ spring:
     store-type: redis
     timeout: 10m
     redis:
-      namespace: bookstore:edge
+      namespace: bookstore:gateway
   redis:
     connect-timeout: 2s
     host: localhost
