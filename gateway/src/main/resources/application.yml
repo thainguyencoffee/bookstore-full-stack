@@ -118,7 +118,7 @@ management:
         enabled: true
       group:
         readiness:
-          include: readinessState, redis
+          include: readinessState
   info:
     env:
       enabled: true
