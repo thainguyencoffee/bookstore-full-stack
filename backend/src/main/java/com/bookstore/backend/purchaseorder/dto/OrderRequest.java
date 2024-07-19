@@ -4,8 +4,8 @@ import com.bookstore.backend.purchaseorder.PaymentMethod;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import java.util.List;
 
 @Getter

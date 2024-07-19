@@ -6,7 +6,7 @@ import com.bookstore.backend.purchaseorder.OrderService;
 import com.bookstore.backend.purchaseorder.OrderStatus;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 @Slf4j
