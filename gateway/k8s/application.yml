@@ -1,6 +1,4 @@
 spring:
-  redis:
-    host: bookstore-redis
   security:
     oauth2:
       client:
