@@ -67,6 +67,12 @@ spring:
         provider:
           keycloak:
             issuer-uri: http://localhost:8080/realms/bookstore
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      connect-timeout: 2s
+      timeout: 1s
   session:
     store-type: redis
     timeout: 10m

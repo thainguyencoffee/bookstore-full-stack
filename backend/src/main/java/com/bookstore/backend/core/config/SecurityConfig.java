@@ -20,11 +20,11 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
-                        .mvcMatchers("/actuator/**").permitAll()
-                        .mvcMatchers(HttpMethod.GET, "/api/books/**").permitAll()
-                        .mvcMatchers("/api/guest-orders/**", "/api/payment/vn-pay/**", "/api/email/orders/**").permitAll()
-                        .mvcMatchers(HttpMethod.POST, "/api/orders/**").permitAll()
-                        .mvcMatchers("/api/shopping-carts/**", "/api/orders/**").authenticated()
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
+                        .requestMatchers("/api/guest-orders/**", "/api/payment/vn-pay/**", "/api/email/orders/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/orders/**").permitAll()
+                        .requestMatchers("/api/shopping-carts/**", "/api/orders/**").authenticated()
                         .anyRequest().hasAnyRole("employee")
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

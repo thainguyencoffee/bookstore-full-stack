@@ -1,15 +1,12 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.7.18'
-    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'org.springframework.boot' version '3.3.0'
+    id 'io.spring.dependency-management' version '1.1.5'
 }
 
 group = 'com.bookstore'
 version = '0.0.1-SNAPSHOT'
-
-java {
-    sourceCompatibility = '17'
-}
+sourceCompatibility = '17'
 
 configurations {
     compileOnly {
@@ -22,10 +19,9 @@ repositories {
 }
 
 ext {
-    set('springCloudVersion', "2021.0.9")
-    set('testKeycloakVersion', '2.3.0')
+    set('springCloudVersion', "2023.0.2")
+    set('testKeycloakVersion', '3.3.1')
     set('cloudinaryVersion', "1.38.0")
-    set('testcontainersVersion', "1.19.8")
 }
 
 dependencies {
@@ -33,6 +29,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation "com.cloudinary:cloudinary-http44:${cloudinaryVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -51,7 +48,6 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
     }
 }
 
