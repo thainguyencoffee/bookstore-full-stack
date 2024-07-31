@@ -1,4 +1,4 @@
-name: Production Stage Deployment
+name: Production stage deployment
 on:
   workflow_dispatch:
     inputs:
@@ -35,7 +35,7 @@ jobs:
       - name: Update image version
         run: |
           cd \
-            deployment/k8s/applications/${{ env.APP_NAME }}/production
+            bookstore-dep/k8s/applications/${{ env.APP_NAME }}/production
           kustomize edit set image \
             ${{ env.IMAGE_NAME }}=${{ env.APP_IMAGE }}:${{ env.VERSION }}
           sed -i 's/ref=[^"]*/ref=${{ env.VERSION }}/' kustomization.yml

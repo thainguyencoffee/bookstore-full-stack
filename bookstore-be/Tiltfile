@@ -1,0 +1,9 @@
+custom_build (
+    ref = 'bookstore-be',
+    command = './gradlew bootBuildImage --imageName $EXPECTED_REF',
+    deps = ['build.gradle', 'src']
+)
+
+k8s_yaml(kustomize('k8s'))
+
+k8s_resource('bookstore-be', port_forwards=['9001'])

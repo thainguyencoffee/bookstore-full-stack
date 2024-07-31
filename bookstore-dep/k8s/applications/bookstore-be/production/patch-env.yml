@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-be
+spec:
+  template:
+    metadata:
+      name: bookstore-be
+    spec:
+      containers:
+        - name: bookstore-be
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: BPL_JVM_THREAD_COUNT
+              value: "100"

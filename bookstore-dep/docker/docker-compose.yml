@@ -1,0 +1,86 @@
+version: "3.8"
+
+services:
+  bookstore-be:
+    depends_on:
+      - bookstore-keycloak
+      - bookstore-postgres
+    image: "bookstore-be"
+    container_name: "bookstore-be"
+    ports:
+      - 9001:9001
+      - 8001:8001
+    environment:
+      - BPL_JVM_THREAD_COUNT=50
+      - BPL_DEBUG_ENABLED=true
+      - BPL_DEBUG_PORT=8001
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://bookstore-postgres:5432/bookstoredb
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://bookstore-keycloak:8080/realms/bookstore
+      - SPRING_PROFILES_ACTIVE=datatest
+  bookstore-edge:
+    depends_on:
+      - bookstore-be
+      - bookstore-keycloak
+      - bookstore-redis
+      - bookstore-postgres
+      - bookstore-fe
+    image: "bookstore-edge"
+    container_name: bookstore-edge
+    ports:
+      - 9000:9000
+      - 8000:8000
+    environment:
+      - BPL_DEBUG_ENABLED=true
+      - BPL_DEBUG_PORT=8000
+      - BACKEND_URL=http://bookstore-be:9001
+      - SPA_URL=http://bookstore-fe:9004
+      - SPRING_REDIS_HOST=bookstore-redis
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI=http://bookstore-keycloak:8080/realms/bookstore
+  bookstore-fe:
+    image: 'bookstore-fe'
+    container_name: bookstore-fe
+    ports:
+      - 9004:9004
+    environment:
+      - PORT=9004
+
+  # Postgres service
+  bookstore-postgres:
+    image: "postgres:16"
+    container_name: "bookstore-postgres"
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - ./postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # Redis service
+  bookstore-redis:
+    image: "redis:7.0"
+    restart: always
+    container_name: "bookstore-redis"
+    ports:
+      - 6379:6379
+
+  # Keycloak service
+  bookstore-keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    depends_on: [bookstore-postgres]
+    container_name: bookstore-keycloak
+    restart: always
+    command: start-dev --import-realm --features=preview # Import configs provided at startup
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+    environment:
+      - KC_DB=postgres
+      - KC_DB_USERNAME=user
+      - KC_DB_PASSWORD=password
+      - KC_DB_URL=jdbc:postgresql://bookstore-postgres:5432/bookstoredb_keycloak
+      - KC_FEATURES=scripts
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=password
+    ports:
+      - 8080:8080
