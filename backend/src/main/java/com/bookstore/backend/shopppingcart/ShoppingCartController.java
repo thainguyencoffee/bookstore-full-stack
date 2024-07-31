@@ -1,10 +1,11 @@
 package com.bookstore.backend.shopppingcart;
 
 import com.bookstore.backend.book.BookService;
+import com.bookstore.backend.core.exception.CustomNoResultException;
 import com.bookstore.backend.shopppingcart.dto.DeleteAllCartRequest;
-import com.bookstore.backend.shopppingcart.exception.CartItemNotFoundException;
-import com.bookstore.backend.shopppingcart.exception.ShoppingCartAlreadyExistingException;
+import com.bookstore.backend.core.exception.shoppingcart.ShoppingCartAlreadyExistingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping(value = "api/shopping-carts", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
+@Slf4j
 public class ShoppingCartController {
 
     private final CartItemService cartItemService;
@@ -30,6 +32,7 @@ public class ShoppingCartController {
     @GetMapping("/my-cart")
     public ResponseEntity<ShoppingCart> getMyCart(@AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaim(StandardClaimNames.PREFERRED_USERNAME);
+        log.info("{} attempt get shopping cart", username);
         try {
             Optional<ShoppingCart> byCreatedBy = shoppingCartService.findByCreatedBy(username);
             if (byCreatedBy.isPresent()) {
@@ -44,7 +47,9 @@ public class ShoppingCartController {
     }
 
     @PostMapping("/{cartId}/add-to-cart")
-    public ResponseEntity<ShoppingCart> addToCart(@PathVariable UUID cartId, @RequestBody CartItem cartItem) {
+    public ResponseEntity<ShoppingCart> addToCart(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID cartId, @RequestBody CartItem cartItem) {
+        String username = jwt.getClaim(StandardClaimNames.PREFERRED_USERNAME);
+        log.info("{} attempt get cart id {}", username, cartId);
         ShoppingCart shoppingCart = shoppingCartService.findById(cartId);
         // find book by isbn
         bookService.findByIsbn(cartItem.getIsbn());
@@ -68,7 +73,9 @@ public class ShoppingCartController {
     }
 
     @DeleteMapping("/{cartId}/delete-cart-item")
-    public ResponseEntity<ShoppingCart> deleteCartItem(@PathVariable UUID cartId, @RequestParam("isbn") String isbn) {
+    public ResponseEntity<ShoppingCart> deleteCartItem(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID cartId, @RequestParam("isbn") String isbn) {
+        String username = jwt.getClaim(StandardClaimNames.PREFERRED_USERNAME);
+        log.info("{} attempt delete cart item with cart id {} and isbn {}", username, cartId, isbn);
         ShoppingCart shoppingCart = shoppingCartService.findById(cartId);
         // find book by isbn
         bookService.findByIsbn(isbn);
@@ -78,11 +85,13 @@ public class ShoppingCartController {
                 return ResponseEntity.ok(shoppingCartService.save(shoppingCart));
             }
         }
-        throw new CartItemNotFoundException(isbn);
+        throw new CustomNoResultException(CartItem.class, CustomNoResultException.Identifier.ISBN, isbn);
     }
 
     @PostMapping("/{cartId}/delete-all-cart-item")
-    public ResponseEntity<ShoppingCart> deleteCartItem(@PathVariable UUID cartId, @RequestBody DeleteAllCartRequest reqBody) {
+    public ResponseEntity<ShoppingCart> deleteCartItem(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID cartId, @RequestBody DeleteAllCartRequest reqBody) {
+        String username = jwt.getClaim(StandardClaimNames.PREFERRED_USERNAME);
+        log.info("{} attempt delete all cart item with cart id {}.", username, cartId);
         ShoppingCart shoppingCart = shoppingCartService.findById(cartId);
         // find book by isbn
         reqBody.getIsbn().forEach(itemShouldDelete -> {

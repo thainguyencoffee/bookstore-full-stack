@@ -9,13 +9,13 @@ server:
     connection-timeout: 2s
 
 spring:
+  application:
+    name: backend
   servlet:
     multipart:
       max-file-size: 10000000
-  application:
-    name: backend
   profiles:
-    active: datatest
+    active: local
   datasource:
     url: jdbc:postgresql://localhost:5432/bookstoredb
     username: user
@@ -23,6 +23,10 @@ spring:
     hikari:
       connection-timeout: 2000 #ms
       maximum-pool-size: 5
+  sql:
+    init:
+      data-locations: classpath:data.sql
+      mode: always
   security:
     oauth2:
       resourceserver:
@@ -31,8 +35,6 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: nguyennt11032004@gmail.com
-    password: ${GOOGLE_APP_PASSWORD}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
@@ -43,21 +45,10 @@ spring:
 
 bookstore:
   gateway-url: http://localhost:9000
-  cloudinary:
-    cloud-name: ${CLOUDINARY_CLOUD_NAME}
-    api-key: ${CLOUDINARY_API_KEY}
-    api-secret: ${CLOUDINARY_API_SECRET}
-  vnPay:
-    api-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-    tmn-code: VMJ3LJZY
-    secret-key: 90SLNCT497CFBIM299YG2ZRT439MIL8W
-    return-url: http://localhost:9001/api/payment/vn-pay/return
-    version: 2.1.0
-    command: querydr
-    order-type: other
+
+# Logging
 
 # Actuator
-
 info:
   system: Bookstore system
 
@@ -81,5 +72,3 @@ management:
       enabled: true
     git:
       enabled: true
-
-##

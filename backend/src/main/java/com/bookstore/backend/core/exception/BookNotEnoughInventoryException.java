@@ -1,4 +1,4 @@
-package com.bookstore.backend.book.exception;
+package com.bookstore.backend.core.exception;
 
 public class BookNotEnoughInventoryException extends RuntimeException {
     public BookNotEnoughInventoryException(String isbn) {
