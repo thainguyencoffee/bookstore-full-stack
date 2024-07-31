@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("integration")
+@ActiveProfiles({"integration", "local"})
 @Testcontainers
 class CatalogServiceApplicationTests {
 
