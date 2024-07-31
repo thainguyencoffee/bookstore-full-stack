@@ -2,12 +2,12 @@ name: Commit stage bookstore edge module
 on:
   push:
     paths:
-      - 'gateway/**'
+      - 'bookstore-edge/**'
       - '.github/workflows/commit/commit-stage-bookstore-edge.yml'
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: thainguyencoffee/bookstore-fullstack/gateway
+  IMAGE_NAME: thainguyencoffee/bookstore-fullstack/bookstore-edge
   VERSION: ${{ github.sha }}
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
         uses: anchore/scan-action@v3
         id: scan
         with:
-          path: "${{ github.workspace }}/gateway"
+          path: "${{ github.workspace }}/bookstore-edge"
           fail-build: false
           severity-cutoff: high
       - name: Upload vulnerability report
