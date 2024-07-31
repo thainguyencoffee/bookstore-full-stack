@@ -8,7 +8,7 @@ import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -31,7 +31,7 @@ public class Book {
     private Integer numberOfPages;
     @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL)
     private Measure measure;
-    private List<String> photos;
+    private Set<String> thumbnails;
     private Integer purchases;
     @CreatedDate
     private Instant createdAt;

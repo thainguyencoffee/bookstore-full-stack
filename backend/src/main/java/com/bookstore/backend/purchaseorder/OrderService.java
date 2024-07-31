@@ -2,16 +2,15 @@ package com.bookstore.backend.purchaseorder;
 
 import com.bookstore.backend.book.Book;
 import com.bookstore.backend.book.BookService;
-import com.bookstore.backend.book.exception.BookNotEnoughInventoryException;
+import com.bookstore.backend.core.exception.BookNotEnoughInventoryException;
 import com.bookstore.backend.core.email.EmailService;
+import com.bookstore.backend.core.exception.CustomNoResultException;
 import com.bookstore.backend.purchaseorder.dto.LineItemRequest;
 import com.bookstore.backend.purchaseorder.dto.OrderRequest;
 import com.bookstore.backend.purchaseorder.dto.OrderUpdateDto;
-import com.bookstore.backend.purchaseorder.exception.ConsistencyDataException;
-import com.bookstore.backend.purchaseorder.exception.OrderNotFoundException;
-import com.bookstore.backend.purchaseorder.exception.OrderStatusNotMatchException;
-import com.bookstore.backend.purchaseorder.exception.OtpExpiredException;
-import com.bookstore.backend.purchaseorder.exception.OtpIncorrectException;
+import com.bookstore.backend.core.exception.purchaseorder.OrderStatusNotMatchException;
+import com.bookstore.backend.core.exception.purchaseorder.OtpExpiredException;
+import com.bookstore.backend.core.exception.purchaseorder.OtpIncorrectException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,12 +33,12 @@ public class OrderService {
 
     public Order findById(UUID id) {
         return orderRepository.findById(id)
-                .orElseThrow(() -> new OrderNotFoundException(id));
+                .orElseThrow(() -> new CustomNoResultException(Order.class, CustomNoResultException.Identifier.ID, id));
     }
 
     public Order findByIdAndUsername(UUID id, String username) {
         return orderRepository.findByIdAndCreatedBy(id, username)
-                .orElseThrow(() -> new OrderNotFoundException(id));
+                .orElseThrow(() -> new CustomNoResultException(Order.class, CustomNoResultException.Identifier.ID, id));
     }
 
     @Transactional
@@ -60,18 +59,17 @@ public class OrderService {
         Order order = findById(orderId);
         if (!order.getStatus().equals(OrderStatus.WAITING_FOR_PAYMENT)
                 && !order.getStatus().equals(OrderStatus.WAITING_FOR_ACCEPTANCE)) {
-            throw new ConsistencyDataException("Order's status is not waiting action");
+            throw new OrderStatusNotMatchException(orderId, order.getStatus(), OrderStatus.WAITING_FOR_PAYMENT, OrderStatus.WAITING_FOR_ACCEPTANCE);
         }
         for (LineItem lineItem : order.getLineItems()) {
             var book = bookService.findByIsbn(lineItem.getIsbn());
             if (book.getInventory() < lineItem.getQuantity()) {
                 throw new BookNotEnoughInventoryException(book.getIsbn());
             }
-            var bookUpdate = book;
             // Update book's inventory and purchases
-            bookUpdate.setInventory(book.getInventory() - lineItem.getQuantity());
-            bookUpdate.setPurchases(book.getPurchases() + lineItem.getQuantity());
-            bookService.save(bookUpdate);
+            book.setInventory(book.getInventory() - lineItem.getQuantity());
+            book.setPurchases(book.getPurchases() + lineItem.getQuantity());
+            bookService.save(book);
         }
         order.setStatus(OrderStatus.ACCEPTED);
         /*===== CREATED ORDER =====*/
@@ -105,7 +103,7 @@ public class OrderService {
         Order order = orderRepository.findByIdAndOtp(orderId, otp)
                 .orElseThrow(() -> new OtpIncorrectException(orderId));
         if(!order.getStatus().equals(OrderStatus.WAITING_FOR_ACCEPTANCE)) {
-            throw new OrderStatusNotMatchException(orderId, OrderStatus.WAITING_FOR_ACCEPTANCE, order.getStatus());
+            throw new OrderStatusNotMatchException(orderId, order.getStatus(), OrderStatus.WAITING_FOR_ACCEPTANCE);
         }
         Instant otpExpiredAt = order.getOtpExpiredAt();
         if (otpExpiredAt.isBefore(Instant.now())) {

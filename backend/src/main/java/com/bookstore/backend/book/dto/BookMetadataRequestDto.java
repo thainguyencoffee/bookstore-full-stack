@@ -4,26 +4,19 @@ import com.bookstore.backend.book.Book;
 import com.bookstore.backend.book.CoverType;
 import com.bookstore.backend.book.Language;
 import com.bookstore.backend.book.Measure;
-import com.bookstore.backend.core.cloudinary.CloudinaryUtils;
-import com.cloudinary.Cloudinary;
+import com.bookstore.backend.book.validator.BookIsbnConstraint;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
-public class BookRequestDto {
-
-    @Id
-    private Long id;
+public class BookMetadataRequestDto {
 
     @NotBlank(message = "The isbn of book must not be null or blank.")
     @Pattern(regexp = "^([0-9]{10}|[0-9]{13})$", message = "The ISBN must be valid")
+    @BookIsbnConstraint
     private String isbn;
 
     @NotBlank(message = "The title of book must not be null or blank.")
@@ -82,15 +75,8 @@ public class BookRequestDto {
     @Min(value = 170, message = "The lowest weight of book is 170 grams.")
     private double weight;
 
-    private List<MultipartFile> photos = new ArrayList<>();
-
-    public Book convertToBook(Cloudinary cloudinary) {
-        List<String> urls = new ArrayList<>();
-        if (!this.getPhotos().isEmpty()) {
-             urls = CloudinaryUtils.convertListMultipartFileToListUrl(this.getPhotos(), cloudinary);
-        }
+    public Book convertToBook() {
         return Book.builder()
-                .id(null)
                 .isbn(this.getIsbn())
                 .title(this.getTitle())
                 .author(this.getAuthor())
@@ -103,7 +89,6 @@ public class BookRequestDto {
                 .coverType(this.getCoverType())
                 .numberOfPages(this.getNumberOfPages())
                 .measure(new Measure(this.getWidth(), this.getHeight(), this.getThickness(), this.getWeight()))
-                .photos(urls)
                 .purchases(0)
                 .version(0)
                 .build();

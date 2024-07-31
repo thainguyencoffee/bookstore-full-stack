@@ -1,4 +1,4 @@
-package com.bookstore.backend.purchaseorder.exception;
+package com.bookstore.backend.core.exception.purchaseorder;
 
 import java.util.UUID;
 

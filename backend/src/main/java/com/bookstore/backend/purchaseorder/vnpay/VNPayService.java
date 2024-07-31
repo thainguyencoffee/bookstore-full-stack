@@ -1,12 +1,12 @@
 package com.bookstore.backend.purchaseorder.vnpay;
 
+import com.bookstore.backend.core.config.BookstoreProperties;
 import com.bookstore.backend.purchaseorder.Order;
 import com.bookstore.backend.purchaseorder.OrderService;
 import com.bookstore.backend.purchaseorder.OrderStatus;
-import com.bookstore.backend.purchaseorder.exception.ConsistencyDataException;
+import com.bookstore.backend.core.exception.purchaseorder.OrderStatusNotMatchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,26 +23,13 @@ import java.util.UUID;
 public class VNPayService {
 
     private final OrderService orderService;
-    @Value("${bookstore.vnPay.api-url}")
-    private String vnp_PayUrl;
-    @Value("${bookstore.vnPay.return-url}")
-    private String vnp_ReturnUrl;
-    @Value("${bookstore.vnPay.tmn-code}")
-    private String vnp_TmnCode ;
-    @Value("${bookstore.vnPay.secret-key}")
-    private String secret_Key;
-    @Value("${bookstore.vnPay.version}")
-    private String vnp_Version;
-    @Value("${bookstore.vnPay.command}")
-    private String vnp_Command;
-    @Value("${bookstore.vnPay.order-type}")
-    private String order_Type;
+    private final BookstoreProperties bookstoreProperties;
 
     public String generatePaymentUrl(HttpServletRequest request, UUID orderId) {
         Order order = orderService.findById(orderId);
         if (!order.getStatus().equals(OrderStatus.WAITING_FOR_PAYMENT)
                 && !order.getStatus().equals(OrderStatus.PAYMENT_FAILED)) {
-            throw new ConsistencyDataException("Order is not waiting for payment");
+            throw new OrderStatusNotMatchException(orderId, order.getStatus(), OrderStatus.WAITING_FOR_PAYMENT, OrderStatus.PAYMENT_FAILED);
         }
         long finalPrice = order.getTotalPrice() * 100L;
         String bankCode = request.getParameter("bankCode");
@@ -55,36 +42,30 @@ public class VNPayService {
         //build query url
         String queryUrl = VNPayUtils.getPaymentURL(vnpParamsMap, true);
         String hashData = VNPayUtils.getPaymentURL(vnpParamsMap, false);
-        String vnpSecureHash = VNPayUtils.hmacSHA512(secret_Key, hashData);
+        String vnpSecureHash = VNPayUtils.hmacSHA512(bookstoreProperties.vnPay().secretKey(), hashData);
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
-        String paymentUrl = vnp_PayUrl + "?" + queryUrl;
-        return paymentUrl;
+        return bookstoreProperties.vnPay().apiUrl() + "?" + queryUrl;
     }
 
     private Map<String, String> getVNPayPayload(UUID orderId) {
         var vnpParamsMap = new HashMap<String, String>();
-        vnpParamsMap.put("vnp_Version", vnp_Version);
-        vnpParamsMap.put("vnp_Command", vnp_Command);
-        vnpParamsMap.put("vnp_TmnCode", vnp_TmnCode);
+        vnpParamsMap.put("vnp_Version", bookstoreProperties.vnPay().version());
+        vnpParamsMap.put("vnp_Command", bookstoreProperties.vnPay().command());
+        vnpParamsMap.put("vnp_TmnCode", bookstoreProperties.vnPay().tmnCode());
         vnpParamsMap.put("vnp_CurrCode", "VND");
         vnpParamsMap.put("vnp_TxnRef",  orderId.toString());
-        vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang:" +  orderId.toString());
-        vnpParamsMap.put("vnp_OrderType", order_Type);
+        vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang:" + orderId);
+        vnpParamsMap.put("vnp_OrderType", bookstoreProperties.vnPay().orderType());
         vnpParamsMap.put("vnp_Locale", "vn");
-        vnpParamsMap.put("vnp_ReturnUrl", vnp_ReturnUrl);
+        vnpParamsMap.put("vnp_ReturnUrl", bookstoreProperties.vnPay().returnUrl());
         vnpParamsMap.putAll(getTime());
         return vnpParamsMap;
     }
 
     private static Map<String, String> getTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
-        // Lấy thời gian hiện tại (ZonedDateTime) tại múi giờ "Asia/Ho_Chi_Minh"
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
-
         String vnpCreateDate = formatter.format(now);
-
-        // Tính thời gian hết hạn sau 15 phút (ZonedDateTime)
         ZonedDateTime fifteenMinutesLater = now.plusMinutes(15);
         String vnpExpireDate = formatter.format(fifteenMinutesLater);
 

@@ -5,7 +5,7 @@ import com.bookstore.backend.purchaseorder.Order;
 import com.bookstore.backend.purchaseorder.OrderService;
 import com.bookstore.backend.purchaseorder.OrderStatus;
 import com.bookstore.backend.purchaseorder.dto.OtpRequestDto;
-import com.bookstore.backend.purchaseorder.exception.OrderStatusNotMatchException;
+import com.bookstore.backend.core.exception.purchaseorder.OrderStatusNotMatchException;
 import com.bookstore.backend.purchaseorder.web.user.OrderController;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

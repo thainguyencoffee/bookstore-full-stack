@@ -1,6 +1,6 @@
 package com.bookstore.backend.book;
 
-import com.bookstore.backend.book.exception.BookNotFoundException;
+import com.bookstore.backend.core.exception.CustomNoResultException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,10 +16,8 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-
-
     public Book findByIsbn(String isbn) {
-        return bookRepository.findByIsbn(isbn).orElseThrow(() -> new BookNotFoundException(isbn));
+        return bookRepository.findByIsbn(isbn).orElseThrow(() -> new CustomNoResultException(Book.class, CustomNoResultException.Identifier.ISBN, isbn));
     }
 
     public Book save(Book book) {
@@ -63,8 +61,6 @@ public class BookService {
             book.setPurchases(patch.getPurchases());
         if (patch.getNumberOfPages() != null)
             book.setNumberOfPages(patch.getNumberOfPages());
-        if (!patch.getPhotos().isEmpty())
-            book.setPhotos(patch.getPhotos());
         return bookRepository.save(book);
     }
 

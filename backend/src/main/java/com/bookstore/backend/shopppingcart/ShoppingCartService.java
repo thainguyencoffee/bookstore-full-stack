@@ -1,6 +1,6 @@
 package com.bookstore.backend.shopppingcart;
 
-import com.bookstore.backend.shopppingcart.exception.ShoppingCartNotFoundException;
+import com.bookstore.backend.core.exception.CustomNoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +23,6 @@ public class ShoppingCartService {
 
     public ShoppingCart findById(UUID cartId) {
         return repository.findById(cartId)
-                .orElseThrow(() -> new ShoppingCartNotFoundException(cartId));
+                .orElseThrow(() -> new CustomNoResultException(ShoppingCart.class, CustomNoResultException.Identifier.ID, cartId));
     }
 }
