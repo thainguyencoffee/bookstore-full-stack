@@ -10,7 +10,7 @@ concurrency: acceptance
 env:
   OWNER: thainguyencoffee
   REGISTRY: ghcr.io
-  APP_REPO: bookstore-fullstack
+  APP_REPO: bookstore-full-stack
   APP_NAME: bookstore-be
   VERSION: ${{ github.sha }}
 
