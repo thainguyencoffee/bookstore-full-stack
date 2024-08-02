@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface BookRepository extends ListCrudRepository<Book, Long> {
 
@@ -42,4 +43,8 @@ public interface BookRepository extends ListCrudRepository<Book, Long> {
 
 //    @Query("select * from books b order by b.purchases desc limit :size offset :page * :size")
     Page<Book> findAllByOrderByPurchasesDesc(Pageable pageable);
+
+    @Query("select b.* from books b join book_catalog bc on b.id = bc.book where bc.catalog = :id")
+    Set<Book> findAllByCatalogId(@Param("id") Long id);
+
 }

@@ -14,8 +14,6 @@ spring:
   servlet:
     multipart:
       max-file-size: 10000000
-  profiles:
-    active: local
   datasource:
     url: jdbc:postgresql://localhost:5432/bookstoredb
     username: user
@@ -33,6 +31,8 @@ spring:
         jwt:
           issuer-uri: http://localhost:8080/realms/bookstore
   mail:
+    username: nguyennt11032004@gmail.com
+    password: evcw uiui bulu mfmk
     host: smtp.gmail.com
     port: 587
     properties:
@@ -45,6 +45,22 @@ spring:
 
 bookstore:
   edge-url: http://localhost:9000
+  vnPay:
+    api-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    tmn-code: VMJ3LJZY
+    secret-key: 90SLNCT497CFBIM299YG2ZRT439MIL8W
+    return-url: http://localhost:9001/api/payment/vn-pay/return
+    version: 2.1.0
+    command: querydr
+    order-type: other
+
+# AWS S3
+digitalocean:
+  spaces:
+    endpoint: https://bookstore-bucket.sgp1.digitaloceanspaces.com
+    access-key: DO00XXYJDDAPT9EXWVF8
+    secret-key: ZY2YAo3WrW+Eq28oLYVW89mDwst//QLJyqiF4TMP+Vg
+    bucket-name: bookstore-bucket
 
 # Logging
 

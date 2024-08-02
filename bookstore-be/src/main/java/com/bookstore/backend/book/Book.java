@@ -1,24 +1,27 @@
 package com.bookstore.backend.book;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.*;
 import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @Table("books")
-@Builder
 public class Book {
 
     @Id
     private Long id;
     private String isbn;
+    @MappedCollection(idColumn = "book", keyColumn = "catalog")
+    private Set<CatalogRef> catalogs = new HashSet<>();
     private String title;
     private String author;
     private String publisher;
@@ -43,4 +46,12 @@ public class Book {
     private String lastModifiedBy;
     @Version
     private int version;
+
+    public void addCatalog(Catalog catalog) {
+        catalogs.add(new CatalogRef(catalog.getId(), catalog.getName()));
+    }
+
+    public Set<Long> getCatalogIds() {
+        return catalogs.stream().map(CatalogRef::getCatalog).collect(Collectors.toSet());
+    }
 }
