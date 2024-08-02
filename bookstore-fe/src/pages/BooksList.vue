@@ -1,14 +1,30 @@
-<script setup>
-import {computed} from "vue";
-import {useStore} from "vuex";
+<script>
 import BookUnit from "../components/BookUnit.vue";
-import TheCategory from "../components/layouts/TheCategory.vue";
+import {computed, onMounted} from "vue";
 import TheBanner from "../components/layouts/TheBanner.vue";
+import TheCategory from "../components/layouts/TheCategory.vue";
+import {useStore} from "vuex";
 
-const store = useStore();
+export default {
+  components: {
+    TheCategory,
+    TheBanner,
+    BookUnit
+  },
+  setup() {
+    const store = useStore();
 
-const books = computed(() => store.getters["books/books"])
+    onMounted(() => {
+      store.dispatch("fetchBooks");
+    });
 
+    const books = computed(() => store.getters.books);
+
+    return {
+      books
+    };
+  }
+}
 </script>
 
 <template>
@@ -16,32 +32,14 @@ const books = computed(() => store.getters["books/books"])
     <the-banner></the-banner>
     <the-category></the-category>
     <div class="row mt-2">
-      <book-unit v-for="book in books"
-                 :id="book.id"
-                 :isbn="book.isbn"
-                 :title="book.title"
-                 :author="book.author"
-                 :publisher="book.publisher"
-                 :supplier="book.supplier"
-                 :price="book.price"
-                 :inventory="book.inventory"
-                 :purchases="book.purchases"
-                 :language="book.language"
-                 :measure="book.measure"
-                 :cover-type="book.coverType"
-                 :number-of-pages="book.numberOfPages"
-                 :created-at="book.createdAt"
-                 :created-by="book.createdBy"
-                 :last-modified-at="book.lastModifiedAt"
-                 :last-modified-by="book.lastModifiedBy"
-                 :key="book.id"
-                 :description="book.description"
-                 :thumbnails="book.thumbnails"
+      <book-unit
+          v-for="book in books"
+          :key="book.id"
+          :book="book"
       ></book-unit>
     </div>
   </div>
 </template>
 
 <style scoped>
-
 </style>
