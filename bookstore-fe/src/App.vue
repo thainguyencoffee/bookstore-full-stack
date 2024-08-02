@@ -1,8 +1,8 @@
-<script setup>
-
+<script>
 import TheHeader from "./components/layouts/TheHeader.vue";
-import TheBanner from "./components/layouts/TheBanner.vue";
-import TheCategory from "./components/layouts/TheCategory.vue";
+export default {
+  components: {TheHeader}
+}
 </script>
 
 <template>
