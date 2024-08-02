@@ -64,8 +64,8 @@ class BookController {
     @Operation(summary = "Create a new book", security = @SecurityRequirement(name = "token"))
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Book save(@Valid BookMetadataRequestDto bookMedadataDto) {
-        Book book = bookMedadataDto.convertToBook();
+    public Book save(@Valid @RequestBody BookMetadataRequestDto bookMetadataDto) {
+        Book book = bookMetadataDto.convertToBook();
         return bookService.save(book);
     }
 

@@ -1,34 +1,20 @@
-package com.bookstore.backend;
+package com.bookstore.backend.purchaseorders;
 
+import com.bookstore.backend.IntegrationTestsBase;
 import com.bookstore.backend.book.*;
 import com.bookstore.backend.purchaseorder.PaymentMethod;
 import com.bookstore.backend.purchaseorder.dto.LineItemRequest;
 import com.bookstore.backend.purchaseorder.dto.OrderRequest;
 import com.bookstore.backend.purchaseorder.dto.PaymentRequest;
 import com.bookstore.backend.purchaseorder.dto.UserInformation;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import dasniko.testcontainers.keycloak.KeycloakContainer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -37,36 +23,10 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Testcontainers
-@ActiveProfiles("local")
-public class OrderServiceApplicationTests {
+public class PurchaseOrderIntegrationTests extends IntegrationTestsBase {
 
-    private static KeycloakToken customerToken;
-    static Book bookMock1 = Book.builder()
-            .isbn("1234567891")
-            .title("Title 1")
-            .author("Author 1")
-            .publisher("Publisher 1")
-            .supplier("Supplier 1")
-            .price(210000L)
-            .language(Language.ENGLISH)
-            .coverType(CoverType.PAPERBACK)
-            .numberOfPages(25)
-            .inventory(3)
-            .measure(new Measure(120, 180, 10, 200)).build();
-    static Book bookMock2 = Book.builder()
-            .isbn("1234567892")
-            .title("Title 2")
-            .author("Author 2")
-            .publisher("Publisher 2")
-            .supplier("Supplier 2")
-            .price(210000L)
-            .language(Language.ENGLISH)
-            .coverType(CoverType.PAPERBACK)
-            .inventory(3)
-            .numberOfPages(25)
-            .measure(new Measure(120, 180, 10, 200)).build();
+    static Book bookMock1;
+    static Book bookMock2;
 
     @Autowired
     private WebTestClient webTestClient;
@@ -74,33 +34,36 @@ public class OrderServiceApplicationTests {
     @MockBean
     BookService bookService;
 
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-            DockerImageName.parse("postgres:16"));
-
-    @Container
-    static KeycloakContainer keycloak = new KeycloakContainer(
-            "quay.io/keycloak/keycloak:23.0")
-            .withRealmImportFile("bookstore-realm.json");
+//    @MockBean
+//    private JavaMailSender javaMailSender;
 
     @BeforeAll
     static void setup() {
-        WebClient webClient = WebClient.builder()
-                .baseUrl(keycloak.getAuthServerUrl() + "/realms/bookstore/protocol/openid-connect/token")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .build();
+        bookMock1 = new Book();
+        bookMock1.setIsbn("1234567891");
+        bookMock1.setTitle("Title 1");
+        bookMock1.setAuthor("Author 1");
+        bookMock1.setPublisher("Publisher 1");
+        bookMock1.setSupplier("Supplier 1");
+        bookMock1.setPrice(210000L);
+        bookMock1.setLanguage(Language.ENGLISH);
+        bookMock1.setCoverType(CoverType.PAPERBACK);
+        bookMock1.setNumberOfPages(25);
+        bookMock1.setInventory(3);
+        bookMock1.setMeasure(new Measure(120, 180, 10, 200));
 
-        customerToken = authenticatedWith("user", "1", webClient);
-    }
-
-    @DynamicPropertySource
-    static void postgresqlProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-
-        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri",
-                () -> keycloak.getAuthServerUrl() + "/realms/bookstore");
+        bookMock2 = new Book();
+        bookMock2.setIsbn("1234567892");
+        bookMock2.setTitle("Title 2");
+        bookMock2.setAuthor("Author 2");
+        bookMock2.setPublisher("Publisher 2");
+        bookMock2.setSupplier("Supplier 2");
+        bookMock2.setPrice(210000L);
+        bookMock2.setLanguage(Language.ENGLISH);
+        bookMock2.setCoverType(CoverType.PAPERBACK);
+        bookMock2.setNumberOfPages(25);
+        bookMock2.setInventory(3);
+        bookMock2.setMeasure(new Measure(120, 180, 10, 200));
     }
 
     @Test
@@ -129,7 +92,7 @@ public class OrderServiceApplicationTests {
         when(bookService.findByIsbn(book2.getKey())).thenReturn(bookMock2);
         String responseBody = webTestClient.post()
                 .uri("/api/orders")
-                .headers(headers -> headers.setBearerAuth(customerToken.accessToken))
+                .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
                 .bodyValue(orderRequest)
                 .exchange()
                 .expectStatus().isCreated()
@@ -141,7 +104,7 @@ public class OrderServiceApplicationTests {
         webTestClient.post()
                 .uri("/api/payment/vn-pay/payment-url")
                 .body(BodyInserters.fromValue(new PaymentRequest(orderId)))
-                .headers(headers -> headers.setBearerAuth(customerToken.accessToken))
+                .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class)
@@ -173,25 +136,5 @@ public class OrderServiceApplicationTests {
         return orderRequest;
     }
 
-
-    private static KeycloakToken authenticatedWith(String username, String password, WebClient webClient) {
-        return webClient
-                .post()
-                .body(BodyInserters.fromFormData("grant_type", "password")
-                        .with("client_id", "edge-service")
-                        .with("client_secret", "cT5pq7W3XStcuFVQMhjPbRj57Iqxcu4n")
-                        .with("username", username)
-                        .with("password", password))
-                .retrieve()
-                .bodyToMono(KeycloakToken.class)
-                .block();
-    }
-
-    private record KeycloakToken(String accessToken) {
-        @JsonCreator
-        private KeycloakToken(@JsonProperty("access_token") String accessToken) {
-            this.accessToken = accessToken;
-        }
-    }
 
 }

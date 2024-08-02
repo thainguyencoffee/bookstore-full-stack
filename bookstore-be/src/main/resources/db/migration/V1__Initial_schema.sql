@@ -73,3 +73,25 @@ CREATE table line_items
     total_price bigint       not null,
     version     int          not null
 );
+
+create table catalogs
+(
+    id               bigserial primary key,
+    name             varchar(255) not null,
+    parent_id        bigserial references catalogs (id) on delete cascade,
+    created_at       timestamp    not null,
+    created_by       varchar(255),
+    last_modified_at timestamp    not null,
+    last_modified_by varchar(255),
+    version          int          not null
+);
+
+ALTER TABLE catalogs ALTER COLUMN parent_id DROP NOT NULL;
+
+create table book_catalog
+(
+    catalog bigserial not null ,
+    book    bigserial not null ,
+    name varchar(255) not null ,
+    primary key (catalog, book)
+);

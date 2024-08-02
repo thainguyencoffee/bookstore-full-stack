@@ -45,6 +45,8 @@ public class BookMetadataRequestDto {
     @Min(value = 0, message = "The inventory must greater than 0")
     private Integer inventory;
 
+    private Integer purchases;
+
     @NotNull(message = "The language of book must not be null.")
     private Language language;
 
@@ -76,21 +78,20 @@ public class BookMetadataRequestDto {
     private double weight;
 
     public Book convertToBook() {
-        return Book.builder()
-                .isbn(this.getIsbn())
-                .title(this.getTitle())
-                .author(this.getAuthor())
-                .publisher(this.getPublisher())
-                .supplier(this.getSupplier())
-                .description(this.getDescription())
-                .price(this.getPrice())
-                .inventory(this.getInventory())
-                .language(this.getLanguage())
-                .coverType(this.getCoverType())
-                .numberOfPages(this.getNumberOfPages())
-                .measure(new Measure(this.getWidth(), this.getHeight(), this.getThickness(), this.getWeight()))
-                .purchases(0)
-                .version(0)
-                .build();
+        Book book = new Book();
+        book.setPurchases(purchases != null && purchases > 0 ? purchases : 0);
+        book.setIsbn(isbn);
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setPublisher(publisher);
+        book.setSupplier(supplier);
+        book.setDescription(description);
+        book.setPrice(price);
+        book.setInventory(inventory);
+        book.setLanguage(language);
+        book.setCoverType(coverType);
+        book.setNumberOfPages(numberOfPages);
+        book.setMeasure(new Measure(width, height, thickness, weight));
+        return book;
     }
 }
