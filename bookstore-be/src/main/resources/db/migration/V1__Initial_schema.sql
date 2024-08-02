@@ -74,11 +74,11 @@ CREATE table line_items
     version     int          not null
 );
 
-create table catalogs
+create table categories
 (
     id               bigserial primary key,
     name             varchar(255) not null,
-    parent_id        bigserial references catalogs (id) on delete cascade,
+    parent_id        bigserial references categories (id) on delete cascade,
     created_at       timestamp    not null,
     created_by       varchar(255),
     last_modified_at timestamp    not null,
@@ -86,12 +86,12 @@ create table catalogs
     version          int          not null
 );
 
-ALTER TABLE catalogs ALTER COLUMN parent_id DROP NOT NULL;
+ALTER TABLE categories ALTER COLUMN parent_id DROP NOT NULL;
 
-create table book_catalog
+create table book_category
 (
-    catalog bigserial not null ,
+    category bigserial not null ,
     book    bigserial not null ,
     name varchar(255) not null ,
-    primary key (catalog, book)
+    primary key (category, book)
 );

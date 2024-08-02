@@ -19,57 +19,57 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJdbcTest
 @ActiveProfiles("integration")
-public class BookCatalogJdbcTests {
+public class BookCategoryJdbcTests {
 
     @Autowired
     private BookRepository bookRepository;
 
     @Autowired
-    private CatalogRepository catalogRepository;
+    private CategoryRepository categoryRepository;
 
     @BeforeEach
     void setUp() {
         bookRepository.deleteAll();
-        catalogRepository.deleteAll();
+        categoryRepository.deleteAll();
     }
 
     @Test
     void testRelationship() {
         var isbn = "1234567890";
 
-        var catalog = buildCatalogExample(null, "Computer Science");
-        catalogRepository.save(catalog);
+        var catalog = buildCategoryExample(null, "Computer Science");
+        categoryRepository.save(catalog);
         var book = buildBookExample(isbn);
-        book.addCatalog(catalog);
+        book.addCategory(catalog);
         bookRepository.save(book);
 
-        // find all catalogs of the book
-        catalogRepository.findAllById(book.getCatalogIds()).forEach(c -> {
-            assertThat(book.getCatalogIds()).contains(c.getId());
+        // find all categories of the book
+        categoryRepository.findAllById(book.getCategoryIds()).forEach(c -> {
+            assertThat(book.getCategoryIds()).contains(c.getId());
             assertThat(c.getName()).isEqualTo(catalog.getName());
         });
 
-        // from `catalog` get all books
-        bookRepository.findAllByCatalogId(catalog.getId()).forEach(b -> {
-            boolean contains = b.getCatalogIds().contains(catalog.getId());
+        // from `category` get all books
+        bookRepository.findAllByCategoryId(catalog.getId()).forEach(b -> {
+            boolean contains = b.getCategoryIds().contains(catalog.getId());
             Assertions.assertThat(contains).isTrue();
         });
     }
 
     @Test
-    void testFindAllSubCatalogsByIdThenSuccess() {
-        var vietnameseCatalog = buildCatalogExample(null, "Vietnamese Literature");
-        catalogRepository.save(vietnameseCatalog);
-        var sub1 = buildCatalogExample(vietnameseCatalog.getId(), "Tiểu thuyết của Lan Rùa");
-        catalogRepository.save(sub1);
-        var sub2 = buildCatalogExample(vietnameseCatalog.getId(), "Truyện ngắn của Nguyễn Nhật Ánh");
-        catalogRepository.save(sub2);
-        var sub3 = buildCatalogExample(vietnameseCatalog.getId(), "Sách Giáo Khoa");
-        catalogRepository.save(sub3);
+    void testFindAllSubCategoriesByIdThenSuccess() {
+        var vietnameseCatalog = buildCategoryExample(null, "Vietnamese Literature");
+        categoryRepository.save(vietnameseCatalog);
+        var sub1 = buildCategoryExample(vietnameseCatalog.getId(), "Tiểu thuyết của Lan Rùa");
+        categoryRepository.save(sub1);
+        var sub2 = buildCategoryExample(vietnameseCatalog.getId(), "Truyện ngắn của Nguyễn Nhật Ánh");
+        categoryRepository.save(sub2);
+        var sub3 = buildCategoryExample(vietnameseCatalog.getId(), "Sách Giáo Khoa");
+        categoryRepository.save(sub3);
 
-        Set<Catalog> subCatalogs = catalogRepository.findAllSubCatalogsById(vietnameseCatalog.getId());
-        subCatalogs.forEach(c -> assertThat(c.getParentId()).isEqualTo(vietnameseCatalog.getId()));
-        assertThat(subCatalogs).hasSize(3);
+        Set<Category> subCategories = categoryRepository.findAllSubCategoriesById(vietnameseCatalog.getId());
+        subCategories.forEach(c -> assertThat(c.getParentId()).isEqualTo(vietnameseCatalog.getId()));
+        assertThat(subCategories).hasSize(3);
     }
 
     private Book buildBookExample(String isbn) {
@@ -92,10 +92,10 @@ public class BookCatalogJdbcTests {
         return book;
     }
 
-    private Catalog buildCatalogExample(Long parentId, String name) {
-        Catalog catalog = new Catalog();
-        catalog.setParentId(parentId);
-        catalog.setName(name);
-        return catalog;
+    private Category buildCategoryExample(Long parentId, String name) {
+        Category category = new Category();
+        category.setParentId(parentId);
+        category.setName(name);
+        return category;
     }
 }

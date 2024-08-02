@@ -20,8 +20,8 @@ public class Book {
     @Id
     private Long id;
     private String isbn;
-    @MappedCollection(idColumn = "book", keyColumn = "catalog")
-    private Set<CatalogRef> catalogs = new HashSet<>();
+    @MappedCollection(idColumn = "book", keyColumn = "category")
+    private Set<CategoryRef> categories = new HashSet<>();
     private String title;
     private String author;
     private String publisher;
@@ -47,11 +47,11 @@ public class Book {
     @Version
     private int version;
 
-    public void addCatalog(Catalog catalog) {
-        catalogs.add(new CatalogRef(catalog.getId(), catalog.getName()));
+    public void addCategory(Category category) {
+        categories.add(new CategoryRef(category.getId(), category.getName()));
     }
 
-    public Set<Long> getCatalogIds() {
-        return catalogs.stream().map(CatalogRef::getCatalog).collect(Collectors.toSet());
+    public Set<Long> getCategoryIds() {
+        return categories.stream().map(CategoryRef::getCategory).collect(Collectors.toSet());
     }
 }
