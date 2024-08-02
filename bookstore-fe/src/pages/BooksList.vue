@@ -1,14 +1,23 @@
-<script setup>
-import {computed} from "vue";
-import {useStore} from "vuex";
+<script>
 import BookUnit from "../components/BookUnit.vue";
-import TheCategory from "../components/layouts/TheCategory.vue";
-import TheBanner from "../components/layouts/TheBanner.vue";
+import {computed, onMounted} from "vue";
 
-const store = useStore();
+export default {
+  components: {
+    BookUnit
+  },
+  setup() {
+    onMounted(() => {
+      this.$store.dispatch("books-module/fetchBooks");
+    });
 
-const books = computed(() => store.getters["books/books"])
+    const booksFetched = computed(() => this.$store.getters["books-module/books"]);
 
+    return {
+      books: booksFetched
+    }
+  }
+}
 </script>
 
 <template>
