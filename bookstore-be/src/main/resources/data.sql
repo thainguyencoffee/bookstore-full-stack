@@ -1,13 +1,13 @@
-TRUNCATE TABLE catalogs CASCADE;
+TRUNCATE TABLE categories CASCADE;
 
-INSERT INTO catalogs (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (6, 'Sách tiếng Việt ', null, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
-INSERT INTO catalogs (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (4, 'Sách tiếng Anh', null, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
-INSERT INTO catalogs (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (3, 'Data Science', 4, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
-INSERT INTO catalogs (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (8, 'Tiểu thuyết của Lan Rùa', 6, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
-INSERT INTO catalogs (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (10, 'Giáo khoa - Tham khảo', 6, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
-INSERT INTO catalogs (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (11, 'Sách Giáo Khoa', 10, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
-INSERT INTO catalogs (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (12, 'Mẫu Giáo', 10, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
-INSERT INTO catalogs (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (13, 'Sách giáo viên', 10, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
+INSERT INTO categories (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (6, 'Sách tiếng Việt ', null, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
+INSERT INTO categories (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (4, 'Sách tiếng Anh', null, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
+INSERT INTO categories (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (3, 'Data Science', 4, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
+INSERT INTO categories (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (8, 'Tiểu thuyết của Lan Rùa', 6, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
+INSERT INTO categories (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (10, 'Giáo khoa - Tham khảo', 6, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
+INSERT INTO categories (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (11, 'Sách Giáo Khoa', 10, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
+INSERT INTO categories (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (12, 'Mẫu Giáo', 10, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
+INSERT INTO categories (id, name, parent_id, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (13, 'Sách giáo viên', 10, '2024-08-03 00:34:06.000000', 'guest', '2024-08-03 00:34:09.000000', 'guest', 0);
 
 TRUNCATE TABLE books CASCADE;
 
@@ -62,16 +62,16 @@ INSERT INTO books (id, isbn, title, author, publisher, supplier, description, pr
 INSERT INTO books (id, isbn, title, author, publisher, supplier, description, price, inventory, language, weight, cover_type, number_of_pages, width, height, thickness, thumbnails, purchases, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (552, '8861650249', 'Daisy', 'Toby', 'Luna Tucker', 'Rocky', null, 19000000, 3, 'ENGLISH', 200, 'HARDCOVER', 25, 120, 180, 10, '{"https://i.scdn.co/image/ab67616d0000b27345680a4a57c97894490a01c1"}', 0, '2024-07-31 20:23:25.134082', 'guest', '2024-07-31 20:23:25.134082', 'guest', 1);
 INSERT INTO books (id, isbn, title, author, publisher, supplier, description, price, inventory, language, weight, cover_type, number_of_pages, width, height, thickness, thumbnails, purchases, created_at, created_by, last_modified_at, last_modified_by, version) VALUES (553, '3640597893', 'Rocky', 'Zoe', 'Bailey', 'Toby Harley', null, 19000000, 3, 'ENGLISH', 200, 'HARDCOVER', 25, 120, 180, 10, '{"https://i.scdn.co/image/ab67616d0000b27345680a4a57c97894490a01c1"}', 0, '2024-07-31 20:23:25.134241', 'guest', '2024-07-31 20:23:25.134241', 'guest', 1);
 
-TRUNCATE TABLE book_catalog CASCADE;
+TRUNCATE TABLE book_category CASCADE;
 
-INSERT INTO public.book_catalog (catalog, book, name) VALUES (10, 554, 'Giáo khoa - Tham khảo');
-INSERT INTO public.book_catalog (catalog, book, name) VALUES (11, 505, 'Sách Giáo Khoa');
-INSERT INTO public.book_catalog (catalog, book, name) VALUES (11, 506, 'Sách Giáo Khoa');
-INSERT INTO public.book_catalog (catalog, book, name) VALUES (11, 507, 'Sách Giáo Khoa');
-INSERT INTO public.book_catalog (catalog, book, name) VALUES (11, 508, 'Sách Giáo Khoa');
-INSERT INTO public.book_catalog (catalog, book, name) VALUES (11, 509, 'Sách Giáo Khoa');
-INSERT INTO public.book_catalog (catalog, book, name) VALUES (11, 510, 'Sách Giáo Khoa');
-INSERT INTO public.book_catalog (catalog, book, name) VALUES (10, 511, 'Giáo khoa - Tham khảo');
-INSERT INTO public.book_catalog (catalog, book, name) VALUES (10, 512, 'Giáo khoa - Tham khảo');
-INSERT INTO public.book_catalog (catalog, book, name) VALUES (10, 513, 'Giáo khoa - Tham khảo');
-INSERT INTO public.book_catalog (catalog, book, name) VALUES (10, 514, 'Giáo khoa - Tham khảo');
+INSERT INTO book_category (category, book, name) VALUES (10, 554, 'Giáo khoa - Tham khảo');
+INSERT INTO book_category (category, book, name) VALUES (11, 505, 'Sách Giáo Khoa');
+INSERT INTO book_category (category, book, name) VALUES (11, 506, 'Sách Giáo Khoa');
+INSERT INTO book_category (category, book, name) VALUES (11, 507, 'Sách Giáo Khoa');
+INSERT INTO book_category (category, book, name) VALUES (11, 508, 'Sách Giáo Khoa');
+INSERT INTO book_category (category, book, name) VALUES (11, 509, 'Sách Giáo Khoa');
+INSERT INTO book_category (category, book, name) VALUES (11, 510, 'Sách Giáo Khoa');
+INSERT INTO book_category (category, book, name) VALUES (10, 511, 'Giáo khoa - Tham khảo');
+INSERT INTO book_category (category, book, name) VALUES (10, 512, 'Giáo khoa - Tham khảo');
+INSERT INTO book_category (category, book, name) VALUES (10, 513, 'Giáo khoa - Tham khảo');
+INSERT INTO book_category (category, book, name) VALUES (10, 514, 'Giáo khoa - Tham khảo');

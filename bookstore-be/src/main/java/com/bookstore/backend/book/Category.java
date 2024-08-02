@@ -7,10 +7,10 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
 
-@Table("catalogs")
+@Table("categories")
 @Getter
 @Setter
-public class Catalog {
+public class Category {
 
     @Id
     private Long id;
