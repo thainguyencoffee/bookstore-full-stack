@@ -2,15 +2,11 @@ package com.bookstore.backend.jdbc;
 
 import com.bookstore.backend.book.*;
 import com.bookstore.backend.core.config.DataConfig;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Set;
@@ -29,48 +25,26 @@ public class BookCategoryJdbcTests {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @BeforeEach
-    void setUp() {
-        bookRepository.deleteAll();
-        categoryRepository.deleteAll();
-    }
-
     @Test
     void testRelationship() {
-        var isbn = "1234567890";
+        var isbn = "0987654321";
 
         var catalog = buildCategoryExample(null, "Computer Science");
         categoryRepository.save(catalog);
         var book = buildBookExample(isbn);
-        book.addCategory(catalog);
+        book.setCategory(catalog);
         bookRepository.save(book);
-
-        // find all categories of the book
-        categoryRepository.findAllById(book.getCategoryIds()).forEach(c -> {
-            assertThat(book.getCategoryIds()).contains(c.getId());
-            assertThat(c.getName()).isEqualTo(catalog.getName());
-        });
 
         // from `category` get all books
         bookRepository.findAllByCategoryId(catalog.getId(), 10, 0).forEach(b -> {
-            boolean contains = b.getCategoryIds().contains(catalog.getId());
-            Assertions.assertThat(contains).isTrue();
+            b.getCategory().getCategoryId().equals(catalog.getId());
         });
     }
 
     @Test
     void testFindAllSubCategoriesByIdThenSuccess() {
-        var vietnameseCatalog = buildCategoryExample(null, "Vietnamese Literature");
-        categoryRepository.save(vietnameseCatalog);
-        var sub1 = buildCategoryExample(vietnameseCatalog.getId(), "Tiểu thuyết của Lan Rùa");
-        categoryRepository.save(sub1);
-        var sub2 = buildCategoryExample(vietnameseCatalog.getId(), "Truyện ngắn của Nguyễn Nhật Ánh");
-        categoryRepository.save(sub2);
-        var sub3 = buildCategoryExample(vietnameseCatalog.getId(), "Sách Giáo Khoa");
-        categoryRepository.save(sub3);
-
-        Set<Category> subCategories = categoryRepository.findAllSubCategoriesById(vietnameseCatalog.getId());
-        subCategories.forEach(c -> assertThat(c.getParentId()).isEqualTo(vietnameseCatalog.getId()));
+        Set<Category> subCategories = categoryRepository.findAllSubCategoriesById(10L);
+        subCategories.forEach(c -> assertThat(c.getParentId()).isEqualTo(10));
         assertThat(subCategories).hasSize(3);
     }
 

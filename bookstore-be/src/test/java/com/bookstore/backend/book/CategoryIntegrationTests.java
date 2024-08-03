@@ -1,7 +1,6 @@
 package com.bookstore.backend.book;
 
 import com.bookstore.backend.IntegrationTestsBase;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -29,7 +28,23 @@ public class CategoryIntegrationTests extends IntegrationTestsBase {
 
     @Test
     void whenUnauthenticatedGetBooksOfCategoryThenOK() {
-        List<String> expectedIsbn = List.of("5936095279", "2339238264", "4968497081", "9153338379", "5111638451");
+
+        List<String> expectedIsbn = List.of("6954086462",
+                "5274133268",
+                "4187247453",
+                "1034372457",
+                "5018958839",
+                "1868154635",
+                "7498173758",
+                "6424132410",
+                "4899895256",
+                "4172782186",
+                "1450078000",
+                "7357994445",
+                "7237004293",
+                "1765764446",
+                "3749983842",
+                "7343071939");
         webTestClient.get()
                 .uri("/api/categories/" + 10 + "/books")
                 .exchange()

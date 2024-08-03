@@ -1,9 +1,7 @@
 package com.bookstore.backend.book.dto;
 
-import com.bookstore.backend.book.Book;
 import com.bookstore.backend.book.CoverType;
 import com.bookstore.backend.book.Language;
-import com.bookstore.backend.book.Measure;
 import com.bookstore.backend.book.validator.BookIsbnConstraint;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +16,9 @@ public class BookMetadataRequestDto {
     @Pattern(regexp = "^([0-9]{10}|[0-9]{13})$", message = "The ISBN must be valid")
     @BookIsbnConstraint
     private String isbn;
+
+    @NotNull(message = "The categoryId must not be null")
+    private Long categoryId;
 
     @NotBlank(message = "The title of book must not be null or blank.")
     @Size(max = 255, message = "The title too long")
@@ -61,37 +62,20 @@ public class BookMetadataRequestDto {
     @NotNull(message = "The width of book must not be null")
     @Min(value = 40, message = "The width of book must greater than 40 mm.")
     @Max(value = 300, message = "The width of book must less than 300 mm.")
-    private double width;
+    private Double width;
 
     @NotNull(message = "The height of book must not be null.")
     @Min(value = 60, message = "The height of book must greater than 60 mm.")
     @Max(value = 400, message = "The height of book must less than 400 mm.")
-    private double height;
+    private Double height;
 
     @NotNull(message = "The thickness of book must not be null.")
     @Min(value = 1, message = "The thickness of book must greater than 1 mm.")
     @Max(value = 100, message = "The thickness of book must less than 100 mm.")
-    private double thickness;
+    private Double thickness;
 
     @NotNull(message = "The weight of book must not be null.")
     @Min(value = 170, message = "The lowest weight of book is 170 grams.")
-    private double weight;
+    private Double weight;
 
-    public Book convertToBook() {
-        Book book = new Book();
-        book.setPurchases(purchases != null && purchases > 0 ? purchases : 0);
-        book.setIsbn(isbn);
-        book.setTitle(title);
-        book.setAuthor(author);
-        book.setPublisher(publisher);
-        book.setSupplier(supplier);
-        book.setDescription(description);
-        book.setPrice(price);
-        book.setInventory(inventory);
-        book.setLanguage(language);
-        book.setCoverType(coverType);
-        book.setNumberOfPages(numberOfPages);
-        book.setMeasure(new Measure(width, height, thickness, weight));
-        return book;
-    }
 }

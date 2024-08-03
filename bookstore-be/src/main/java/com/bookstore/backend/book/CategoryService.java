@@ -18,8 +18,14 @@ public class CategoryService {
         return categoryRepository.findAll(pageable);
     }
 
+    public Category findById(Long id) {
+        return categoryRepository.findById(id).orElseThrow(() ->
+                new CustomNoResultException(Category.class, CustomNoResultException.Identifier.ID, id));
+    }
+
     public List<Book> findAllBooksByCategory(Long categoryId, Pageable pageable) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CustomNoResultException(Category.class, CustomNoResultException.Identifier.ID, categoryId));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() ->
+                new CustomNoResultException(Category.class, CustomNoResultException.Identifier.ID, categoryId));
         int limit = pageable.getPageSize();
         int offset = (int) pageable.getOffset();
         return bookRepository.findAllByCategoryId(category.getId(), limit, offset);
