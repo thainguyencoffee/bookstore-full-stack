@@ -39,8 +39,14 @@ jobs:
           kustomize edit set image \
             ${{ env.IMAGE_NAME }}=${{ env.APP_IMAGE }}:${{ env.VERSION }}
           sed -i 's/ref=[^"]*/ref=${{ env.VERSION }}/' kustomization.yml
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Update ${{ env.APP_NAME }} to version ${{ env.VERSION }}"
-          branch: main
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+      - name: Commit and Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
+        run: |
+          git add .
+          git commit -m "Update image version to ${{ env.VERSION }}"
+          git push https://${{ env.PAT }}@github.com/${{ github.repository }}.git main
