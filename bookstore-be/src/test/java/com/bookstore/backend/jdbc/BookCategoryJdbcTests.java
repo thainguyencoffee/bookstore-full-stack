@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Set;
@@ -50,7 +52,7 @@ public class BookCategoryJdbcTests {
         });
 
         // from `category` get all books
-        bookRepository.findAllByCategoryId(catalog.getId()).forEach(b -> {
+        bookRepository.findAllByCategoryId(catalog.getId(), 10, 0).forEach(b -> {
             boolean contains = b.getCategoryIds().contains(catalog.getId());
             Assertions.assertThat(contains).isTrue();
         });

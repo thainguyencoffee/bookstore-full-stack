@@ -24,10 +24,19 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/**", "/v3/api-docs/**","/swagger-ui/**","/swagger-ui.html").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
-                        .requestMatchers("/api/guest-orders/**", "/api/payment/vn-pay/**", "/api/email/orders/**").permitAll()
+
+                        .requestMatchers(
+                                "/api/guest-orders/**",
+                                "/api/payment/vn-pay/**",
+                                "/api/email/orders/**",
+                                "/api/categories/**").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/api/orders/**").permitAll()
+
                         .requestMatchers("/api/shopping-carts/**", "/api/orders/**").authenticated()
+
                         .anyRequest().hasAnyRole("employee")
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
