@@ -1,10 +1,11 @@
 package com.bookstore.backend.book;
 
-import com.bookstore.backend.awss3.AmazonS3Service;
 import com.bookstore.backend.book.dto.BookMetadataRequestDto;
+import com.bookstore.backend.book.dto.BookMetadataUpdateDto;
 import com.bookstore.backend.book.dto.ThumbnailUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
-import java.util.HashSet;
-import java.util.Set;
 
 @RestController
 @RequestMapping(value = "api/books", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -28,7 +24,6 @@ class BookController {
 
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
     private final BookService bookService;
-    private final AmazonS3Service amazonS3Service;
 
     @Operation(summary = "Get all books")
     @GetMapping
@@ -65,32 +60,20 @@ class BookController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Book save(@Valid @RequestBody BookMetadataRequestDto bookMetadataDto) {
-        Book book = bookMetadataDto.convertToBook();
-        return bookService.save(book);
+        return bookService.save(bookMetadataDto);
     }
 
     @Operation(summary = "Update a book by ISBN", security = @SecurityRequirement(name = "token"))
     @PatchMapping(value = "/{isbn}")
-    public Book update(@PathVariable String isbn, @Validated BookMetadataRequestDto bookMetadataDto) {
-        var book = bookMetadataDto.convertToBook();
-        return bookService.updateByIsbn(isbn, book);
+    public Book update(@PathVariable String isbn, @Valid @RequestBody BookMetadataUpdateDto bookMetadataDto) {
+        return bookService.updateByIsbn(isbn, bookMetadataDto);
     }
 
     @Operation(summary = "Upload thumbnails for a book by ISBN", security = @SecurityRequirement(name = "token"))
     @PostMapping(value = "/{isbn}/upload-thumbnail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public Book uploadPhoto(@PathVariable String isbn, @ModelAttribute ThumbnailUpdateDto thumbnailsUpdateDto) {
-        Book book = bookService.findByIsbn(isbn);
-        Set<String> thumbnailsToDelete = new HashSet<>(book.getThumbnails());
-        thumbnailsToDelete.removeAll(thumbnailsUpdateDto.getThumbnailsChange());
-        thumbnailsToDelete.forEach(amazonS3Service::deleteFile);
-        thumbnailsUpdateDto.getThumbnailsAdd().forEach(mf -> {
-            String folder = "books/" + isbn + "/thumbnails/";
-            String url = amazonS3Service.uploadFile(mf, folder);
-            thumbnailsUpdateDto.addThumbnail(url);
-        });
-        book.setThumbnails(thumbnailsUpdateDto.getThumbnailsChange());
-        return bookService.save(book);
+        return bookService.uploadThumbnail(isbn, thumbnailsUpdateDto);
     }
 
     @Operation(summary = "Delete a book by ISBN", security = @SecurityRequirement(name = "token"))

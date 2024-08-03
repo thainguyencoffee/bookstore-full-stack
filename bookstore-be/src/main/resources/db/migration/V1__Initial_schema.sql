@@ -1,7 +1,24 @@
+create table categories
+(
+    id               bigserial primary key,
+    name             varchar(255) not null,
+    parent_id        bigserial references categories (id) on delete cascade,
+    created_at       timestamp    not null,
+    created_by       varchar(255),
+    last_modified_at timestamp    not null,
+    last_modified_by varchar(255),
+    version          int          not null
+);
+
+ALTER TABLE categories
+    ALTER COLUMN parent_id DROP NOT NULL;
+
 CREATE TABLE books
 (
     id               BIGSERIAL    NOT NULL PRIMARY KEY,
     isbn             varchar(255) NOT NULL UNIQUE,
+    category_id      BIGSERIAL    NOT NULL REFERENCES categories (id) ON DELETE CASCADE,
+    category_name    varchar(255) NOT NULL,
     title            varchar(255) NOT NULL,
     author           varchar(255) NOT NULL,
     publisher        varchar(255) NOT NULL,
@@ -72,26 +89,4 @@ CREATE table line_items
     price       bigint       not null,
     total_price bigint       not null,
     version     int          not null
-);
-
-create table categories
-(
-    id               bigserial primary key,
-    name             varchar(255) not null,
-    parent_id        bigserial references categories (id) on delete cascade,
-    created_at       timestamp    not null,
-    created_by       varchar(255),
-    last_modified_at timestamp    not null,
-    last_modified_by varchar(255),
-    version          int          not null
-);
-
-ALTER TABLE categories ALTER COLUMN parent_id DROP NOT NULL;
-
-create table book_category
-(
-    category bigserial not null ,
-    book    bigserial not null ,
-    name varchar(255) not null ,
-    primary key (category, book)
 );

@@ -14,7 +14,6 @@ public class ThumbnailUpdateDto {
 
     @NotNull(message = "thumbnailsChange must not be null")
     private Set<String> thumbnailsChange;
-    @NotNull(message = "thumbnailsDelete must not be null")
     private List<MultipartFile> thumbnailsAdd;
 
     public void addThumbnail(String thumbnail) {

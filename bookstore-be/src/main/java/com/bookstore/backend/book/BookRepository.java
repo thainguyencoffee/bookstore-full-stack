@@ -44,7 +44,7 @@ public interface BookRepository extends ListCrudRepository<Book, Long> {
 //    @Query("select * from books b order by b.purchases desc limit :size offset :page * :size")
     Page<Book> findAllByOrderByPurchasesDesc(Pageable pageable);
 
-    @Query("select b.* from books b join book_category bc on b.id = bc.book where bc.category = :id")
-    Set<Book> findAllByCategoryId(@Param("id") Long id);
+    @Query("select b.* from books b where b.category_id = :categoryId LIMIT :limit OFFSET :offset")
+    List<Book> findAllByCategoryId(@Param("categoryId") Long categoryId, @Param("limit") int limit, @Param("offset") int offset);
 
 }

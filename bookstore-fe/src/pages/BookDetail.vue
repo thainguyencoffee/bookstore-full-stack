@@ -7,10 +7,10 @@ export default {
   setup(props) {
     const store = useStore();
 
-    onMounted(() => store.dispatch("fetchBookDetails", props.isbn))
+    onMounted(() => store.dispatch("books/fetchBookDetails", props.isbn))
 
-    const bookDetail = computed(() => store.getters.bookDetail)
-    const isLoading = computed(() => store.getters.isLoading)
+    const bookDetail = computed(() => store.getters["books/bookDetail"])
+    const isLoading = computed(() => store.getters["books/isLoading"])
     return {
       book: bookDetail,
       isLoading: isLoading
