@@ -19,4 +19,12 @@ Instructions for setting up the project locally.
 Instructions on how to use the application.
 
 ## Contributing
-Guidelines for contributing to the project.
+### Initial setup
+1. Thiết lập cơ sở dữ liệu và Keycloak (yêu cầu terminal đang ở thư mục gốc của project)
+```bash
+cd bookstore-dep/docker && docker compose up -d bookstore-keycloak
+```
+2. Run bookstore backend
+```bash
+cd bookstore-be && ./gradlew bootRun
+```
