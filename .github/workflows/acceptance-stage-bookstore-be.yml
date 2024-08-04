@@ -3,7 +3,7 @@ on:
   workflow_run:
     workflows: ["Commit stage bookstore backend module"]
     types: [completed]
-    branches: main
+    branches: *
 
 concurrency: acceptance
 
