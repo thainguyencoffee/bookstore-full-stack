@@ -88,5 +88,3 @@ management:
       enabled: true
     git:
       enabled: true
-
-# trigger the build

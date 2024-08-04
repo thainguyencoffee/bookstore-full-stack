@@ -43,8 +43,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
       - name: Commit and Push changes
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
         run: |
           git add .
           git commit -m "Update image version to ${{ env.VERSION }}"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git test-production
+          git push https://x-access-token:${{ env.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git test-production
