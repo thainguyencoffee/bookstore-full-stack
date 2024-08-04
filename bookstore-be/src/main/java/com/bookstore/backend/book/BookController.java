@@ -1,7 +1,7 @@
 package com.bookstore.backend.book;
 
-import com.bookstore.backend.book.dto.BookMetadataRequestDto;
-import com.bookstore.backend.book.dto.BookMetadataUpdateDto;
+import com.bookstore.backend.book.dto.book.BookMetadataRequestDto;
+import com.bookstore.backend.book.dto.book.BookMetadataUpdateDto;
 import com.bookstore.backend.book.dto.ThumbnailUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

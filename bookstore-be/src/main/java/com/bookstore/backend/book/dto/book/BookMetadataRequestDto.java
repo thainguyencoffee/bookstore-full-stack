@@ -1,4 +1,4 @@
-package com.bookstore.backend.book.dto;
+package com.bookstore.backend.book.dto.book;
 
 import com.bookstore.backend.book.CoverType;
 import com.bookstore.backend.book.Language;
@@ -14,6 +14,7 @@ public class BookMetadataRequestDto {
 
     @NotBlank(message = "The isbn of book must not be null or blank.")
     @Pattern(regexp = "^([0-9]{10}|[0-9]{13})$", message = "The ISBN must be valid")
+    @Size(max = 255, message = "The isbn of book is too long")
     @BookIsbnConstraint
     private String isbn;
 
@@ -21,19 +22,19 @@ public class BookMetadataRequestDto {
     private Long categoryId;
 
     @NotBlank(message = "The title of book must not be null or blank.")
-    @Size(max = 255, message = "The title too long")
+    @Size(max = 255, message = "The title of book is too long")
     private String title;
 
     @NotBlank(message = "The author of book must not be null or blank.")
-    @Size(max = 255, message = "The author name is too long")
+    @Size(max = 255, message = "The author of book is too long")
     private String author;
 
     @NotBlank(message = "The publisher of book must not be null or blank.")
-    @Size(max = 255, message = "The publisher name is too long")
+    @Size(max = 255, message = "The publisher of book is too long")
     private String publisher;
 
     @NotBlank(message = "The supplier of book must not be null or blank.")
-    @Size(max = 255, message = "The supplier name is too long")
+    @Size(max = 255, message = "The supplier of book is too long")
     private String supplier;
 
     private String description;

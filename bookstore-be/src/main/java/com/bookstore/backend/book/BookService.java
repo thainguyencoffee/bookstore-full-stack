@@ -1,8 +1,8 @@
 package com.bookstore.backend.book;
 
 import com.bookstore.backend.awss3.AmazonS3Service;
-import com.bookstore.backend.book.dto.BookMetadataRequestDto;
-import com.bookstore.backend.book.dto.BookMetadataUpdateDto;
+import com.bookstore.backend.book.dto.book.BookMetadataRequestDto;
+import com.bookstore.backend.book.dto.book.BookMetadataUpdateDto;
 import com.bookstore.backend.book.dto.ThumbnailUpdateDto;
 import com.bookstore.backend.core.exception.CustomNoResultException;
 import lombok.RequiredArgsConstructor;

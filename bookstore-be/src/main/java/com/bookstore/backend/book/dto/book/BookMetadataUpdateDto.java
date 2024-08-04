@@ -1,4 +1,4 @@
-package com.bookstore.backend.book.dto;
+package com.bookstore.backend.book.dto.book;
 
 import com.bookstore.backend.book.CoverType;
 import com.bookstore.backend.book.Language;
