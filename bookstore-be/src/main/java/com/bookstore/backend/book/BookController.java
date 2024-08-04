@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "api/books", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
-@CrossOrigin
 class BookController {
 
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
@@ -27,7 +26,7 @@ class BookController {
 
     @Operation(summary = "Get all books")
     @GetMapping
-    Page<Book> all(@ParameterObject Pageable pageable) {
+    public Page<Book> all(@ParameterObject Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
