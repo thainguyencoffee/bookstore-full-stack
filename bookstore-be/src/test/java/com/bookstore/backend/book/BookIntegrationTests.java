@@ -3,11 +3,17 @@ package com.bookstore.backend.book;
 import com.bookstore.backend.IntegrationTestsBase;
 import com.bookstore.backend.book.dto.book.BookMetadataRequestDto;
 import com.bookstore.backend.book.dto.book.BookMetadataUpdateDto;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.util.List;
 
 // Summary of the test data
 // Total categories: 7 [id] {'10000', '10001', '10002', '10003', '10004', '10005', '10006'}
@@ -233,6 +239,103 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isNoContent();
+    }
+
+    @Test
+    void whenUnauthenticatedUploadThumbnailsBookThen401() {
+        String isbn = "1234567890";
+        webTestClient.post()
+                .uri("/api/books/" + isbn + "/thumbnails")
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters
+                        .fromMultipartData("thumbnails", new ClassPathResource("thumbnail.svg"))
+                        .with("thumbnails", new ClassPathResource("thumbnail.svg")))
+                .exchange()
+                .expectStatus().isUnauthorized();
+    }
+
+    @Test
+    void whenAuthenticatedWithInvalidRoleUploadThumbnailsBookThen403() {
+        String isbn = "1234567890";
+        webTestClient.post()
+                .uri("/api/books/" + isbn + "/thumbnails")
+                .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters
+                        .fromMultipartData("thumbnails", new ClassPathResource("thumbnail.svg"))
+                        .with("thumbnails", new ClassPathResource("thumbnail.svg")))
+                .exchange()
+                .expectStatus().isForbidden();
+    }
+
+
+    @Test
+    void whenAuthenticatedWithValidRoleUpdateThumbnailsBookThenOK() throws com.fasterxml.jackson.core.JsonProcessingException {
+        String isbn = "1234567890";
+
+        List<String> thumbnails = uploadThumbnails(isbn);
+
+        var req = new BookMetadataUpdateDto();
+        req.setThumbnails(thumbnails);
+        webTestClient.patch()
+                .uri("/api/books/" + isbn)
+                .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
+                .body(BodyInserters.fromValue(req))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.thumbnails").isArray()
+                .jsonPath("$.thumbnails.length()").isEqualTo(2);
+    }
+
+    @Test
+    void whenAuthenticatedWithValidRoleUpdateThumbnailsBookAndRemoveOldThumbnailsThenOK() throws com.fasterxml.jackson.core.JsonProcessingException {
+        String isbn = "1234567890";
+
+        List<String> thumbnails = uploadThumbnails(isbn);
+
+        var req = new BookMetadataUpdateDto();
+        req.setThumbnails(thumbnails);
+        webTestClient.patch()
+                .uri("/api/books/" + isbn)
+                .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
+                .body(BodyInserters.fromValue(req))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.thumbnails").isArray()
+                .jsonPath("$.thumbnails.length()").isEqualTo(2);
+
+        List<String> thumbnails2 = uploadThumbnails(isbn);
+        thumbnails2.add(thumbnails.get(0));
+        req.setThumbnails(thumbnails2);
+        webTestClient.patch()
+                .uri("/api/books/" + isbn)
+                .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
+                .body(BodyInserters.fromValue(req))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.thumbnails").isArray()
+                .jsonPath("$.thumbnails.length()").isEqualTo(3);
+
+        // Phía digital ocean ở thư mục thumbnails của book này nên chỉ có 3 files
+    }
+
+    private List<String> uploadThumbnails(String isbn) throws com.fasterxml.jackson.core.JsonProcessingException {
+        String responseRaw = webTestClient.post()
+                .uri("/api/books/" + isbn + "/thumbnails")
+                .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters
+                        .fromMultipartData("thumbnails", new ClassPathResource("thumbnail.svg"))
+                        .with("thumbnails", new ClassPathResource("thumbnail.svg")))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .returnResult().getResponseBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(responseRaw, new TypeReference<>() {});
     }
 
     private static BookMetadataRequestDto buildBookMetadata(boolean isValid, String isbn, Long categoryId) {

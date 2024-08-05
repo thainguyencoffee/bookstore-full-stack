@@ -1,10 +1,16 @@
 package com.bookstore.backend.book;
 
 import com.bookstore.backend.IntegrationTestsBase;
+import com.bookstore.backend.book.dto.book.BookMetadataUpdateDto;
 import com.bookstore.backend.book.dto.category.CategoryMetadataRequestDto;
 import com.bookstore.backend.book.dto.category.CategoryMetadataUpdateDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
@@ -209,7 +215,7 @@ public class CategoryIntegrationTests extends IntegrationTestsBase {
                 .exchange()
                 .expectStatus().isNoContent();
     }
-    
+
     @Test
     void whenAuthenticatedWithValidRoleDeleteCategoryNotFoundThen404() {
         webTestClient.delete()
@@ -217,6 +223,69 @@ public class CategoryIntegrationTests extends IntegrationTestsBase {
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isNotFound();
+    }
+
+    @Test
+    void whenUnauthenticatedUploadThumbnailsThen401() {
+        webTestClient.post()
+                .uri("/api/categories/" + 10001 + "/thumbnails")
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData("thumbnail", new ClassPathResource("thumbnail.svg")))
+                .exchange()
+                .expectStatus().isUnauthorized();
+    }
+
+    @Test
+    void whenAuthenticatedWithInvalidRoleUploadThumbnailsThen403() {
+        webTestClient.post()
+                .uri("/api/categories/" + 10001 + "/thumbnails")
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData("thumbnail", new ClassPathResource("thumbnail.svg")))
+                .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
+                .exchange()
+                .expectStatus().isForbidden();
+    }
+
+    @Test
+    void whenAuthenticatedWithValidRoleUpdateThumbnailsBookAndRemoveOldThumbnailsThenOK() throws com.fasterxml.jackson.core.JsonProcessingException {
+        var id = 10001L;
+        String thumbnails = uploadThumbnails(id);
+
+        var req = new CategoryMetadataUpdateDto();
+        req.setThumbnail(thumbnails);
+        webTestClient.patch()
+                .uri("/api/categories/" + 10001)
+                .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
+                .body(BodyInserters.fromValue(req))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.thumbnail").isNotEmpty();
+
+        String thumbnail2 = uploadThumbnails(id);
+        req.setThumbnail(thumbnail2);
+        webTestClient.patch()
+                .uri("/api/categories/" + 10001)
+                .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
+                .body(BodyInserters.fromValue(req))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.thumbnail").isNotEmpty();
+
+        // Phía digital ocean ở thư mục thumbnail của category này nên chỉ có 1 files
+    }
+
+    private String uploadThumbnails(Long id) throws JsonProcessingException {
+        return webTestClient.post()
+                .uri("/api/categories/" + id + "/thumbnails")
+                .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData("thumbnail", new ClassPathResource("thumbnail.svg")))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .returnResult().getResponseBody();
     }
 
     private static CategoryMetadataRequestDto buildCategoryMetadata(String name, Long parent) {

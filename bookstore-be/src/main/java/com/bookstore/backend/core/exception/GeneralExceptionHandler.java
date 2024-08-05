@@ -118,4 +118,13 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         errorInfo.setMessage(ex.getMessage());
         return new ResponseEntity<>(new ApiError(List.of(errorInfo)), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(AmazonServiceS3Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<Object> handleAmazonS3Exception(AmazonServiceS3Exception ex) {
+        ApiError.ErrorInfo errorInfo = new ApiError.ErrorInfo();
+        errorInfo.setMessage(ex.getMessage());
+        return new ResponseEntity<>(new ApiError(List.of(errorInfo)), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }

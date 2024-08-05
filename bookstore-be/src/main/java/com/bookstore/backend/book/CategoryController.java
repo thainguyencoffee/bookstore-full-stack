@@ -72,8 +72,9 @@ public class CategoryController {
     @Operation(summary = "Upload thumbnail for a category", security = @SecurityRequirement(name = "token"))
     @PostMapping(value = "/{id}/thumbnails", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public List<String> uploadThumbnail(@PathVariable String id, @RequestPart List<MultipartFile> thumbnails) {
-        return multiMediaService.uploadEverything(Category.class, id, thumbnails, "thumbnail");
+    public String uploadThumbnail(@PathVariable String id, @RequestPart MultipartFile thumbnail) {
+        return multiMediaService.uploadEverything(Category.class, id, List.of(thumbnail), "thumbnail")
+                .get(0);
     }
 
 }
