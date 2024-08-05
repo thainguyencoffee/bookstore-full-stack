@@ -3,11 +3,13 @@ package com.bookstore.backend.book;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.*;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -31,7 +33,7 @@ public class Book {
     private Integer numberOfPages;
     @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL)
     private Measure measure;
-    private Set<String> thumbnails;
+    private List<String> thumbnails = new ArrayList<>();
     private Integer purchases;
     @CreatedDate
     private Instant createdAt;

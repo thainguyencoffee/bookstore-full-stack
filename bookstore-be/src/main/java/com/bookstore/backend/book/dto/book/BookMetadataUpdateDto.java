@@ -7,6 +7,8 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class BookMetadataUpdateDto {
@@ -54,4 +56,5 @@ public class BookMetadataUpdateDto {
     @NumberConstraint(min = 170, message = "The lowest weight of book is 170 grams.")
     private Double weight;
 
+    private List<String> thumbnails;
 }

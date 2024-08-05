@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import jakarta.validation.constraints.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class BookMetadataRequestDto {
@@ -78,5 +80,7 @@ public class BookMetadataRequestDto {
     @NotNull(message = "The weight of book must not be null.")
     @Min(value = 170, message = "The lowest weight of book is 170 grams.")
     private Double weight;
+
+    private List<String> thumbnails;
 
 }

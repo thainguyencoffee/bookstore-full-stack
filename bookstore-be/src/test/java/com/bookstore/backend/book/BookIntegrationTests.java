@@ -5,20 +5,13 @@ import com.bookstore.backend.book.dto.book.BookMetadataRequestDto;
 import com.bookstore.backend.book.dto.book.BookMetadataUpdateDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
+// Summary of the test data
+// Total categories: 7 [id] {'10000', '10001', '10002', '10003', '10004', '10005', '10006'}
+// Total books: 2 [isbn]{'1234567890', '1234567891'}
 class BookIntegrationTests extends IntegrationTestsBase {
 
     @Autowired
@@ -31,24 +24,38 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.content").isArray();
+                .jsonPath("$.content").isArray()
+                .jsonPath("$.content.length()").isEqualTo(2);
     }
 
     @Test
     void whenUnauthenticatedAndBookAvailableGetBookByIsbnThenOk() {
-        // from classpath:data.sql -> books available
-        var isbn = "5936095279";
+        var isbn = "1234567890";
         webTestClient
                 .get().uri("/api/books/" + isbn)
                 .exchange()
                 .expectStatus().is2xxSuccessful()
                 .expectBody()
-                .jsonPath("$.isbn").isEqualTo(isbn);
+                .jsonPath("$.isbn").isEqualTo(isbn)
+                .jsonPath("$.title").isEqualTo("Spring boot in action")
+                .jsonPath("$.author").isEqualTo("Craig Walls")
+                .jsonPath("$.publisher").isEqualTo("Manning")
+                .jsonPath("$.supplier").isEqualTo("Manning")
+                .jsonPath("$.price").isEqualTo(1000000)
+                .jsonPath("$.language").isEqualTo("ENGLISH")
+                .jsonPath("$.coverType").isEqualTo("PAPERBACK")
+                .jsonPath("$.numberOfPages").isEqualTo(300)
+                .jsonPath("$.purchases").isEqualTo(10)
+                .jsonPath("$.inventory").isEqualTo(100)
+                .jsonPath("$.description").isEqualTo("Spring boot in action")
+                .jsonPath("$.measure.width").isEqualTo(300)
+                .jsonPath("$.measure.height").isEqualTo(400)
+                .jsonPath("$.measure.thickness").isEqualTo(100)
+                .jsonPath("$.measure.weight").isEqualTo(170);
     }
 
     @Test
     void whenUnauthenticatedAndBookNotAvailableGetBookByIsbnThenNotFound() {
-        // from classpath:data.sql -> books available
         var isbn = "99999999999";
         webTestClient
                 .get().uri("/api/books/" + isbn)
@@ -58,8 +65,8 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
     @Test
     void whenUnauthenticatedCreateBookThen401() {
-        var categoryIdAvailable = 6L;
-        var bookReq = buildBookMetadata(true, "1234567890", categoryIdAvailable);
+        var springCategory = 10002L;
+        var bookReq = buildBookMetadata(true, "1234567892", springCategory);
         webTestClient
                 .post()
                 .uri("/api/books")
@@ -70,8 +77,8 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
     @Test
     void whenAuthenticatedWithInvalidRoleCreateBookThen403() {
-        var categoryIdAvailable = 6L;
-        var bookReq = buildBookMetadata(true, "1234567890", categoryIdAvailable);
+        var springCategory = 10002L;
+        var bookReq = buildBookMetadata(true, "1234567892", springCategory);
         webTestClient
                 .post()
                 .uri("/api/books")
@@ -83,9 +90,8 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
     @Test
     void whenAuthenticatedWithValidRoleCreateBookThen201() {
-        var categoryIdAvailable = 6L;
-        var isbn = "1234567890";
-        var bookReq = buildBookMetadata(true, isbn, categoryIdAvailable);
+        var springCategory = 10002L;
+        var bookReq = buildBookMetadata(true, "1234567892", springCategory);
         webTestClient
                 .post()
                 .uri("/api/books")
@@ -94,12 +100,13 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody()
-                .jsonPath("$.category.categoryId").isEqualTo(categoryIdAvailable)
-                .jsonPath("$.isbn").isEqualTo(isbn)
+                .jsonPath("$.category.categoryId").isEqualTo(springCategory)
+                .jsonPath("$.isbn").isEqualTo("1234567892")
                 .jsonPath("$.title").isEqualTo(bookReq.getTitle())
                 .jsonPath("$.author").isEqualTo(bookReq.getAuthor())
                 .jsonPath("$.publisher").isEqualTo(bookReq.getPublisher())
                 .jsonPath("$.supplier").isEqualTo(bookReq.getSupplier())
+                .jsonPath("$.price").isEqualTo(bookReq.getPrice())
                 .jsonPath("$.language").isEqualTo(bookReq.getLanguage().name())
                 .jsonPath("$.coverType").isEqualTo(bookReq.getCoverType().name())
                 .jsonPath("$.numberOfPages").isEqualTo(bookReq.getNumberOfPages())
@@ -114,9 +121,8 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
     @Test
     void whenAuthenticatedWithValidRoleCreateBookInvalidThen400() {
-        var categoryIdAvailable = 6L;
-        var isbn = "1234567890";
-        var bookReq = buildBookMetadata(false, isbn, categoryIdAvailable);
+        var springCategory = 10002L;
+        var bookReq = buildBookMetadata(false, "1234567892", springCategory);
         webTestClient
                 .post()
                 .uri("/api/books")
@@ -129,8 +135,8 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenUnauthenticatedUpdateBookThen401() {
         var bookReq = new BookMetadataRequestDto();
-        bookReq.setCategoryId(4L);
-        var isbn = "5936095279";
+        bookReq.setCategoryId(10002L);
+        var isbn = "1234567891";
         webTestClient
                 .patch()
                 .uri("/api/books" + isbn)
@@ -142,8 +148,8 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenAuthenticatedWithInvalidRoleUpdateBookThen403() {
         var bookReq = new BookMetadataRequestDto();
-        bookReq.setCategoryId(4L);
-        var isbn = "5936095279";
+        bookReq.setCategoryId(10002L);
+        var isbn = "1234567891";
         webTestClient
                 .patch()
                 .uri("/api/books" + isbn)
@@ -156,11 +162,8 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenAuthenticatedWithValidRoleUpdateBookThen200() throws JsonProcessingException {
         var bookReq = new BookMetadataRequestDto();
-        bookReq.setCategoryId(4L);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(bookReq);
-        System.out.println(json);
-        var isbn = "5936095279";
+        bookReq.setCategoryId(10002L);
+        var isbn = "1234567891";
         webTestClient
                 .patch()
                 .uri("/api/books/" + isbn)
@@ -169,7 +172,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.category.categoryId").isEqualTo(4L)
+                .jsonPath("$.category.categoryId").isEqualTo(10002L)
                 .jsonPath("$.isbn").isNotEmpty()
                 .jsonPath("$.title").isNotEmpty()
                 .jsonPath("$.author").isNotEmpty()
@@ -189,9 +192,8 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenAuthenticatedWithValidRoleUpdateBookInvalidThen400() {
         var bookReq = new BookMetadataUpdateDto();
-        bookReq.setCategoryId(4L);
         bookReq.setWidth(0.0);
-        var isbn = "5936095279";
+        var isbn = "1234567891";
         webTestClient
                 .patch()
                 .uri("/api/books/" + isbn)
@@ -203,7 +205,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
     @Test
     void whenUnauthenticatedDeleteBookThen401() {
-        var isbn = "5936095279";
+        var isbn = "1234567890";
         webTestClient
                 .delete()
                 .uri("/api/books/" + isbn)
@@ -213,7 +215,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
     @Test
     void whenAuthenticatedWithInvalidRoleDeleteBookThen403() {
-        var isbn = "5936095279";
+        var isbn = "1234567890";
         webTestClient
                 .delete()
                 .uri("/api/books/" + isbn)
@@ -224,93 +226,13 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
     @Test
     void whenAuthenticatedWithValidRoleDeleteBookThen204() {
-        var isbn = "5936095279";
+        var isbn = "1234567890";
         webTestClient
                 .delete()
                 .uri("/api/books/" + isbn)
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isNoContent();
-    }
-
-    @Test
-    void whenAuthenticatedWithValidRoleUploadThumbnailThen200() throws IOException {
-        var isbn = "5936095279";
-
-        MockMultipartFile thumbnailsAdd = new MockMultipartFile(
-                "thumbnailsAdd",
-                "test-thumbnail.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "lol".getBytes(StandardCharsets.UTF_8)
-        );
-
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("thumbnailsChange", List.of(""));
-        body.add("thumbnailsAdd", new ByteArrayResource(thumbnailsAdd.getBytes()) {
-            @Override
-            public String getFilename() {
-                return thumbnailsAdd.getOriginalFilename();
-            }
-        });
-
-        webTestClient
-                .post()
-                .uri("/api/books/" + isbn + "/upload-thumbnail")
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .body(BodyInserters.fromMultipartData(body))
-                .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
-                .exchange()
-                .expectStatus().isCreated();
-    }
-
-    @Test
-    void whenAuthenticatedWithInValidRoleUploadThumbnailThen403() throws IOException {
-        var isbn = "5936095279";
-
-        MockMultipartFile thumbnailsAdd = new MockMultipartFile(
-                "thumbnailsAdd",
-                "test-thumbnail.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "lol".getBytes(StandardCharsets.UTF_8)
-        );
-
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("thumbnailsChange", List.of(""));
-        body.add("thumbnailsAdd", new ByteArrayResource(thumbnailsAdd.getBytes()) {
-            @Override
-            public String getFilename() {
-                return thumbnailsAdd.getOriginalFilename();
-            }
-        });
-
-        webTestClient
-                .post()
-                .uri("/api/books/" + isbn + "/upload-thumbnail")
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .body(BodyInserters.fromMultipartData(body))
-                .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
-                .exchange()
-                .expectStatus().isForbidden();
-    }
-
-    @Test
-    void whenAuthenticatedWithValidRoleUploadEmptyThumbnailThen201() throws IOException {
-        var isbn = "5936095279";
-
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("thumbnailsChange", "");
-
-        webTestClient
-                .post()
-                .uri("/api/books/" + isbn + "/upload-thumbnail")
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .body(BodyInserters.fromMultipartData(body))
-                .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody()
-                .jsonPath("$.thumbnails").isArray()
-                .jsonPath("$.thumbnails.length()").isEqualTo(0);
     }
 
     private static BookMetadataRequestDto buildBookMetadata(boolean isValid, String isbn, Long categoryId) {

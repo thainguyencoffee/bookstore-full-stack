@@ -25,13 +25,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/**", "/v3/api-docs/**","/swagger-ui/**","/swagger-ui.html").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/books/**", "/api/categories/**").permitAll()
 
                         .requestMatchers(
                                 "/api/guest-orders/**",
                                 "/api/payment/vn-pay/**",
-                                "/api/email/orders/**",
-                                "/api/categories/**").permitAll()
+                                "/api/email/orders/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/orders/**").permitAll()
 

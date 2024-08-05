@@ -14,7 +14,7 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AmazonS3Service {
+class AmazonS3Service {
 
     private final AmazonS3 amazonS3;
 
