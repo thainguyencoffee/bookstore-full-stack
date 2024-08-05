@@ -3,6 +3,7 @@ package com.bookstore.backend.awss3;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.bookstore.backend.core.exception.AmazonServiceS3Exception;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,16 +23,18 @@ class AmazonS3Service {
     private String bucketName;
 
     public String uploadFile(MultipartFile file, String folder) {
+        String fileName = file.getOriginalFilename();
+        assert fileName != null;
         String key = folder + file.getOriginalFilename();
         var objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(file.getSize());
         try {
             amazonS3.putObject(bucketName, key, file.getInputStream(), objectMetadata);
-            log.info("Upload thumbnail for book successfully.");
+            log.info("Upload media for " + folder + " successfully.");
         }
         catch (IOException | AmazonS3Exception e) {
             log.error("Error upload thumbnail for book.");
-            throw new RuntimeException(e);
+            throw new AmazonServiceS3Exception(fileName, folder);
         }
         return amazonS3.getUrl(bucketName, key).toString();
     }
@@ -42,6 +45,7 @@ class AmazonS3Service {
             log.info("Delete thumbnail with url {} successfully.", url);
         } catch (AmazonS3Exception e) {
             log.error("Error deleting thumbnail with url {}.", url);
+            throw new AmazonServiceS3Exception(url);
         }
     }
 

@@ -14,6 +14,10 @@ public class CategoryMetadataUpdateDto {
 
     private String thumbnail;
 
+
+    public CategoryMetadataUpdateDto() {
+    }
+
     public CategoryMetadataUpdateDto(String name, Long parentId) {
         this.name = name;
         this.parentId = parentId;
