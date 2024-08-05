@@ -1,18 +1,16 @@
 package com.bookstore.backend.book;
 
-import com.bookstore.backend.awss3.AmazonS3Service;
-import com.bookstore.backend.book.dto.BookMetadataRequestDto;
-import com.bookstore.backend.book.dto.BookMetadataUpdateDto;
-import com.bookstore.backend.book.dto.ThumbnailUpdateDto;
+import com.bookstore.backend.awss3.MultiMediaService;
+import com.bookstore.backend.book.dto.book.BookMetadataRequestDto;
+import com.bookstore.backend.book.dto.book.BookMetadataUpdateDto;
 import com.bookstore.backend.core.exception.CustomNoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +18,7 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final CategoryService categoryService;
-    private final AmazonS3Service amazonS3Service;
+    private final MultiMediaService multiMediaService;
 
     public Book findByIsbn(String isbn) {
         return bookRepository.findByIsbn(isbn).orElseThrow(() -> new CustomNoResultException(Book.class, CustomNoResultException.Identifier.ISBN, isbn));
@@ -36,44 +34,38 @@ public class BookService {
         bookRepository.save(book);
     }
 
-    public Iterable<Book> saveAll(List<Book> books) {
-        return bookRepository.saveAll(books);
-    }
-
     public Page<Book> findAll(Pageable pageable) {
         return bookRepository.findAll(pageable);
     }
 
     public Book updateByIsbn(String isbn, BookMetadataUpdateDto patch) {
         Book book = findByIsbn(isbn);
-        if (patch.getCategoryId() != null) {
-            Category category = categoryService.findById(patch.getCategoryId());
-            book.setCategory(category);
+        Optional.ofNullable(patch.getCategoryId()).ifPresent(categoryId -> book.setCategory(categoryService.findById(categoryId)));
+        Optional.ofNullable(patch.getTitle()).ifPresent(book::setTitle);
+        Optional.ofNullable(patch.getAuthor()).ifPresent(book::setAuthor);
+        Optional.ofNullable(patch.getPublisher()).ifPresent(book::setPublisher);
+        Optional.ofNullable(patch.getSupplier()).ifPresent(book::setSupplier);
+        Optional.ofNullable(patch.getPrice()).ifPresent(book::setPrice);
+        Optional.ofNullable(patch.getInventory()).ifPresent(book::setInventory);
+        Optional.ofNullable(patch.getCoverType()).ifPresent(book::setCoverType);
+        Optional.ofNullable(patch.getLanguage()).ifPresent(book::setLanguage);
+        Optional.ofNullable(patch.getDescription()).ifPresent(book::setDescription);
+        Optional.ofNullable(patch.getPurchases()).ifPresent(book::setPurchases);
+        Optional.ofNullable(patch.getNumberOfPages()).ifPresent(book::setNumberOfPages);
+        if (patch.getThumbnails() != null) {
+            book.setThumbnails(updateThumbnails(book.getThumbnails(), patch.getThumbnails()));
         }
-        if (patch.getTitle() != null)
-            book.setTitle(patch.getTitle());
-        if (patch.getAuthor() != null)
-            book.setAuthor(patch.getAuthor());
-        if (patch.getPublisher() != null) 
-            book.setPublisher(patch.getPublisher());
-        if (patch.getSupplier() != null)
-            book.setSupplier(patch.getSupplier());
-        if (patch.getPrice() != null)
-            book.setPrice(patch.getPrice());
-        if (patch.getInventory() != null)
-            book.setInventory(patch.getInventory());
-        if (patch.getCoverType() != null) 
-            book.setCoverType(patch.getCoverType());
-        if (patch.getLanguage() != null)
-            book.setLanguage(patch.getLanguage());
         Measure measure = patchMeasure(patch, book);
         book.setMeasure(measure);
-        if (patch.getPurchases() != null)
-            book.setPurchases(patch.getPurchases());
-        if (patch.getNumberOfPages() != null)
-            book.setNumberOfPages(patch.getNumberOfPages());
-        Book save = bookRepository.save(book);
-        return save;
+        return bookRepository.save(book);
+    }
+
+    private List<String> updateThumbnails(List<String> currentThumbnails, List<String> newThumbnails) {
+        if (!currentThumbnails.isEmpty()) {
+            currentThumbnails.removeAll(newThumbnails);
+            multiMediaService.deleteEverything(currentThumbnails);
+        }
+        return newThumbnails;
     }
 
     private Measure patchMeasure(BookMetadataUpdateDto patch, Book book) {
@@ -113,22 +105,6 @@ public class BookService {
         return bookRepository.findAllBySupplierContaining(query, pageable);
     }
 
-    public Book uploadThumbnail(String isbn, ThumbnailUpdateDto thumbnailsUpdateDto) {
-        Book book = findByIsbn(isbn);
-        Set<String> thumbnailsToDelete = new HashSet<>(book.getThumbnails());
-        thumbnailsToDelete.removeAll(thumbnailsUpdateDto.getThumbnailsChange());
-        thumbnailsToDelete.forEach(amazonS3Service::deleteFile);
-        if (thumbnailsUpdateDto.getThumbnailsAdd() != null) {
-            thumbnailsUpdateDto.getThumbnailsAdd().forEach(mf -> {
-                String folder = "books/" + isbn + "/thumbnails/";
-                String url = amazonS3Service.uploadFile(mf, folder);
-                thumbnailsUpdateDto.addThumbnail(url);
-            });
-        }
-        book.setThumbnails(thumbnailsUpdateDto.getThumbnailsChange());
-        return bookRepository.save(book);
-    }
-
     private static Book convertToBook(BookMetadataRequestDto dto, Category category) {
         Book book = new Book();
         book.setPurchases(dto.getPurchases() != null && dto.getPurchases() > 0 ? dto.getPurchases() : 0);
@@ -145,6 +121,8 @@ public class BookService {
         book.setCoverType(dto.getCoverType());
         book.setNumberOfPages(dto.getNumberOfPages());
         book.setMeasure(new Measure(dto.getWidth(), dto.getHeight(), dto.getThickness(), dto.getWeight()));
+        book.setThumbnails(dto.getThumbnails());
         return book;
     }
+
 }

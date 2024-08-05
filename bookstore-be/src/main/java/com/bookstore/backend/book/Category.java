@@ -15,6 +15,7 @@ public class Category {
     @Id
     private Long id;
     private String name;
+    private String thumbnail;
     private Long parentId;
     @CreatedDate
     private Instant createdAt;
@@ -26,4 +27,8 @@ public class Category {
     private String lastModifiedBy;
     @Version
     private int version;
+
+    public void setParent(Category category) {
+        this.parentId = category.getId();
+    }
 }

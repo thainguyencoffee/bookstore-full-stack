@@ -1,8 +1,8 @@
 package com.bookstore.backend.book;
 
-import com.bookstore.backend.book.dto.BookMetadataRequestDto;
-import com.bookstore.backend.book.dto.BookMetadataUpdateDto;
-import com.bookstore.backend.book.dto.ThumbnailUpdateDto;
+import com.bookstore.backend.awss3.MultiMediaService;
+import com.bookstore.backend.book.dto.book.BookMetadataRequestDto;
+import com.bookstore.backend.book.dto.book.BookMetadataUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -15,19 +15,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "api/books", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
-@CrossOrigin
 class BookController {
 
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
     private final BookService bookService;
+    private final MultiMediaService multiMediaService;
 
     @Operation(summary = "Get all books")
     @GetMapping
-    Page<Book> all(@ParameterObject Pageable pageable) {
+    public Page<Book> all(@ParameterObject Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
@@ -70,10 +73,10 @@ class BookController {
     }
 
     @Operation(summary = "Upload thumbnails for a book by ISBN", security = @SecurityRequirement(name = "token"))
-    @PostMapping(value = "/{isbn}/upload-thumbnail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public Book uploadPhoto(@PathVariable String isbn, @ModelAttribute ThumbnailUpdateDto thumbnailsUpdateDto) {
-        return bookService.uploadThumbnail(isbn, thumbnailsUpdateDto);
+    @PostMapping(value = "/{isbn}/thumbnails", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> uploadThumbnail(@PathVariable String isbn, @RequestPart List<MultipartFile> thumbnails) {
+        return multiMediaService.uploadEverything(Book.class, isbn, thumbnails, "thumbnail");
     }
 
     @Operation(summary = "Delete a book by ISBN", security = @SecurityRequirement(name = "token"))

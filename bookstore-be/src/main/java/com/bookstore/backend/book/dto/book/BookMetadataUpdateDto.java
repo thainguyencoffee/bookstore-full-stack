@@ -1,4 +1,4 @@
-package com.bookstore.backend.book.dto;
+package com.bookstore.backend.book.dto.book;
 
 import com.bookstore.backend.book.CoverType;
 import com.bookstore.backend.book.Language;
@@ -6,6 +6,8 @@ import com.bookstore.backend.book.validator.NumberConstraint;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -54,4 +56,5 @@ public class BookMetadataUpdateDto {
     @NumberConstraint(min = 170, message = "The lowest weight of book is 170 grams.")
     private Double weight;
 
+    private List<String> thumbnails;
 }

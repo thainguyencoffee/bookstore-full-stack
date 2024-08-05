@@ -2,6 +2,7 @@ create table categories
 (
     id               bigserial primary key,
     name             varchar(255) not null,
+    thumbnail        varchar(500),
     parent_id        bigserial references categories (id) on delete cascade,
     created_at       timestamp    not null,
     created_by       varchar(255),
@@ -33,7 +34,7 @@ CREATE TABLE books
     width            float8       NOT NULL,
     height           float8       NOT NULL,
     thickness        float8       NOT NULL,
-    thumbnails       varchar(255)[],
+    thumbnails       varchar(500)[],
     purchases        int          NOT NULL,
     created_at       timestamp    NOT NULL,
     created_by       varchar(255),

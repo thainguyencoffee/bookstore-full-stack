@@ -2,6 +2,7 @@ package com.bookstore.backend.jdbc;
 
 import com.bookstore.backend.book.*;
 import com.bookstore.backend.core.config.DataConfig;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -9,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,9 +44,25 @@ public class BookCategoryJdbcTests {
 
     @Test
     void testFindAllSubCategoriesByIdThenSuccess() {
-        Set<Category> subCategories = categoryRepository.findAllSubCategoriesById(10L);
-        subCategories.forEach(c -> assertThat(c.getParentId()).isEqualTo(10));
-        assertThat(subCategories).hasSize(3);
+        Category foreignCategory = new Category();
+        foreignCategory.setId(10000L);
+        foreignCategory.setName("Foreign Books");
+        categoryRepository.save(foreignCategory);
+
+        Category javaCategory = new Category();
+        javaCategory.setId(10001L);
+        javaCategory.setName("Java Books");
+        javaCategory.setParent(foreignCategory);
+        categoryRepository.save(javaCategory);
+
+        Category springCategory = new Category();
+        springCategory.setId(10002L);
+        springCategory.setName("Spring Books");
+        springCategory.setParent(javaCategory);
+        categoryRepository.save(springCategory);
+
+        List<Category> subCategories = categoryRepository.findAllSubCategoriesById(10000L);
+        assertThat(subCategories).hasSize(2);
     }
 
     private Book buildBookExample(String isbn) {
@@ -64,7 +81,6 @@ public class BookCategoryJdbcTests {
         book.setCoverType(CoverType.HARDCOVER);
         book.setNumberOfPages(1000);
         book.setMeasure(new Measure(300, 400, 100, 170));
-        book.setThumbnails(Set.of("https://images-na.ssl-images-amazon.com/images/I/41Z5GZzZomL._SX331_BO1,204,203,200_.jpg"));
         return book;
     }
 
@@ -74,4 +90,11 @@ public class BookCategoryJdbcTests {
         category.setName(name);
         return category;
     }
+
+    @AfterEach
+    void tearDown() {
+        bookRepository.deleteAll();
+        categoryRepository.deleteAll();
+    }
+
 }

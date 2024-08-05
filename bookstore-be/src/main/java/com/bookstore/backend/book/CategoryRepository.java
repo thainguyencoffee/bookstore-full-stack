@@ -2,31 +2,29 @@ package com.bookstore.backend.book;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Set;
 
-public interface CategoryRepository extends ListCrudRepository<Category, Long> {
+public interface CategoryRepository extends CrudRepository<Category, Long> {
 
     List<Category> findAll(Pageable pageable);
 
-    @Query("""
+    @Query(value = """
             with recursive subcategoriess as (
-                select id, name, parent_id
-                from categories where id = :id
-            
-                union all
-            
-                select c.id, c.name, c.parent_id
-                from categories c
-                inner join subcategoriess sc on c.parent_id = sc.id
-            )
-            
-            select * from subcategoriess sc where sc.id <> :id;
-            
+                   select c.*
+                   from categories c where id = :id
+               
+                   union all
+               
+                   select c.*
+                   from categories c
+                            inner join subcategoriess sc on c.parent_id = sc.id
+               )
+               
+               select * from subcategoriess sc where sc.id <> :id;
             """)
-    Set<Category> findAllSubCategoriesById(@Param("id") Long id);
+    List<Category> findAllSubCategoriesById(@Param("id") Long id);
 
 }
