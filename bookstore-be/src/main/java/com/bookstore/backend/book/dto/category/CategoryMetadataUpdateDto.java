@@ -14,6 +14,7 @@ public class CategoryMetadataUpdateDto {
 
     private String thumbnail;
 
+
     public CategoryMetadataUpdateDto() {
     }
 
