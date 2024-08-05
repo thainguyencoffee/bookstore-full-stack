@@ -1,9 +1,6 @@
 <script>
-import BookUnit from "../components/BookUnit.vue";
-import {computed, onMounted} from "vue";
 import TheBanner from "../components/layouts/TheBanner.vue";
 import TheCategory from "../components/layouts/TheCategory.vue";
-import {useStore} from "vuex";
 import BooksList from "../components/BooksList.vue";
 
 export default {
@@ -12,20 +9,22 @@ export default {
     TheCategory,
     TheBanner,
   },
-  setup() {
-    const store = useStore();
-
-    onMounted(() => {
-      store.dispatch("categories/fetchCategories");
-    });
-
-    const categories = computed(() => store.getters['categories/categories'])
-    const categoriesIsLoading = computed(() => store.getters["categories/isLoading"])
-
+  data() {
     return {
-      categories,
-      categoriesIsLoading
-    };
+      categories: [],
+      categoriesIsLoading: true
+    }
+  },
+  computed: {
+    categories() {
+      return this.$store.getters['categories/categories'];
+    },
+    categoriesIsLoading() {
+      return this.$store.getters['categories/isLoading'];
+    },
+  },
+  mounted() {
+    this.$store.dispatch('categories/fetchCategories');
   }
 }
 </script>

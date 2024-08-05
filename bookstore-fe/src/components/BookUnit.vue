@@ -1,6 +1,4 @@
 <script>
-import {computed} from 'vue';
-
 export default {
   props: {
     book: {
@@ -8,18 +6,14 @@ export default {
       required: true
     }
   },
-  setup(props) {
-    const linkTo = computed(() => {
+  computed: {
+    linkTo() {
       return {
         name: 'book-detail',
         params: {
-          isbn: props.book.isbn
+          isbn: this.book.isbn
         }
       }
-    });
-
-    return {
-      linkTo
     }
   }
 }

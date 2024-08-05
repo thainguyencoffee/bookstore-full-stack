@@ -1,20 +1,16 @@
 <script>
-import {computed, onMounted} from "vue";
-import {useStore} from "vuex";
-
 export default {
   props: ["isbn"],
-  setup(props) {
-    const store = useStore();
-
-    onMounted(() => store.dispatch("books/fetchBookDetails", props.isbn))
-
-    const bookDetail = computed(() => store.getters["books/bookDetail"])
-    const isLoading = computed(() => store.getters["books/isLoading"])
-    return {
-      book: bookDetail,
-      isLoading: isLoading
+  computed: {
+    bookDetail() {
+      return this.$store.getters["books/bookDetail"];
+    },
+    isLoading() {
+      return this.$store.getters["books/isLoading"];
     }
+  },
+  mounted() {
+    this.$store.dispatch("books/fetchBookDetails", this.isbn);
   }
 }
 </script>
@@ -29,14 +25,14 @@ export default {
     <div class="row mt-2">
       <div class="col-12 col-md-5 sticky-top" style="height: 480px;">
         <div class="p-1 p-md-2 bg-white rounded-2">
-          {{book.isbn}}
+          {{ bookDetail.isbn }}
           picture
         </div>
       </div>
       <div class="col-12 col-md-7">
         <div class="row px-2" style="height: 100px">
           <div class="p-1 p-md-2 bg-white rounded-2 mb-2">
-            <span class="fs-4 fw-bold">{{book.title}}</span>
+            <span class="fs-4 fw-bold">{{ bookDetail.title }}</span>
             title, purchase, vote
           </div>
         </div>

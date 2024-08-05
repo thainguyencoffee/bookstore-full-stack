@@ -1,4 +1,4 @@
-![Production](https://github.com/thainguyencoffee/bookstore-full-stack/actions/workflows/production-stage-deployment.yml/badge.svg)
+[//]: # (![Production]&#40;https://github.com/thainguyencoffee/bookstore-full-stack/actions/workflows/production-stage-deployment.yml/badge.svg&#41;)
 ## Introduction
 This is a full-stack project for managing a bookstore, including frontend, backend, and database integration.
 

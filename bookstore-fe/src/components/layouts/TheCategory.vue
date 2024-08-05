@@ -15,11 +15,13 @@ export default {
       <div class="row">
         <!-- Category items -->
         <div class="col-2 col-md-1 p-1 p-md-3" v-for="category in categories">
-          <div class="category">
-            <img src="https://cdn0.fahasa.com/media/wysiwyg/Thang-05-2024/Icon_GiamGia_120x120.png" alt="Sách văn học"
-                 class="category-img">
-            <span class="fs-20">{{category.name}}</span>
-          </div>
+          <router-link to="/">
+            <div class="category">
+              <img :src="category.thumbnail" alt="Sách văn học"
+                   class="category-img">
+              <span class="fs-20">{{ category.name }}</span>
+            </div>
+          </router-link>
         </div>
       </div>
     </div>
@@ -27,6 +29,11 @@ export default {
 </template>
 
 <style>
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 .category {
   text-align: center;
 }
