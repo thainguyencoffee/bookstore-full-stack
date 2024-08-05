@@ -1,4 +1,4 @@
-![Production](https://github.com/thainguyencoffee/bookstore-full-stack/actions/workflows/production-stage-deployment.yml/badge.svg)
+[//]: # (![Production]&#40;https://github.com/thainguyencoffee/bookstore-full-stack/actions/workflows/production-stage-deployment.yml/badge.svg&#41;)
 ## Introduction
 This is a full-stack project for managing a bookstore, including frontend, backend, and database integration.
 
@@ -27,4 +27,8 @@ cd bookstore-dep/docker && docker compose up -d bookstore-keycloak
 2. Run bookstore backend
 ```bash
 cd bookstore-be && ./gradlew bootRun
+```
+3. Run bookstore fe
+```bash
+cd bookstore-fe && npm run dev
 ```
