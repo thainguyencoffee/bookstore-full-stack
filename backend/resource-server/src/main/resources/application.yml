@@ -1,5 +1,13 @@
+schema: http
+hostname: localhost
+reverse-proxy-port: 6969
+reverse-proxy-uri: ${schema}://${hostname}:${reverse-proxy-port}
+authorization-server-prefix: /auth
+issuer: ${reverse-proxy-uri}${authorization-server-prefix}/realms/bookstore
+resource-server-port: 9001
+
 server:
-  port: 9001
+  port: ${resource-server-port}
   shutdown: graceful
   tomcat:
     threads:
@@ -27,7 +35,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/bookstore
+          issuer-uri: ${issuer}
   mail:
     username: nguyennt11032004@gmail.com
     password: evcw uiui bulu mfmk

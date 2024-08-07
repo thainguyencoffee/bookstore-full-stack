@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/**", "/v3/api-docs/**","/swagger-ui/**","/swagger-ui.html").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/api/books/**",  "/api/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/books/**",  "/api/categories/**", "/api/me").permitAll()
 
                         .requestMatchers(
                                 "/api/guest-orders/**",
@@ -57,17 +57,5 @@ public class SecurityConfig {
                 jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
-
-//    @Bean
-//    public WebMvcConfigurer webMvcConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(@NonNull CorsRegistry registry) {
-//                registry.addMapping("/**")
-//                        .allowedOrigins("*")
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE");
-//            }
-//        };
-//    }
 
 }
