@@ -47,11 +47,13 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:postgresql'
     testImplementation "com.github.dasniko:testcontainers-keycloak:${testKeycloakVersion}"
+	
     implementation 'org.jooq:jooq'
     implementation'org.springframework.boot:spring-boot-starter-jooq'
     implementation'org.jooq:jooq-meta-extensions:3.19.10'
     implementation 'org.postgresql:postgresql'
     jooqGenerator 'org.postgresql:postgresql:42.5.4'
+	
 }
 
 jooq {
