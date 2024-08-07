@@ -114,7 +114,13 @@ dependencyManagement {
 tasks.named('test') {
     useJUnitPlatform()
 }
-tasks.named('generateJooq').configure { allInputsDeclared = true }
+tasks.named('generateJooq').configure {
+
+    inputs.files(fileTree('src/main/resources/db/migration'))
+            .withPropertyName('migrations')
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+
+    allInputsDeclared = true }
 
 bootBuildImage {
     builder = "docker.io/paketobuildpacks/builder-jammy-base"
