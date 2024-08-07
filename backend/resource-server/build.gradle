@@ -67,9 +67,9 @@ jooq {
             generationTool {
                 jdbc {
                     driver = "org.postgresql.Driver"
-                    url = "jdbc:postgresql://localhost:5432/bookstoredb"
-                    user = "user"
-                    password = "password"
+                    url = System.getenv('DB_URL') ?: 'jdbc:postgresql://localhost:5432/bookstoredb'
+                    user = System.getenv('DB_USER') ?: 'user'
+                    password = System.getenv('DB_PASSWORD') ?: 'password'
                     properties {
                         property {
                             key = "scripts"
