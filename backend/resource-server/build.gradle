@@ -57,9 +57,6 @@ dependencies {
 }
 
 jooq {
-    version = '3.19.1'
-    edition = nu.studer.gradle.jooq.JooqEdition.OSS
-
     configurations {
         main {
             generateSchemaSourceOnCompilation = true
@@ -70,24 +67,24 @@ jooq {
                     url = System.getenv('DB_URL') ?: 'jdbc:postgresql://localhost:5432/bookstoredb'
                     user = System.getenv('DB_USER') ?: 'user'
                     password = System.getenv('DB_PASSWORD') ?: 'password'
-                    properties {
-                        property {
-                            key = "scripts"
-                            value = "src/main/resources/db/migrations/*.sql"
-                        }
-                        property {
-                            key = "sort"
-                            value = "flyway"
-                        }
-                    }
                 }
                 generator {
                     name = 'org.jooq.codegen.DefaultGenerator'
                     database {
                         name = 'org.jooq.meta.postgres.PostgresDatabase'
-                        includes = '.*'
-                        excludes = ''
-
+                        inputSchema = 'public'
+                        forcedTypes {
+                            forcedType {
+                                name = 'varchar'
+                                includeExpression = '.*'
+                                includeTypes = 'JSONB?'
+                            }
+                            forcedType {
+                                name = 'varchar'
+                                includeExpression = '.*'
+                                includeTypes = 'INET'
+                            }
+                        }
                     }
                     generate {
                         deprecated = false
@@ -114,13 +111,7 @@ dependencyManagement {
 tasks.named('test') {
     useJUnitPlatform()
 }
-tasks.named('generateJooq').configure {
-
-    inputs.files(fileTree('src/main/resources/db/migration'))
-            .withPropertyName('migrations')
-            .withPathSensitivity(PathSensitivity.RELATIVE)
-
-    allInputsDeclared = true }
+tasks.named('generateJooq').configure { allInputsDeclared = true }
 
 bootBuildImage {
     builder = "docker.io/paketobuildpacks/builder-jammy-base"
