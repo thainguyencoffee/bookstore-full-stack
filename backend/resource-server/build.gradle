@@ -52,7 +52,7 @@ dependencies {
     implementation'org.springframework.boot:spring-boot-starter-jooq'
     implementation'org.jooq:jooq-meta-extensions:3.19.10'
     implementation 'org.postgresql:postgresql'
-    jooqGenerator 'org.postgresql:postgresql:42.5.4'
+    jooqGenerator 'org.postgresql:postgresql'
 	
 }
 
