@@ -1,4 +1,0 @@
-include('../../../../bookstore-be/Tiltfile')
-include('../../../../bookstore-edge/Tiltfile')
-
-update_settings(max_parallel_updates=1)
