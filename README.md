@@ -24,6 +24,14 @@ Instructions on how to use the application.
 ```bash
 cd bookstore-dep/docker && docker compose up -d bookstore-keycloak
 ```
+1.1. Tạo các class Jooq
+```bash
+cd bookstore-be && ./gradlew generateJooq
+```
+1.2.  Muốn hủy các class vừa tạo
+```bash
+cd bookstore-be && ./gradlew cleanGenerateJooq
+```
 2. Run bookstore backend
 ```bash
 cd bookstore-be && ./gradlew bootRun
