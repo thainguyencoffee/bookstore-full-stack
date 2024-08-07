@@ -67,6 +67,16 @@ jooq {
                     url = System.getenv('DB_URL') ?: 'jdbc:postgresql://localhost:5432/bookstoredb'
                     user = System.getenv('DB_USER') ?: 'user'
                     password = System.getenv('DB_PASSWORD') ?: 'password'
+                    properties {
+                        property {
+                            key = "scripts"
+                            value = "src/main/resources/db/migrations/*.sql"
+                        }
+                        property {
+                            key = "sort"
+                            value = "flyway"
+                        }
+                    }
                 }
                 generator {
                     name = 'org.jooq.codegen.DefaultGenerator'
