@@ -1,7 +1,0 @@
-spring:
-  security:
-    oauth2:
-      client:
-        provider:
-          keycloak:
-            issuer-uri: http://bookstore-keycloak/realms/bookstore
