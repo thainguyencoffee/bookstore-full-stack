@@ -48,10 +48,8 @@ dependencies {
     testImplementation 'org.testcontainers:postgresql'
     testImplementation "com.github.dasniko:testcontainers-keycloak:${testKeycloakVersion}"
 	
-    implementation 'org.jooq:jooq'
     implementation'org.springframework.boot:spring-boot-starter-jooq'
-    implementation'org.jooq:jooq-meta-extensions:3.19.10'
-    implementation 'org.postgresql:postgresql'
+    implementation'org.postgresql:postgresql'
     jooqGenerator 'org.postgresql:postgresql'
 	
 }
@@ -60,58 +58,31 @@ jooq {
     configurations {
         main {
             generateSchemaSourceOnCompilation = true
-
             generationTool {
                 jdbc {
                     driver = "org.postgresql.Driver"
-                    url = System.getenv('DB_URL') ?: 'jdbc:postgresql://localhost:5432/bookstoredb'
-                    user = System.getenv('DB_USER') ?: 'user'
-                    password = System.getenv('DB_PASSWORD') ?: 'password'
-                    properties {
-                        property {
-                            key = "scripts"
-                            value = "src/main/resources/db/migrations/*.sql"
-                        }
-                        property {
-                            key = "sort"
-                            value = "flyway"
-                        }
-                    }
+                    url = System.getenv('SPRING_DATASOURCE_URL') ?: 'jdbc:postgresql://localhost:5432/bookstoredb'
+                    user = System.getenv('SPRING_DATASOURCE_USERNAME') ?: 'user'
+                    password = System.getenv('SPRING_DATASOURCE_PASSWORD') ?: 'password'
                 }
                 generator {
                     name = 'org.jooq.codegen.DefaultGenerator'
                     database {
                         name = 'org.jooq.meta.postgres.PostgresDatabase'
-                        inputSchema = 'public'
-                        forcedTypes {
-                            forcedType {
-                                name = 'varchar'
-                                includeExpression = '.*'
-                                includeTypes = 'JSONB?'
-                            }
-                            forcedType {
-                                name = 'varchar'
-                                includeExpression = '.*'
-                                includeTypes = 'INET'
-                            }
-                        }
+                        includes = '.*'
+                        excludes = ''
                     }
-                    generate {
-                        deprecated = false
-                        records = true
-                        immutablePojos = true
-                        fluentSetters = true
-                    }
+
                     target {
-                        packageName = "schema"
-                        directory = "build/generated/sources/jooq"
+                        packageName = "nu.studer.sample"
+
                     }
-                    strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
                 }
             }
         }
     }
 }
+
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
