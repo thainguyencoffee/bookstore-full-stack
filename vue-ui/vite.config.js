@@ -12,6 +12,6 @@ export default defineConfig({
     //  cert: 'C:/Users/ch4mp/.ssh/bravo-ch4mp_self_signed.pem',
     //  key: 'C:/Users/ch4mp/.ssh/bravo-ch4mp_req_key.pem',
     //},
-    //open: 'https://localhost:7080/vue-ui',
+    //open: 'https://localhost:9002/vue-ui',
   },
 })
