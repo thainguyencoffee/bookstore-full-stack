@@ -18,6 +18,7 @@ spring:
     gateway:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+        - AddResponseHeader=X-Frame-Options, SAMEORIGIN
       routes:
         # Vue UI
         - id: vue-ui
