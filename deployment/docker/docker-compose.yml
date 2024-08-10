@@ -1,10 +1,37 @@
 services:
 
   # Application services
+  bff:
+    depends_on:
+      - reverse-proxy
+      - bookstore-redis
+    image: "bookstore/bff"
+    container_name: bookstore.bff
+    ports:
+      - 9000:9000
+      - 8000:8000
+    environment:
+      BPL_JVM_THREAD_COUNT: 50
+      BPL_DEBUG_ENABLED: true
+      BPL_DEBUG_PORT: 8000
+      RESOURCE_SERVER_URI: http://resource-server:9001
+      REVERSE_PROXY_URI: http://reverse-proxy:6969
+
+  reverse-proxy:
+    image: "bookstore/reverse-proxy"
+    container_name: bookstore.reverse-proxy
+    ports:
+      - 6969:6969
+    environment:
+      AUTHORIZATION_SERVER_URI: http://bookstore-keycloak:8080/auth
+      VUE_URI: http://localhost:8081
+      BFF_URI: http://bff:9000/bff
+
   resource-server:
     depends_on:
       - bookstore-keycloak
       - bookstore-postgres
+      - bff
     image: "bookstore/resource-server"
     container_name: bookstore.resource-server
     ports:
@@ -15,8 +42,9 @@ services:
       BPL_DEBUG_ENABLED: true
       BPL_DEBUG_PORT: 8001
       SPRING_DATASOURCE_URL: jdbc:postgresql://bookstore-postgres:5432/resource_server
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://bookstore-keycloak:8080/realms/bookstore
       SPRING_PROFILES_ACTIVE: datatest
+      ISSUER: http://reverse-proxy:6969/auth/realms/bookstore
+
 
   # Data services
   bookstore-postgres:
