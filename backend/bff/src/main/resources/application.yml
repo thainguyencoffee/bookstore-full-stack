@@ -1,7 +1,12 @@
 bff-port: 9000
 bff-prefix: /bff
-reverse-proxy-uri: http://localhost:6969
-resource-server-uri: http://localhost:9001
+schema: http
+hostname: localhost
+resource-server-port: 9001
+reverse-proxy-port: 6969
+reverse-proxy-uri: ${schema}://${hostname}:${reverse-proxy-port}
+authorization-server-prefix: /auth
+issuer: ${reverse-proxy-uri}${authorization-server-prefix}/realms/bookstore
 client-id: bookstore-confidential
 client-secret: client-secret
 authorities-json-path: $.roles
@@ -19,7 +24,7 @@ spring:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
       routes:
         - id: bff
-          uri: ${resource-server-uri}
+          uri: ${schema}://${hostname}:${resource-server-port}
           predicates:
             - Path=/api/**
           filters:
@@ -31,7 +36,7 @@ spring:
       client:
         provider:
           bookstore:
-            issuer-uri: ${reverse-proxy-uri}/auth/realms/bookstore
+            issuer-uri: ${issuer}
         registration:
           bookstore:
             provider: bookstore
@@ -49,7 +54,7 @@ com:
     springaddons:
       oidc:
         ops:
-          - iss: ${reverse-proxy-uri}/auth/realms/bookstore
+          - iss: ${issuer}
             authorities:
               - path: ${authorities-json-path}
             aud: ${audience}

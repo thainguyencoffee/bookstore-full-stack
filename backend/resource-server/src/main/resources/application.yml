@@ -1,4 +1,9 @@
-issuer: http://localhost:6969/auth/realms/bookstore
+schema: http
+hostname: localhost
+reverse-proxy-port: 6969
+reverse-proxy-uri: ${schema}://${hostname}:${reverse-proxy-port}
+authorization-server-prefix: /auth
+issuer: ${reverse-proxy-uri}${authorization-server-prefix}/realms/bookstore
 resource-server-port: 9001
 
 server:

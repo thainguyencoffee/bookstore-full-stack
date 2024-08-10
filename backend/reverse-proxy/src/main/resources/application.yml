@@ -1,12 +1,17 @@
 # Custom properties to ease configuration overrides
 # on command-line or IDE launch configurations
+schema: http
+hostname: localhost
 reverse-proxy-port: 6969
+vue-port: 9002
 vue-prefix: /vue-ui
-vue-uri: http://localhost:9002/vue-ui
+vue-uri: ${schema}://${hostname}:${vue-port}${vue-prefix}
+authorization-server-port: 8080
 authorization-server-prefix: /auth
-authorization-server-uri: http://localhost:8080/auth
+authorization-server-uri: ${schema}://${hostname}:${authorization-server-port}${authorization-server-prefix}
+bff-port: 9000
 bff-prefix: /bff
-bff-uri: http://localhost:9000/bff
+bff-uri: ${schema}://${hostname}:${bff-port}
 
 server:
   port: ${reverse-proxy-port}
