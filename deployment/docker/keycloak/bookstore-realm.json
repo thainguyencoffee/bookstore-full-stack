@@ -677,7 +677,7 @@
       "client.secret.creation.time" : "1717668585",
       "backchannel.logout.session.required" : "true",
       "backchannel.logout.url" : "http://127.0.0.1:6969/bff/logout/connect/back-channel/bookstore",
-      "post.logout.redirect.uris" : "http://localhost:6969/vue-ui/",
+      "post.logout.redirect.uris" : "http://localhost:6969/vue-ui/*",
       "display.on.consent.screen" : "false",
       "oauth2.device.authorization.grant.enabled" : "false",
       "backchannel.logout.revoke.offline.tokens" : "false"
