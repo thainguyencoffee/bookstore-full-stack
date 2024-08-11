@@ -1,23 +1,4 @@
 services:
-
-  # Application services
-  resource-server:
-    depends_on:
-      - bookstore-keycloak
-      - bookstore-postgres
-    image: "bookstore/resource-server"
-    container_name: bookstore.resource-server
-    ports:
-      - 9001:9001
-      - 8001:8001
-    environment:
-      BPL_JVM_THREAD_COUNT: 50
-      BPL_DEBUG_ENABLED: true
-      BPL_DEBUG_PORT: 8001
-      SPRING_DATASOURCE_URL: jdbc:postgresql://bookstore-postgres:5432/resource_server
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://bookstore-keycloak:8080/realms/bookstore
-      SPRING_PROFILES_ACTIVE: datatest
-
   # Data services
   bookstore-postgres:
     image: "postgres:16"
