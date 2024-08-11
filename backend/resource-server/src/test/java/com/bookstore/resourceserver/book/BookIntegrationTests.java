@@ -13,6 +13,9 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 
 // Summary of the test data
@@ -335,7 +338,24 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .expectBody(String.class)
                 .returnResult().getResponseBody();
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(responseRaw, new TypeReference<>() {});
+        return objectMapper.readValue(responseRaw, new TypeReference<>() {
+        });
+    }
+
+    @Test
+    void whenUnAuthenticatedGetBestSellersThenReturnOK() {
+        Instant from = LocalDate.now()
+                .withDayOfMonth(1)
+                .minusMonths(1)
+                .atStartOfDay().toInstant(ZoneOffset.UTC);
+        webTestClient
+                .get().uri(uriBuilder -> uriBuilder
+                        .path("/api/books/best-sellers")
+                        .queryParam("from", from)
+                        .queryParam("page", 0)
+                        .queryParam("size", 10).build()
+                ).exchange()
+                .expectStatus().isOk();
     }
 
     private static BookMetadataRequestDto buildBookMetadata(boolean isValid, String isbn, Long categoryId) {

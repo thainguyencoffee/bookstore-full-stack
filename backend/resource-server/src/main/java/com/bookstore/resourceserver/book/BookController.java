@@ -7,8 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -24,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 class BookController {
 
-    private static final Logger log = LoggerFactory.getLogger(BookController.class);
     private final BookService bookService;
     private final MultiMediaService multiMediaService;
 
@@ -42,21 +40,8 @@ class BookController {
 
     @Operation(summary = "Get best sellers")
     @GetMapping("/best-sellers")
-    public Page<Book> bestSellers(@ParameterObject Pageable pageable) {
-        return bookService.findBestSellers(pageable);
-    }
-
-    @Operation(summary = "Search for books by title, author, publisher or supplier")
-    @GetMapping("/search")
-    public Page<Book> search(@RequestParam String query, @RequestParam String type, @ParameterObject Pageable pageable) {
-        log.info("Searching for {} with query: {}", type, query);
-        return switch (type) {
-            case "title" -> bookService.findByTitleContaining(query, pageable);
-            case "author" -> bookService.findByAuthorContaining(query, pageable);
-            case "publisher" -> bookService.findByPublisherContaining(query, pageable);
-            case "supplier" -> bookService.findBySupplierContaining(query, pageable);
-            default -> throw new IllegalArgumentException("Invalid search type");
-        };
+    public Page<Book> bestSellers(@RequestParam Instant from, @ParameterObject Pageable pageable) {
+        return bookService.findBestSellers(from, pageable);
     }
 
     @Operation(summary = "Create a new book", security = @SecurityRequirement(name = "token"))
@@ -85,5 +70,5 @@ class BookController {
     void delete(@PathVariable String isbn) {
         bookService.deleteByIsbn(isbn);
     }
-    
+
 }

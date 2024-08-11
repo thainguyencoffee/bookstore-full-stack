@@ -8,7 +8,12 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneOffset;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @Profile("datatest")
@@ -42,9 +47,14 @@ public class DataTest {
             categoryList.add(category);
         }
 
+        // Set up random time for purchase_at
+        Instant start = LocalDateTime.of(2024, Month.JUNE, 10, 0, 0).toInstant(ZoneOffset.UTC);
+        Instant end = LocalDateTime.of(2024, Month.AUGUST, 10, 23, 59).toInstant(ZoneOffset.UTC);
         var booksList = new ArrayList<Book>();
         for (long isbn : generatedNumbers()) {
-            Book book = buildExampleBook(isbn);
+            long timeRandomMillis = ThreadLocalRandom.current().nextLong(start.toEpochMilli(), end.toEpochMilli());
+            Instant randomTime = Instant.ofEpochMilli(timeRandomMillis);
+            Book book = buildExampleBook(isbn, randomTime, random.nextInt(10) + 5);
             book.setCategory(categoryList.get(random.nextInt(categoryList.size())));
             booksList.add(book);
         }
@@ -67,7 +77,7 @@ public class DataTest {
         return generatedNumbers;
     }
 
-    private static Book buildExampleBook(Long isbn) {
+    private static Book buildExampleBook(Long isbn, Instant purchaseAt, Integer purchases) {
         var book = new Book();
         book.setIsbn(String.valueOf(isbn));
         book.setTitle(generateRandomName());
@@ -80,7 +90,8 @@ public class DataTest {
         book.setCoverType(CoverType.HARDCOVER);
         book.setNumberOfPages(25);
         book.setMeasure(new Measure(120d, 180d, 10d, 200d));
-        book.setPurchases(0);
+        book.setPurchases(purchases);
+        book.setPurchaseAt(purchaseAt);
         book.setThumbnails(List.of(
                 "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718216795/samples/ecommerce/accessories-bag.jpg",
                 "http://res.cloudinary.com/dl0v8gbku/image/upload/v1718216795/samples/ecommerce/leather-bag-gray.jpg",

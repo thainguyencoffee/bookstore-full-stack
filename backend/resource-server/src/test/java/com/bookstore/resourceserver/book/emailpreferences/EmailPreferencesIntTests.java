@@ -14,9 +14,16 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
     @Autowired
     private WebTestClient webTestClient;
 
+//    @BeforeEach
+//    void setUp() {
+//        webTestClient = webTestClient.mutate()
+//                .responseTimeout(Duration.ofMillis(30000))
+//                .build();
+//    }
+
     @Test
     void whenUnauthenticatedSubscribeEmailPreferencesWithValidDataThen201() {
-        var dtoRequest = buildDto("nguyennt11032004@gmail.com");
+        var dtoRequest = buildDto("demo@gmail.com");
         webTestClient.post().uri("/api/email-preferences")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(dtoRequest))
@@ -29,7 +36,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
 
     @Test
     void whenUnauthenticatedSubscribeEmailPreferencesWithCategoryNotfoundThen404() {
-        var dtoRequest = buildDto("nguyennt11032004@gmail.com");
+        var dtoRequest = buildDto("demo@gmail.com");
         dtoRequest.setCategoryIds(List.of(10000L, 9999999L));
         webTestClient.post().uri("/api/email-preferences")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -40,7 +47,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
 
     @Test
     void whenUnauthenticatedSubscribeEmailPreferencesWithBadBodyThen400() {
-        var dtoRequest = buildDto("nguyennt11032004@gmail.com");
+        var dtoRequest = buildDto("demo@gmail.com");
         dtoRequest.setEmail("");
         dtoRequest.setCategoryIds(List.of(10000L));
         webTestClient.post().uri("/api/email-preferences")
@@ -52,7 +59,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
 
     @Test
     void whenUnauthenticatedSubscribeEmailPreferencesWithBadBody2Then400() {
-        var dtoRequest = buildDto("nguyennt11032004@gmail.com");
+        var dtoRequest = buildDto("demo@gmail.com");
         dtoRequest.setEmail("nguyennt11032004"); // invalid email
         dtoRequest.setCategoryIds(List.of(10000L));
         webTestClient.post().uri("/api/email-preferences")
@@ -76,19 +83,9 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
 
     @Test
     void whenSubscribeEmailPreferencesWithEmailExistingThenUpdateAndReturn201() throws InterruptedException {
-        var email = "demo@gmail.com";
+        var email = "demo@fpt.edu.vn";
+
         var dtoRequest = buildDto(email);
-        webTestClient.post().uri("/api/email-preferences")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(dtoRequest))
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody()
-                .jsonPath("$.email").isEqualTo(dtoRequest.getEmail())
-                .jsonPath("$.id").isNotEmpty();
-
-        Thread.sleep(8000);
-
         dtoRequest.setFirstName("change name");
         dtoRequest.setCategoryIds(null);
         webTestClient.post().uri("/api/email-preferences")
@@ -107,18 +104,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
 
     @Test
     void whenUnSubscribeEmailPreferencesWithEmailExistingThenNoContent() throws InterruptedException {
-        var email = "demo@gmail.com";
-        var dtoRequest = buildDto(email);
-        webTestClient.post().uri("/api/email-preferences")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(dtoRequest))
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody()
-                .jsonPath("$.email").isEqualTo(dtoRequest.getEmail())
-                .jsonPath("$.id").isNotEmpty();
-
-        Thread.sleep(8000);
+        var email = "nguyennt11032004@gmail.vn";
 
         webTestClient.delete().uri("/api/email-preferences/" + email + "/unsubscribe")
                 .exchange()

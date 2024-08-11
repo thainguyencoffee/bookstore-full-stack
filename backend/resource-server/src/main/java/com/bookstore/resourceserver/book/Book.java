@@ -3,7 +3,6 @@ package com.bookstore.resourceserver.book;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.*;
-import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -35,6 +34,7 @@ public class Book {
     private Measure measure;
     private List<String> thumbnails = new ArrayList<>();
     private Integer purchases;
+    private Instant purchaseAt;
     @CreatedDate
     private Instant createdAt;
     @CreatedBy

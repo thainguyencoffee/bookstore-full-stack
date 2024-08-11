@@ -68,6 +68,7 @@ public class OrderService {
             }
             // Update book's inventory and purchases
             book.setInventory(book.getInventory() - lineItem.getQuantity());
+            book.setPurchaseAt(Instant.now());
             book.setPurchases(book.getPurchases() + lineItem.getQuantity());
             bookService.save(book);
         }
