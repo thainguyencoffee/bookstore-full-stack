@@ -1,6 +1,5 @@
 <script setup>
 import TheHeader from "./components/TheHeader.vue";
-import TheBanner from "./components/BookstoreOnline.vue";
 import TheFooter from "./components/TheFooter.vue";
 </script>
 

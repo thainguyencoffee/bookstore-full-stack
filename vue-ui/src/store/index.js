@@ -1,7 +1,11 @@
 import { createStore } from 'vuex';
+import categoryModule from "./category.module.js";
 import { SET_AUTH, SET_REFRESH_INTERVAL_ID, SET_USER } from "./mutations.type.js";
 
 const store = createStore({
+    modules: {
+        categories: categoryModule
+    },
     state() {
         return {
             user: {},

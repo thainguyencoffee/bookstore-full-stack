@@ -8,6 +8,9 @@ const router = createRouter({
         },
         {
             path: '/profile', component: () => import('./views/ProfileView.vue')
+        },
+        {
+            name: 'emailPreferences', path: '/email-preferences', component: () => import('./views/EmailPreferences.vue')
         }
     ],
     scrollBehavior(_, _2, savePosition) {
