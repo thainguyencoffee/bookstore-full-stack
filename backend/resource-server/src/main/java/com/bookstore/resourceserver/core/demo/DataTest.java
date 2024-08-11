@@ -80,7 +80,7 @@ public class DataTest {
     private static Book buildExampleBook(Long isbn, Instant purchaseAt, Integer purchases) {
         var book = new Book();
         book.setIsbn(String.valueOf(isbn));
-        book.setTitle(generateRandomName());
+        book.setTitle(generateRandomName() + isbn);
         book.setAuthor(generateRandomName());
         book.setPublisher(generateRandomName());
         book.setSupplier(generateRandomName());

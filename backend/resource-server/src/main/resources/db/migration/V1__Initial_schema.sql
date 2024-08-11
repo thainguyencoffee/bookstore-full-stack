@@ -20,7 +20,7 @@ CREATE TABLE books
     isbn             varchar(255) NOT NULL UNIQUE,
     category_id      BIGSERIAL    NOT NULL REFERENCES categories (id) ON DELETE CASCADE,
     category_name    varchar(255) NOT NULL,
-    title            varchar(255) NOT NULL,
+    title            varchar(255) NOT NULL UNIQUE ,
     author           varchar(255) NOT NULL,
     publisher        varchar(255) NOT NULL,
     supplier         varchar(255) NOT NULL,
