@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -71,6 +72,56 @@ public class EmailService {
                 .append("Chúng tôi sẽ liên hệ với bạn sớm để xác nhận và giao hàng. \n")
                 .append("Trân trọng, \n")
                 .append("Bookstore support!").toString();
+    }
+
+    public String buildPromotionEmailBody() {
+        StringBuilder body = new StringBuilder();
+        body.append("<h1>Chào mừng đến với Bookstore!</h1>");
+        body.append("<p>Chúng tôi rất vui khi thông báo rằng bạn đã đăng ký nhận thông tin từ Bookstore.");
+        body.append("<p>Đừng bỏ lỡ cơ hội khám phá những đầu sách tuyệt vời tại Bookstore! Cảm ơn bạn đã quan tâm.</p>");
+        body.append("<p>Trân trọng,</p>");
+        body.append("<p>Bookstore Team</p>");
+
+        return body.toString();
+    }
+
+    public String buildPromotionalDealOfTheDayEmailBody(List<Book> bestSellerBooks, List<Book> freeProducts) {
+        String baseUrl = "http://localhost:6969/vue-ui/book-detail/";
+
+        StringBuilder body = new StringBuilder();
+        body.append("<h1>Chào mừng đến với Bookstore!</h1>");
+
+        body.append("<p>Chúng tôi rất vui khi thông báo rằng bạn đã đăng ký nhận thông tin từ Bookstore. " +
+                "Dưới đây là một số thông tin mà chúng tôi muốn chia sẻ với bạn:</p>");
+
+        if (!bestSellerBooks.isEmpty()) {
+            body.append("<p>Dưới đây là một số tựa sách bán chạy nhất của chúng tôi:</p>");
+            for (Book book : bestSellerBooks) {
+                body.append("<p><a href='").append(baseUrl).append(book.getIsbn()).append("'>")
+                        .append(book.getTitle()).append("</a></p>");
+            }
+        } else {
+            body.append("<p>Hiện tại chúng tôi không có sách bán chạy nào.</p>");
+        }
+
+        if (!freeProducts.isEmpty()) {
+            body.append("<p>Ngoài ra, hãy xem các sản phẩm miễn phí tuyệt vời của chúng tôi!</p>");
+            body.append("<table>");
+            body.append("<tr><th>Tiêu đề</th><th>Mô tả</th></tr>");
+            for (Book freeBook : freeProducts) {
+                body.append("<tr><td>").append(freeBook.getTitle()).append("</td>")
+                        .append("<td>").append(freeBook.getDescription()).append("</td></tr>");
+            }
+            body.append("</table>");
+        } else {
+            body.append("<p>Hiện tại chúng tôi không có sản phẩm miễn phí nào.</p>");
+        }
+
+        body.append("<p>Đừng bỏ lỡ cơ hội khám phá những đầu sách tuyệt vời tại Bookstore! Cảm ơn bạn đã quan tâm.</p>");
+        body.append("<p>Trân trọng,</p>");
+        body.append("<p>Bookstore Team</p>");
+
+        return body.toString();
     }
 
 }

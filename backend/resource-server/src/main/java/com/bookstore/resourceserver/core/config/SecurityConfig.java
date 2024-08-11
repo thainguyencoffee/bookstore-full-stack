@@ -27,7 +27,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/guest-orders/**",
                                 "/api/payment/vn-pay/**",
-                                "/api/email/orders/**").permitAll()
+                                "/api/email/orders/**",
+                                "/api/email-preferences/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/orders/**").permitAll()
 
