@@ -22,7 +22,7 @@ public class CustomNoResultException extends RuntimeException {
     }
 
     public static enum Identifier {
-        ID, ISBN, EMAIL
+        ID, ISBN, TITLE, EMAIL
     }
 
 }

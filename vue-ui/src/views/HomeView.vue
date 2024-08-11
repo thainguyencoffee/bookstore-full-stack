@@ -17,6 +17,13 @@ onMounted(() => {
   // fetch best sellers
   store.dispatch("books/fetchBestSellers", {from: bestSellersFrom.value.toISOString(), pageableStr: 'page=0&size=10'});
 })
+
+function bookDetailLink(isbn) {
+  return {
+    name: 'bookDetail',
+    params: {isbn}
+  }
+}
 </script>
 
 <template>
@@ -31,51 +38,83 @@ onMounted(() => {
           <h4 class="text-center">and more</h4>
           <div class="d-flex justify-content-around align-items-center">
             <input type="email" class="form-control" placeholder="email address" v-model="emailPreferences">
-            <router-link :to="{ name: 'emailPreferences', query: {email: emailPreferences} }" class="btn btn-primary w-25">Go</router-link>
+            <router-link :to="{ name: 'emailPreferences', query: {email: emailPreferences} }"
+                         class="btn btn-primary w-25">Go
+            </router-link>
           </div>
         </div>
         <div class="mb-3 p-2 bg-white rounded home_category">
           <h3>Bookstore online</h3>
-          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from different genres. You can find books for children, teenagers, and adults. We also have books in different languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who can help you find the perfect book for you. We also have a blog where you can read about the latest books and authors. So, if you are looking for a book, visit Bookstore online today!</p>
+          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from
+            different genres. You can find books for children, teenagers, and adults. We also have books in different
+            languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who
+            can help you find the perfect book for you. We also have a blog where you can read about the latest books
+            and authors. So, if you are looking for a book, visit Bookstore online today!</p>
         </div>
         <div class="p-2 bg-white rounded home_category">
           <h3>Bookstore online</h3>
-          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from different genres. You can find books for children, teenagers, and adults. We also have books in different languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who can help you find the perfect book for you. We also have a blog where you can read about the latest books and authors. So, if you are looking for a book, visit Bookstore online today!</p>
+          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from
+            different genres. You can find books for children, teenagers, and adults. We also have books in different
+            languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who
+            can help you find the perfect book for you. We also have a blog where you can read about the latest books
+            and authors. So, if you are looking for a book, visit Bookstore online today!</p>
         </div>
       </div>
       <div class="col-12 col-md-4">
         <div class="mb-3 p-2 bg-white rounded home_category">
           <h3>Bookstore online</h3>
-          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from different genres. You can find books for children, teenagers, and adults. We also have books in different languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who can help you find the perfect book for you. We also have a blog where you can read about the latest books and authors. So, if you are looking for a book, visit Bookstore online today!</p>
+          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from
+            different genres. You can find books for children, teenagers, and adults. We also have books in different
+            languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who
+            can help you find the perfect book for you. We also have a blog where you can read about the latest books
+            and authors. So, if you are looking for a book, visit Bookstore online today!</p>
         </div>
         <div class="mb-3 p-2 rounded bg-dark bg-opacity-10">
           <span class="fs-3 fw-normal">Bestsellers</span> &af;
-          <span class="fs-6">{{bestSellersFrom.toDateString()}}</span>
+          <span class="fs-6">{{ bestSellersFrom.toDateString() }}</span>
           <div>
             <ul style="list-style: decimal">
               <li v-for="book in bestSellers" :key="book.id">
-                <router-link class="best-sellers-item" to="">{{book.title}} - purchases : {{book.purchases}}</router-link>
+                <router-link class="best-sellers-item" :to="bookDetailLink(book.isbn)">{{ book.title }} - purchases :
+                  {{ book.purchases }}
+                </router-link>
               </li>
             </ul>
           </div>
         </div>
         <div class="p-2 bg-white rounded home_category">
           <h3>Bookstore online</h3>
-          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from different genres. You can find books for children, teenagers, and adults. We also have books in different languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who can help you find the perfect book for you. We also have a blog where you can read about the latest books and authors. So, if you are looking for a book, visit Bookstore online today!</p>
+          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from
+            different genres. You can find books for children, teenagers, and adults. We also have books in different
+            languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who
+            can help you find the perfect book for you. We also have a blog where you can read about the latest books
+            and authors. So, if you are looking for a book, visit Bookstore online today!</p>
         </div>
       </div>
       <div class="col-12 col-md-4">
         <div class="mb-3 p-2 bg-white rounded home_category">
           <h3>Bookstore online</h3>
-          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from different genres. You can find books for children, teenagers, and adults. We also have books in different languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who can help you find the perfect book for you. We also have a blog where you can read about the latest books and authors. So, if you are looking for a book, visit Bookstore online today!</p>
+          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from
+            different genres. You can find books for children, teenagers, and adults. We also have books in different
+            languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who
+            can help you find the perfect book for you. We also have a blog where you can read about the latest books
+            and authors. So, if you are looking for a book, visit Bookstore online today!</p>
         </div>
         <div class="mb-3 p-2 bg-white rounded home_category">
           <h3>Bookstore online</h3>
-          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from different genres. You can find books for children, teenagers, and adults. We also have books in different languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who can help you find the perfect book for you. We also have a blog where you can read about the latest books and authors. So, if you are looking for a book, visit Bookstore online today!</p>
+          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from
+            different genres. You can find books for children, teenagers, and adults. We also have books in different
+            languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who
+            can help you find the perfect book for you. We also have a blog where you can read about the latest books
+            and authors. So, if you are looking for a book, visit Bookstore online today!</p>
         </div>
         <div class="p-2 bg-white rounded home_category">
           <h3>Bookstore online</h3>
-          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from different genres. You can find books for children, teenagers, and adults. We also have books in different languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who can help you find the perfect book for you. We also have a blog where you can read about the latest books and authors. So, if you are looking for a book, visit Bookstore online today!</p>
+          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from
+            different genres. You can find books for children, teenagers, and adults. We also have books in different
+            languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who
+            can help you find the perfect book for you. We also have a blog where you can read about the latest books
+            and authors. So, if you are looking for a book, visit Bookstore online today!</p>
         </div>
       </div>
     </div>

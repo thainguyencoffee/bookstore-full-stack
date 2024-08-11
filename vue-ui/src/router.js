@@ -7,6 +7,9 @@ const router = createRouter({
             path: '/', component: () => import('./views/HomeView.vue')
         },
         {
+            name: 'bookDetail', path: '/books/:isbn', component: () => import('./views/BookDetail.vue')
+        },
+        {
             path: '/profile', component: () => import('./views/ProfileView.vue')
         },
         {
