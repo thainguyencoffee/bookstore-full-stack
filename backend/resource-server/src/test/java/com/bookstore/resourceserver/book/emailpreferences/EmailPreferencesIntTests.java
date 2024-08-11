@@ -24,6 +24,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
     @Test
     void whenUnauthenticatedSubscribeEmailPreferencesWithValidDataThen201() {
         var dtoRequest = buildDto("demo@gmail.com");
+
         webTestClient.post().uri("/api/email-preferences")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(dtoRequest))
@@ -37,6 +38,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
     @Test
     void whenUnauthenticatedSubscribeEmailPreferencesWithCategoryNotfoundThen404() {
         var dtoRequest = buildDto("demo@gmail.com");
+
         dtoRequest.setCategoryIds(List.of(10000L, 9999999L));
         webTestClient.post().uri("/api/email-preferences")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -48,6 +50,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
     @Test
     void whenUnauthenticatedSubscribeEmailPreferencesWithBadBodyThen400() {
         var dtoRequest = buildDto("demo@gmail.com");
+
         dtoRequest.setEmail("");
         dtoRequest.setCategoryIds(List.of(10000L));
         webTestClient.post().uri("/api/email-preferences")
@@ -60,6 +63,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
     @Test
     void whenUnauthenticatedSubscribeEmailPreferencesWithBadBody2Then400() {
         var dtoRequest = buildDto("demo@gmail.com");
+
         dtoRequest.setEmail("nguyennt11032004"); // invalid email
         dtoRequest.setCategoryIds(List.of(10000L));
         webTestClient.post().uri("/api/email-preferences")
@@ -86,6 +90,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
         var email = "demo@fpt.edu.vn";
 
         var dtoRequest = buildDto(email);
+
         dtoRequest.setFirstName("change name");
         dtoRequest.setCategoryIds(null);
         webTestClient.post().uri("/api/email-preferences")

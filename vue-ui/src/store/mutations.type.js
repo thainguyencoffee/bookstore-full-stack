@@ -6,3 +6,4 @@ export const SET_CATEGORIES = 'setCategories';
 export const SET_SUBCATEGORIES_MAP = 'setSubCategoriesMap';
 
 export const SET_BEST_SELLERS = 'setBestSellers';
+
