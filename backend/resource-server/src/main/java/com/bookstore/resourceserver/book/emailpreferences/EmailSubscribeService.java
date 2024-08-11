@@ -11,6 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
@@ -48,7 +52,13 @@ public class EmailSubscribeService {
         }
 
         if (emailPreferences.getEmailTopics().contains(EmailTopic.DEAL_OF_THE_DAY)) {
-            Page<Book> booksPage = bookService.findBestSellers(PageRequest.of(0 , 10));
+            Instant firstDayOfPrevMonth = LocalDate.now()
+                    .withDayOfMonth(1)
+                    .minusMonths(1)
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toInstant();
+            Page<Book> booksPage = bookService.findBestSellers(firstDayOfPrevMonth,
+                    PageRequest.of(0 , 10));
             // hasn't implemented discount yet
             emailService.sendConfirmationEmail(emailPreferences.getEmail(), "Welcome to Bookstore!",
                     emailService.buildPromotionalDealOfTheDayEmailBody(booksPage.getContent(), Collections.emptyList()));

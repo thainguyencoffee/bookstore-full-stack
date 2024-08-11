@@ -1,6 +1,9 @@
 package com.bookstore.resourceserver;
 
 import com.bookstore.resourceserver.book.*;
+import com.bookstore.resourceserver.book.emailpreferences.EmailPreferences;
+import com.bookstore.resourceserver.book.emailpreferences.EmailPreferencesRepository;
+import com.bookstore.resourceserver.book.emailpreferences.EmailTopic;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.AfterEach;
@@ -8,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -18,6 +22,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders;
 
+import java.util.List;
+import java.util.Set;
+
+@AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @ActiveProfiles("integration")
@@ -30,6 +38,8 @@ public abstract class IntegrationTestsBase {
     private CategoryRepository categoryRepository;
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private EmailPreferencesRepository emailPreferencesRepository;
 
     @DynamicPropertySource
     static void keycloakProperties(DynamicPropertyRegistry registry) {
@@ -155,12 +165,29 @@ public abstract class IntegrationTestsBase {
         grade1MathBook.setCategory(grade1Category);
         bookRepository.save(grade1MathBook);
 
+        EmailPreferences emailPreferences = new EmailPreferences();
+        emailPreferences.setEmail("nguyenntph33935@fpt.edu.vn");
+        emailPreferences.addAllCategories(Set.of(vietnameseCategory, javaCategory));
+        emailPreferences.setFirstName("Nguyen");
+        emailPreferences.setLastName("Thai");
+        emailPreferences.setEmailTopics(List.of(EmailTopic.NEW_RELEASES));
+        emailPreferencesRepository.save(emailPreferences);
+
+        EmailPreferences emailPreferences1 = new EmailPreferences();
+        emailPreferences1.setEmail("nguyennt11032004@gmail.vn");
+        emailPreferences1.addAllCategories(Set.of(vietnameseCategory, javaCategory));
+        emailPreferences1.setFirstName("Nguyen");
+        emailPreferences1.setLastName("Thai");
+        emailPreferences1.setEmailTopics(List.of(EmailTopic.NEW_RELEASES));
+        emailPreferencesRepository.save(emailPreferences1);
+
     }
 
     @AfterEach
     void tearDown() {
         bookRepository.deleteAll();
         categoryRepository.deleteAll();
+        emailPreferencesRepository.deleteAll();
     }
 
 }

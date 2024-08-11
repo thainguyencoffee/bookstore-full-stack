@@ -1,9 +1,22 @@
 <script setup>
 
 import BookstoreOnline from "../components/BookstoreOnline.vue";
-import {ref} from "vue";
+import {computed, onMounted, ref} from "vue";
+import {useStore} from "vuex";
+
+const store = useStore();
 
 const emailPreferences = ref('');
+const bestSellers = computed(() => store.getters["books/bestSellers"])
+const bestSellersFrom = computed(() => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth() - 1, 2);
+})
+
+onMounted(() => {
+  // fetch best sellers
+  store.dispatch("books/fetchBestSellers", {from: bestSellersFrom.value.toISOString(), pageableStr: 'page=0&size=10'});
+})
 </script>
 
 <template>
@@ -35,9 +48,16 @@ const emailPreferences = ref('');
           <h3>Bookstore online</h3>
           <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from different genres. You can find books for children, teenagers, and adults. We also have books in different languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who can help you find the perfect book for you. We also have a blog where you can read about the latest books and authors. So, if you are looking for a book, visit Bookstore online today!</p>
         </div>
-        <div class="mb-3 p-2 bg-white rounded home_category">
-          <h3>Bookstore online</h3>
-          <p>Bookstore online is a place where you can find all the books you need. We have a wide range of books from different genres. You can find books for children, teenagers, and adults. We also have books in different languages. You can buy books online and have them delivered to your doorstep. We have a team of experts who can help you find the perfect book for you. We also have a blog where you can read about the latest books and authors. So, if you are looking for a book, visit Bookstore online today!</p>
+        <div class="mb-3 p-2 rounded bg-dark bg-opacity-10">
+          <span class="fs-3 fw-normal">Bestsellers</span> &af;
+          <span class="fs-6">{{bestSellersFrom.toDateString()}}</span>
+          <div>
+            <ul style="list-style: decimal">
+              <li v-for="book in bestSellers" :key="book.id">
+                <router-link class="best-sellers-item" to="">{{book.title}} - purchases : {{book.purchases}}</router-link>
+              </li>
+            </ul>
+          </div>
         </div>
         <div class="p-2 bg-white rounded home_category">
           <h3>Bookstore online</h3>
@@ -71,5 +91,14 @@ const emailPreferences = ref('');
 .home_category {
   background-image: url("https://www.manning.com/assets/dotdBackground_small-aea7dbee847cb26aab6e506586cd8a2b.png");
   background-size: cover;
+}
+
+.best-sellers-item {
+  color: rebeccapurple;
+  text-decoration: none;
+}
+
+.best-sellers-item:hover {
+  text-decoration: underline;
 }
 </style>

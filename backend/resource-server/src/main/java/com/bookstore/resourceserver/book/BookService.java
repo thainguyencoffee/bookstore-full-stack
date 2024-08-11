@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,24 +86,8 @@ public class BookService {
         bookRepository.deleteByIsbn(isbn);
     }
 
-    public Page<Book> findBestSellers(Pageable pageable) {
-        return bookRepository.findAllByOrderByPurchasesDesc(pageable);
-    }
-
-    public Page<Book> findByTitleContaining(String query, Pageable pageable) {
-        return bookRepository.findAllByTitleContaining(query, pageable);
-    }
-
-    public Page<Book> findByAuthorContaining(String query, Pageable pageable) {
-        return bookRepository.findAllByAuthorContaining(query, pageable);
-    }
-
-    public Page<Book> findByPublisherContaining(String query, Pageable pageable) {
-        return bookRepository.findAllByPublisherContaining(query, pageable);
-    }
-
-    public Page<Book> findBySupplierContaining(String query, Pageable pageable) {
-        return bookRepository.findAllBySupplierContaining(query, pageable);
+    public Page<Book> findBestSellers(Instant statisticIn, Pageable pageable) {
+        return bookRepository.findByPurchaseAtAfterOrderByPurchasesDesc(statisticIn, pageable);
     }
 
     private static Book convertToBook(BookMetadataRequestDto dto, Category category) {
