@@ -30,6 +30,7 @@ spring:
           filters:
             - TokenRelay=
             - SaveSession
+            - StripPrefix=1
   # Security
   security:
     oauth2:

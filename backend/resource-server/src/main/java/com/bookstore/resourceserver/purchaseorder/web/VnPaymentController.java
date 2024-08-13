@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/payment/vn-pay")
+@RequestMapping("payment/vn-pay")
 @RequiredArgsConstructor
 public class VnPaymentController {
 

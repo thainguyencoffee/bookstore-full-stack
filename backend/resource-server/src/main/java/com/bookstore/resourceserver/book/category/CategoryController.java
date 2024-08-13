@@ -1,6 +1,7 @@
-package com.bookstore.resourceserver.book;
+package com.bookstore.resourceserver.book.category;
 
 import com.bookstore.resourceserver.awss3.MultiMediaService;
+import com.bookstore.resourceserver.book.Book;
 import com.bookstore.resourceserver.book.dto.category.CategoryMetadataRequestDto;
 import com.bookstore.resourceserver.book.dto.category.CategoryMetadataUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/categories", produces = "application/json")
+@RequestMapping(path = "categories", produces = "application/json")
 @RequiredArgsConstructor
 public class CategoryController {
 

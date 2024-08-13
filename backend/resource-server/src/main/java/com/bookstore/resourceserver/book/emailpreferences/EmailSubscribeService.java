@@ -1,14 +1,11 @@
 package com.bookstore.resourceserver.book.emailpreferences;
 
-import com.bookstore.resourceserver.book.Book;
-import com.bookstore.resourceserver.book.BookService;
-import com.bookstore.resourceserver.book.Category;
-import com.bookstore.resourceserver.book.CategoryService;
+import com.bookstore.resourceserver.book.category.Category;
+import com.bookstore.resourceserver.book.category.CategoryService;
+import com.bookstore.resourceserver.book.impl.BookServiceImpl;
 import com.bookstore.resourceserver.core.email.EmailService;
 import com.bookstore.resourceserver.core.exception.CustomNoResultException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -27,7 +24,7 @@ import static com.bookstore.resourceserver.core.exception.CustomNoResultExceptio
 public class EmailSubscribeService {
 
     private final CategoryService categoryService;
-    private final BookService bookService;
+    private final BookServiceImpl bookService;
     private final EmailPreferencesRepository emailPreferencesRepository;
     private final EmailService emailService;
 
@@ -57,11 +54,11 @@ public class EmailSubscribeService {
                     .minusMonths(1)
                     .atStartOfDay(ZoneId.systemDefault())
                     .toInstant();
-            Page<Book> booksPage = bookService.findBestSellers(firstDayOfPrevMonth,
-                    PageRequest.of(0 , 10));
+//            Page<Book> booksPage = bookService.findBestSellers(firstDayOfPrevMonth,
+//                    PageRequest.of(0 , 10));
             // hasn't implemented discount yet
             emailService.sendConfirmationEmail(emailPreferences.getEmail(), "Welcome to Bookstore!",
-                    emailService.buildPromotionalDealOfTheDayEmailBody(booksPage.getContent(), Collections.emptyList()));
+                    emailService.buildPromotionalDealOfTheDayEmailBody(null, Collections.emptyList()));
         } else {
             emailService.sendConfirmationEmail(emailPreferences.getEmail(), "Welcome to Bookstore!", emailService.buildPromotionEmailBody());
         }

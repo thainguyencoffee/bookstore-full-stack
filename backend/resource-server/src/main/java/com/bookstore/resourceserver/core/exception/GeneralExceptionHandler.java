@@ -8,7 +8,6 @@ import com.bookstore.resourceserver.core.exception.purchaseorder.OtpExpiredExcep
 import com.bookstore.resourceserver.core.exception.purchaseorder.OtpIncorrectException;
 import com.bookstore.resourceserver.core.exception.shoppingcart.ShoppingCartAlreadyExistingException;
 import com.bookstore.resourceserver.shopppingcart.ShoppingCart;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Objects;
 
 @RestControllerAdvice
-@Slf4j
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CustomNoResultException.class)
@@ -74,6 +72,15 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleBookNotEnoughInventoryException(BookNotEnoughInventoryException ex) {
         ApiError.ErrorInfo errorInfo = new ApiError.ErrorInfo();
         errorInfo.setEntity(Book.class.getSimpleName());
+        errorInfo.setMessage(ex.getMessage());
+        return new ResponseEntity<>(new ApiError(List.of(errorInfo)), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityCastException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleClassCastException(EntityCastException ex) {
+        ApiError.ErrorInfo errorInfo = new ApiError.ErrorInfo();
+        errorInfo.setEntity(ex.getInputClass().getSimpleName());
         errorInfo.setMessage(ex.getMessage());
         return new ResponseEntity<>(new ApiError(List.of(errorInfo)), HttpStatus.BAD_REQUEST);
     }

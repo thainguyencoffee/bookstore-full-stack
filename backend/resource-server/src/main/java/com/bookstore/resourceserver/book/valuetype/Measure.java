@@ -1,4 +1,4 @@
-package com.bookstore.resourceserver.book;
+package com.bookstore.resourceserver.book.valuetype;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

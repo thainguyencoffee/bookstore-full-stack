@@ -1,26 +1,25 @@
 package com.bookstore.resourceserver.book;
 
 import com.bookstore.resourceserver.IntegrationTestsBase;
-import com.bookstore.resourceserver.book.dto.book.BookMetadataRequestDto;
-import com.bookstore.resourceserver.book.dto.book.BookMetadataUpdateDto;
+import com.bookstore.resourceserver.book.author.Author;
+import com.bookstore.resourceserver.book.category.Category;
+import com.bookstore.resourceserver.book.dto.book.BookRequestDto;
+import com.bookstore.resourceserver.book.dto.book.BookUpdateDto;
+import com.bookstore.resourceserver.book.valuetype.Language;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Set;
 
-// Summary of the test data
-// Total categories: 7 [id] {'10000', '10001', '10002', '10003', '10004', '10005', '10006'}
-// Total books: 2 [isbn]{'1234567890', '1234567891'}
 class BookIntegrationTests extends IntegrationTestsBase {
 
     @Autowired
@@ -29,126 +28,115 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenUnauthenticatedGetAllBooksThenOk() {
         webTestClient
-                .get().uri("/api/books")
+                .get().uri("/books")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.content").isArray()
-                .jsonPath("$.content.length()").isEqualTo(2);
+                .jsonPath("$.content").isArray();
     }
 
-    @Test
-    void whenUnauthenticatedAndBookAvailableGetBookByIsbnThenOk() {
-        var isbn = "1234567890";
+    @ParameterizedTest
+    @MethodSource("provideBooks")
+    void whenUnauthenticatedAndBookAvailableGetBookByIsbnThenOk(Book book) {
         webTestClient
-                .get().uri("/api/books/" + isbn)
+                .get().uri("/books/" + book.getIsbn())
                 .exchange()
                 .expectStatus().is2xxSuccessful()
                 .expectBody()
-                .jsonPath("$.isbn").isEqualTo(isbn)
-                .jsonPath("$.title").isEqualTo("Spring boot in action")
-                .jsonPath("$.author").isEqualTo("Craig Walls")
-                .jsonPath("$.publisher").isEqualTo("Manning")
-                .jsonPath("$.supplier").isEqualTo("Manning")
-                .jsonPath("$.price").isEqualTo(1000000)
-                .jsonPath("$.language").isEqualTo("ENGLISH")
-                .jsonPath("$.coverType").isEqualTo("PAPERBACK")
-                .jsonPath("$.numberOfPages").isEqualTo(300)
-                .jsonPath("$.purchases").isEqualTo(10)
-                .jsonPath("$.inventory").isEqualTo(100)
-                .jsonPath("$.description").isEqualTo("Spring boot in action")
-                .jsonPath("$.measure.width").isEqualTo(300)
-                .jsonPath("$.measure.height").isEqualTo(400)
-                .jsonPath("$.measure.thickness").isEqualTo(100)
-                .jsonPath("$.measure.weight").isEqualTo(170);
+                .jsonPath("$.isbn").isEqualTo(book.getIsbn())
+                .jsonPath("$.title").isEqualTo(book.getTitle())
+                .jsonPath("$.edition").isEqualTo(book.getEdition())
+                .jsonPath("$.authors").isArray()
+                .jsonPath("$.publisher").isEqualTo(book.getPublisher())
+                .jsonPath("$.supplier").isEqualTo(book.getSupplier())
+                .jsonPath("$.language").isEqualTo(book.getLanguage().toString())
+                .jsonPath("$.description").isEqualTo(book.getDescription())
+                .jsonPath("$.category.categoryId").isEqualTo(book.getCategory().getCategoryId())
+                .jsonPath("$.category.categoryName").isEqualTo(book.getCategory().getCategoryName());
     }
 
     @Test
     void whenUnauthenticatedAndBookNotAvailableGetBookByIsbnThenNotFound() {
         var isbn = "99999999999";
         webTestClient
-                .get().uri("/api/books/" + isbn)
+                .get().uri("/books/" + isbn)
                 .exchange()
                 .expectStatus().isNotFound();
     }
 
-    @Test
-    void whenUnauthenticatedCreateBookThen401() {
-        var springCategory = 10002L;
-        var bookReq = buildBookMetadata(true, "1234567892", springCategory);
+    @ParameterizedTest
+    @MethodSource("provideSingleAuthorAndCategory")
+    void whenUnauthenticatedCreateBookThen401(Author author, Category category) {
+        var bookReq = buildBookMetadata(true, "1234567892", category.getId(), author.getId());
         webTestClient
                 .post()
-                .uri("/api/books")
+                .uri("/books")
                 .body(BodyInserters.fromValue(bookReq))
                 .exchange()
                 .expectStatus().isUnauthorized();
     }
 
-    @Test
-    void whenAuthenticatedWithInvalidRoleCreateBookThen403() {
-        var springCategory = 10002L;
-        var bookReq = buildBookMetadata(true, "1234567892", springCategory);
+    @ParameterizedTest
+    @MethodSource("provideSingleAuthorAndCategory")
+    void whenAuthenticatedWithInvalidRoleCreateBookThen403(Author author, Category category) {
+        var bookReq = buildBookMetadata(true, "1234567893", category.getId(), author.getId());
         webTestClient
                 .post()
-                .uri("/api/books")
+                .uri("/books")
                 .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
                 .body(BodyInserters.fromValue(bookReq))
                 .exchange()
                 .expectStatus().isForbidden();
     }
 
-    @Test
-    void whenAuthenticatedWithValidRoleCreateBookThen201() {
-        var springCategory = 10002L;
-        var bookReq = buildBookMetadata(true, "1234567892", springCategory);
+
+    @ParameterizedTest
+    @MethodSource("provideSingleAuthorAndCategory")
+    void whenAuthenticatedWithValidRoleCreateBookThen201(Author author, Category category) {
+        var isbn = generatedNumbers10Digits();
+        var bookReq = buildBookMetadata(true, isbn, category.getId(), author.getId());
         webTestClient
                 .post()
-                .uri("/api/books")
+                .uri("/books")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(bookReq))
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody()
-                .jsonPath("$.category.categoryId").isEqualTo(springCategory)
-                .jsonPath("$.isbn").isEqualTo("1234567892")
+                .jsonPath("$.category.categoryId").isEqualTo(category.getId())
+                .jsonPath("$.isbn").isEqualTo(isbn)
                 .jsonPath("$.title").isEqualTo(bookReq.getTitle())
-                .jsonPath("$.author").isEqualTo(bookReq.getAuthor())
+                .jsonPath("$.authors[0].author").isEqualTo(author.getId())
+                .jsonPath("$.authors[0].authorName").isEqualTo(author.getUserInformation().getFullName())
                 .jsonPath("$.publisher").isEqualTo(bookReq.getPublisher())
                 .jsonPath("$.supplier").isEqualTo(bookReq.getSupplier())
-                .jsonPath("$.price").isEqualTo(bookReq.getPrice())
                 .jsonPath("$.language").isEqualTo(bookReq.getLanguage().name())
-                .jsonPath("$.coverType").isEqualTo(bookReq.getCoverType().name())
-                .jsonPath("$.numberOfPages").isEqualTo(bookReq.getNumberOfPages())
-                .jsonPath("$.purchases").isEqualTo(bookReq.getPurchases())
-                .jsonPath("$.inventory").isEqualTo(bookReq.getInventory())
                 .jsonPath("$.description").isEqualTo(bookReq.getDescription())
-                .jsonPath("$.measure.width").isEqualTo(bookReq.getWidth())
-                .jsonPath("$.measure.height").isEqualTo(bookReq.getHeight())
-                .jsonPath("$.measure.thickness").isEqualTo(bookReq.getThickness())
-                .jsonPath("$.measure.weight").isEqualTo(bookReq.getWeight());
+                .jsonPath("$.edition").isEqualTo(bookReq.getEdition());
     }
 
-    @Test
-    void whenAuthenticatedWithValidRoleCreateBookInvalidThen400() {
-        var springCategory = 10002L;
-        var bookReq = buildBookMetadata(false, "1234567892", springCategory);
+    @ParameterizedTest
+    @MethodSource("provideSingleAuthorAndCategoryAndBook")
+    void whenAuthenticatedWithValidRoleCreateBookInvalidThen400(Author author, Category category) {
+        var bookReq = buildBookMetadata(false, "1234567892", category.getId(), author.getId());
         webTestClient
                 .post()
-                .uri("/api/books")
+                .uri("/books")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(bookReq))
                 .exchange()
                 .expectStatus().isBadRequest();
     }
 
+
     @Test
     void whenUnauthenticatedUpdateBookThen401() {
-        var bookReq = new BookMetadataRequestDto();
+        var bookReq = new BookRequestDto();
         bookReq.setCategoryId(10002L);
         var isbn = "1234567891";
         webTestClient
                 .patch()
-                .uri("/api/books" + isbn)
+                .uri("/books" + isbn)
                 .body(BodyInserters.fromValue(bookReq))
                 .exchange()
                 .expectStatus().isUnauthorized();
@@ -156,56 +144,68 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
     @Test
     void whenAuthenticatedWithInvalidRoleUpdateBookThen403() {
-        var bookReq = new BookMetadataRequestDto();
+        var bookReq = new BookRequestDto();
         bookReq.setCategoryId(10002L);
         var isbn = "1234567891";
         webTestClient
                 .patch()
-                .uri("/api/books" + isbn)
+                .uri("/books" + isbn)
                 .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
                 .body(BodyInserters.fromValue(bookReq))
                 .exchange()
                 .expectStatus().isForbidden();
     }
 
-    @Test
-    void whenAuthenticatedWithValidRoleUpdateBookThen200() throws JsonProcessingException {
-        var bookReq = new BookMetadataRequestDto();
-        bookReq.setCategoryId(10002L);
-        var isbn = "1234567891";
+    @ParameterizedTest
+    @MethodSource("provideSingleAuthorAndCategoryAndBook")
+    void whenAuthenticatedWithValidRoleUpdateBookThen200(Author author, Category category, Book book) {
+        var bookReq = new BookUpdateDto();
+        bookReq.setLanguage(Language.ENGLISH);
+        bookReq.setPublisher("updated publisher");
+        bookReq.setSupplier("updated supplier");
+        bookReq.setTitle("updated title " + book.getIsbn());
+        bookReq.setDescription("updated description");
+        bookReq.setEdition(3);
+        Set<Long> authorIds = Set.of(author.getId());
+        bookReq.setAuthorIds(authorIds);
+        bookReq.setCategoryId(category.getId());
+
         webTestClient
                 .patch()
-                .uri("/api/books/" + isbn)
+                .uri("/books/" + book.getIsbn())
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(bookReq))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.category.categoryId").isEqualTo(10002L)
                 .jsonPath("$.isbn").isNotEmpty()
-                .jsonPath("$.title").isNotEmpty()
-                .jsonPath("$.author").isNotEmpty()
-                .jsonPath("$.publisher").isNotEmpty()
-                .jsonPath("$.supplier").isNotEmpty()
-                .jsonPath("$.language").isNotEmpty()
-                .jsonPath("$.coverType").isNotEmpty()
-                .jsonPath("$.numberOfPages").isNotEmpty()
-                .jsonPath("$.purchases").isNotEmpty()
-                .jsonPath("$.inventory").isNotEmpty()
-                .jsonPath("$.measure.width").isNotEmpty()
-                .jsonPath("$.measure.height").isNotEmpty()
-                .jsonPath("$.measure.thickness").isNotEmpty()
-                .jsonPath("$.measure.weight").isNotEmpty();
+                .jsonPath("$.title").isEqualTo(bookReq.getTitle())
+                .jsonPath("$.authors").isArray()
+                .jsonPath("$.category").isNotEmpty()
+                .jsonPath("$.publisher").isEqualTo(bookReq.getPublisher())
+                .jsonPath("$.supplier").isEqualTo(bookReq.getSupplier())
+                .jsonPath("$.language").isEqualTo(bookReq.getLanguage().name())
+                .jsonPath("$.description").isEqualTo(bookReq.getDescription())
+                .jsonPath("$.edition").isEqualTo(bookReq.getEdition());
     }
 
-    @Test
-    void whenAuthenticatedWithValidRoleUpdateBookInvalidThen400() {
-        var bookReq = new BookMetadataUpdateDto();
-        bookReq.setWidth(0.0);
-        var isbn = "1234567891";
+    @ParameterizedTest
+    @MethodSource("provideSingleBook")
+    void whenAuthenticatedWithValidRoleUpdateBookInvalidThen400(Book book) {
+        var bookReq = new BookUpdateDto();
+        var isbn = book.getIsbn();
+        bookReq.setTitle("In Build a Large Language Model (from Scratch), you’ll discover how LLMs work from the inside out. In this insightful book, bestselling author Sebastian Raschka guides you step by step through creating your own LLM, explaining each stage with clear text, diagrams, and examples. You’ll go from the initial design and creation to pretraining on a general corpus, all the way to finetuning for specific tasks.\n" +
+                "Build a Large Language Model (from Scratch) teaches you how to:\n" +
+                "Plan and code all the parts of an LLM\n" +
+                "Prepare a dataset suitable for LLM training\n" +
+                "Finetune LLMs for text classification and with your own data\n" +
+                "Apply instruction tuning techniques to ensure your LLM follows instructions\n" +
+                "Load pretrained weights into an LLM\n" +
+                "The large language models (LLMs) that power cutting-edge AI tools like ChatGPT, Bard, and Copilot seem like a miracle, but they’re not magic. This book demystifies LLMs by helping you build your own from scratch. You’ll get a unique and valuable insight into how LLMs work, learn how to evaluate their quality, and pick up concrete techniques to finetune and improve them.\n" +
+                "The process you use to train and develop your own small-but-functional model in this book follows the same steps used to deliver huge-scale foundation models like GPT-4. Your small-scale LLM can be developed on an ordinary laptop, and you’ll be able to use it as your own personal assistant.");
         webTestClient
                 .patch()
-                .uri("/api/books/" + isbn)
+                .uri("/books/" + isbn)
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(bookReq))
                 .exchange()
@@ -217,7 +217,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
         var isbn = "1234567890";
         webTestClient
                 .delete()
-                .uri("/api/books/" + isbn)
+                .uri("/books/" + isbn)
                 .exchange()
                 .expectStatus().isUnauthorized();
     }
@@ -227,18 +227,18 @@ class BookIntegrationTests extends IntegrationTestsBase {
         var isbn = "1234567890";
         webTestClient
                 .delete()
-                .uri("/api/books/" + isbn)
+                .uri("/books/" + isbn)
                 .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isForbidden();
     }
 
-    @Test
-    void whenAuthenticatedWithValidRoleDeleteBookThen204() {
-        var isbn = "1234567890";
+    @ParameterizedTest
+    @MethodSource("provideSingleBook")
+    void whenAuthenticatedWithValidRoleDeleteBookThen204(Book book) {
         webTestClient
                 .delete()
-                .uri("/api/books/" + isbn)
+                .uri("/books/" + book.getIsbn())
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isNoContent();
@@ -248,7 +248,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
     void whenUnauthenticatedUploadThumbnailsBookThen401() {
         String isbn = "1234567890";
         webTestClient.post()
-                .uri("/api/books/" + isbn + "/thumbnails")
+                .uri("/books/" + isbn + "/thumbnails")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters
                         .fromMultipartData("thumbnails", new ClassPathResource("thumbnail.svg"))
@@ -261,7 +261,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
     void whenAuthenticatedWithInvalidRoleUploadThumbnailsBookThen403() {
         String isbn = "1234567890";
         webTestClient.post()
-                .uri("/api/books/" + isbn + "/thumbnails")
+                .uri("/books/" + isbn + "/thumbnails")
                 .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters
@@ -272,16 +272,17 @@ class BookIntegrationTests extends IntegrationTestsBase {
     }
 
 
-    @Test
-    void whenAuthenticatedWithValidRoleUpdateThumbnailsBookThenOK() throws com.fasterxml.jackson.core.JsonProcessingException {
-        String isbn = "1234567890";
+    @ParameterizedTest
+    @MethodSource("provideSingleBook")
+    void whenAuthenticatedWithValidRoleUpdateThumbnailsBookThenOK(Book book) throws com.fasterxml.jackson.core.JsonProcessingException {
+        String isbn = book.getIsbn();
 
         List<String> thumbnails = uploadThumbnails(isbn);
 
-        var req = new BookMetadataUpdateDto();
+        var req = new BookUpdateDto();
         req.setThumbnails(thumbnails);
         webTestClient.patch()
-                .uri("/api/books/" + isbn)
+                .uri("/books/" + isbn)
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(req))
                 .exchange()
@@ -291,16 +292,17 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .jsonPath("$.thumbnails.length()").isEqualTo(2);
     }
 
-    @Test
-    void whenAuthenticatedWithValidRoleUpdateThumbnailsBookAndRemoveOldThumbnailsThenOK() throws com.fasterxml.jackson.core.JsonProcessingException {
-        String isbn = "1234567890";
+    @ParameterizedTest
+    @MethodSource("provideSingleBook")
+    void whenAuthenticatedWithValidRoleUpdateThumbnailsBookAndRemoveOldThumbnailsThenOK(Book book) throws com.fasterxml.jackson.core.JsonProcessingException {
+        String isbn = book.getIsbn();
 
         List<String> thumbnails = uploadThumbnails(isbn);
 
-        var req = new BookMetadataUpdateDto();
+        var req = new BookUpdateDto();
         req.setThumbnails(thumbnails);
         webTestClient.patch()
-                .uri("/api/books/" + isbn)
+                .uri("/books/" + isbn)
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(req))
                 .exchange()
@@ -313,7 +315,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
         thumbnails2.add(thumbnails.get(0));
         req.setThumbnails(thumbnails2);
         webTestClient.patch()
-                .uri("/api/books/" + isbn)
+                .uri("/books/" + isbn)
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(req))
                 .exchange()
@@ -327,7 +329,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
     private List<String> uploadThumbnails(String isbn) throws com.fasterxml.jackson.core.JsonProcessingException {
         String responseRaw = webTestClient.post()
-                .uri("/api/books/" + isbn + "/thumbnails")
+                .uri("/books/" + isbn + "/thumbnails")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters
@@ -338,64 +340,36 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .expectBody(String.class)
                 .returnResult().getResponseBody();
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(responseRaw, new TypeReference<>() {
-        });
+        return objectMapper.readValue(responseRaw, new TypeReference<>() {});
     }
 
-    @Test
-    void whenUnAuthenticatedGetBestSellersThenReturnOK() {
-        Instant from = LocalDate.now()
-                .withDayOfMonth(1)
-                .minusMonths(1)
-                .atStartOfDay().toInstant(ZoneOffset.UTC);
-        webTestClient
-                .get().uri(uriBuilder -> uriBuilder
-                        .path("/api/books/best-sellers")
-                        .queryParam("from", from)
-                        .queryParam("page", 0)
-                        .queryParam("size", 10).build()
-                ).exchange()
-                .expectStatus().isOk();
-    }
-
-    private static BookMetadataRequestDto buildBookMetadata(boolean isValid, String isbn, Long categoryId) {
-        var bookDto = new BookMetadataRequestDto();
-        bookDto.setIsbn(isbn);
+    private static BookRequestDto buildBookMetadata(boolean isValid, String isbn, Long categoryId, Long authorId) {
+        var bookDto = new BookRequestDto();
         bookDto.setCategoryId(categoryId);
+        bookDto.setAuthorIds(Set.of(authorId));
         if (isValid) {
+            bookDto.setIsbn(isbn);
             bookDto.setTitle("DEMO_TITLE");
-            bookDto.setPrice(1000000L);
-            bookDto.setAuthor("DEMO_AUTHOR");
             bookDto.setPublisher("DEMO_PUBLISHER");
             bookDto.setSupplier("DEMO_SUPPLIER");
             bookDto.setLanguage(Language.VIETNAMESE);
-            bookDto.setCoverType(CoverType.PAPERBACK);
-            bookDto.setNumberOfPages(1000);
-            bookDto.setPurchases(10);
-            bookDto.setInventory(100);
             bookDto.setDescription("DEMO_DESCRIPTION");
-            bookDto.setWidth(300.0);
-            bookDto.setHeight(400.0);
-            bookDto.setThickness(100.0);
-            bookDto.setWeight(170.0);
+            bookDto.setEdition(2);
         } else {
+            bookDto.setIsbn(isbn + "1234");
             bookDto.setTitle("");
-            bookDto.setPrice(0L);
-            bookDto.setAuthor("");
             bookDto.setPublisher("");
             bookDto.setSupplier("");
             bookDto.setLanguage(Language.VIETNAMESE);
-            bookDto.setCoverType(CoverType.PAPERBACK);
-            bookDto.setNumberOfPages(0);
-            bookDto.setPurchases(0);
-            bookDto.setInventory(0);
             bookDto.setDescription("");
-            bookDto.setWidth(0.0);
-            bookDto.setHeight(0.0);
-            bookDto.setThickness(0.0);
-            bookDto.setWeight(0.0);
+            bookDto.setEdition(2);
         }
         return bookDto;
+    }
+
+    private String generatedNumbers10Digits() {
+        var number = (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
+        return String.valueOf(number);
     }
 
 }

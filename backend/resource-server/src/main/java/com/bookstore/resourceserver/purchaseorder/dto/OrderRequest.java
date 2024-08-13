@@ -1,5 +1,7 @@
 package com.bookstore.resourceserver.purchaseorder.dto;
 
+import com.bookstore.resourceserver.core.valuetype.AddressInformation;
+import com.bookstore.resourceserver.core.valuetype.UserInformation;
 import com.bookstore.resourceserver.purchaseorder.PaymentMethod;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +18,7 @@ public class OrderRequest {
     private List<LineItemRequest> lineItems;
     @Valid
     private UserInformation userInformation;
+    private AddressInformation addressInformation;
     @NotNull(message = "Payment method is required")
     private PaymentMethod paymentMethod;
 }

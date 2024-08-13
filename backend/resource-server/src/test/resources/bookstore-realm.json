@@ -39,6 +39,7 @@
   "editUsernameAllowed" : false,
   "bruteForceProtected" : false,
   "permanentLockout" : false,
+  "maxTemporaryLockouts" : 0,
   "maxFailureWaitSeconds" : 900,
   "minimumQuickLoginWaitSeconds" : 60,
   "waitIncrementSeconds" : 60,
@@ -107,6 +108,14 @@
       "attributes" : { }
     } ],
     "client" : {
+      "bookstore-confidential" : [ {
+        "id" : "3b0589d5-31f6-40c4-9d87-e964f9627ecc",
+        "name" : "uma_protection",
+        "composite" : false,
+        "clientRole" : true,
+        "containerId" : "a7df4184-0c31-42ce-b248-e0669a11e4bf",
+        "attributes" : { }
+      } ],
       "realm-management" : [ {
         "id" : "28511dc0-e552-424c-a7d3-54ca4f4d6e3e",
         "name" : "manage-identity-providers",
@@ -282,14 +291,6 @@
         "containerId" : "aab3a90e-6ea8-4866-9b6e-6c58e7869cb7",
         "attributes" : { }
       } ],
-      "edge-service" : [ {
-        "id" : "3b0589d5-31f6-40c4-9d87-e964f9627ecc",
-        "name" : "uma_protection",
-        "composite" : false,
-        "clientRole" : true,
-        "containerId" : "a7df4184-0c31-42ce-b248-e0669a11e4bf",
-        "attributes" : { }
-      } ],
       "security-admin-console" : [ ],
       "admin-cli" : [ ],
       "account-console" : [ ],
@@ -422,25 +423,25 @@
   "webAuthnPolicyPasswordlessExtraOrigins" : [ ],
   "users" : [ {
     "id" : "622765d0-d0b3-4eb3-baec-7d5faf7caaa7",
-    "createdTimestamp" : 1718299674748,
     "username" : "admin",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : true,
     "firstName" : "Nguyên",
     "lastName" : "Thái",
     "email" : "nguyennt11032004@gmail.com",
+    "emailVerified" : true,
     "attributes" : {
       "gender" : [ "Male" ],
       "birthdate" : [ "2004-03-11" ]
     },
+    "createdTimestamp" : 1718299674748,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "391c0a66-9633-44be-92b6-cdb8ba0c9fdc",
       "type" : "password",
       "userLabel" : "My password",
       "createdDate" : 1718299683769,
-      "secretData" : "{\"value\":\"DGyxVOXIDY1spkqcFhNuZWYIxADJSaY6rCoUQFtYYts=\",\"salt\":\"ggHmDzvhA5r5k8nPwp+j4A==\",\"additionalParameters\":{}}",
-      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+      "secretData" : "{\"value\":\"IMWtGwwo5g5XbITE7JY/DKlBKCKnoKwAn9Wxd0SiBUcvMZi2BKzIqY/FupFyG84spaAqaN4WMBgw+9E3R7vGqA==\",\"salt\":\"5zoGYkO2XzbwRr+CVqJMEg==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
@@ -449,18 +450,18 @@
     "groups" : [ ]
   }, {
     "id" : "70bad9ee-d88a-4728-9ddf-f211cd3e3453",
-    "createdTimestamp" : 1718616394506,
     "username" : "employee",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : true,
     "firstName" : "Nhan",
     "lastName" : "Vien",
     "email" : "nguyenthainguyen11032004@gmail.com",
+    "emailVerified" : true,
     "attributes" : {
       "gender" : [ "Male" ],
       "birthdate" : [ "2004-03-11" ]
     },
+    "createdTimestamp" : 1718616394506,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "b4559964-6bdc-421a-8fbf-6d887e6fc9dc",
       "type" : "password",
@@ -476,29 +477,29 @@
     "groups" : [ ]
   }, {
     "id" : "7454c61c-082c-46dd-96ee-f815a6c9979e",
+    "username" : "service-account-bookstore-confidential",
+    "emailVerified" : false,
     "createdTimestamp" : 1717668585813,
-    "username" : "service-account-edge-service",
     "enabled" : true,
     "totp" : false,
-    "emailVerified" : false,
-    "serviceAccountClientId" : "edge-service",
+    "serviceAccountClientId" : "bookstore-confidential",
     "credentials" : [ ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "admin", "employee", "default-roles-chat" ],
     "clientRoles" : {
-      "realm-management" : [ "realm-admin" ],
-      "edge-service" : [ "uma_protection" ]
+      "bookstore-confidential" : [ "uma_protection" ],
+      "realm-management" : [ "realm-admin" ]
     },
     "notBefore" : 0,
     "groups" : [ ]
   }, {
     "id" : "5777c2d0-f710-4bcd-bb0b-6a8b0e3dc061",
-    "createdTimestamp" : 1718614041838,
     "username" : "service-account-realm-management",
+    "emailVerified" : false,
+    "createdTimestamp" : 1718614041838,
     "enabled" : true,
     "totp" : false,
-    "emailVerified" : false,
     "serviceAccountClientId" : "realm-management",
     "credentials" : [ ],
     "disableableCredentialTypes" : [ ],
@@ -511,26 +512,26 @@
     "groups" : [ ]
   }, {
     "id" : "d3572e9d-a101-450f-b0ba-aa1c92bf6a41",
-    "createdTimestamp" : 1718612811645,
     "username" : "user",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : true,
     "firstName" : "Nguyen",
     "lastName" : "Thai",
     "email" : "nguyenntph33935@fpt.edu.vn",
+    "emailVerified" : true,
     "attributes" : {
       "birthdate" : [ "2004-03-11" ],
       "gender" : [ "Male" ],
       "pictures" : [ "https://res.cloudinary.com/dl0v8gbku/image/upload/v1718216820/cld-sample.jpg" ]
     },
+    "createdTimestamp" : 1718612811645,
+    "enabled" : true,
+    "totp" : false,
     "credentials" : [ {
       "id" : "2155880a-069a-48c7-9797-7f87e8d36147",
       "type" : "password",
       "userLabel" : "My password",
       "createdDate" : 1718612817418,
-      "secretData" : "{\"value\":\"F+PZIsc0CAjEQJGqmTl2hA1pOkPjV2cVvY1NiedGUR4=\",\"salt\":\"GRdDxnQylQlpqPc6b1B9KA==\",\"additionalParameters\":{}}",
-      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+      "secretData" : "{\"value\":\"0gv5Ks/e18Ql7uWyLOS04XgVLRXzCMNrXgsXl8HSu66pi/VFJqc5l4ilWrkJTaEyedK/Vm4YS2mAMUah3v9A8A==\",\"salt\":\"IaX7mMQEu9THE+ahDoMJPg==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
@@ -646,36 +647,8 @@
     "defaultClientScopes" : [ "web-origins", "acr", "profile", "roles", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   }, {
-    "id" : "adef976d-0c41-4177-afba-97b8bd0e1b4b",
-    "clientId" : "broker",
-    "name" : "${client_broker}",
-    "surrogateAuthRequired" : false,
-    "enabled" : true,
-    "alwaysDisplayInConsole" : false,
-    "clientAuthenticatorType" : "client-secret",
-    "redirectUris" : [ ],
-    "webOrigins" : [ ],
-    "notBefore" : 0,
-    "bearerOnly" : true,
-    "consentRequired" : false,
-    "standardFlowEnabled" : true,
-    "implicitFlowEnabled" : false,
-    "directAccessGrantsEnabled" : false,
-    "serviceAccountsEnabled" : false,
-    "publicClient" : false,
-    "frontchannelLogout" : false,
-    "protocol" : "openid-connect",
-    "attributes" : {
-      "post.logout.redirect.uris" : "+"
-    },
-    "authenticationFlowBindingOverrides" : { },
-    "fullScopeAllowed" : false,
-    "nodeReRegistrationTimeout" : 0,
-    "defaultClientScopes" : [ "web-origins", "acr", "profile", "roles", "email" ],
-    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
-  }, {
     "id" : "a7df4184-0c31-42ce-b248-e0669a11e4bf",
-    "clientId" : "edge-service",
+    "clientId" : "bookstore-confidential",
     "name" : "",
     "description" : "",
     "rootUrl" : "",
@@ -685,9 +658,9 @@
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
-    "secret" : "cT5pq7W3XStcuFVQMhjPbRj57Iqxcu4n",
-    "redirectUris" : [ "*" ],
-    "webOrigins" : [ "*" ],
+    "secret" : "client-secret",
+    "redirectUris" : [ "https://localhost:6969/bff/login/oauth2/code/bookstore", "https://127.0.0.1:6969/bff/login/oauth2/code/bookstore", "http://127.0.0.1:6969/bff/login/oauth2/code/bookstore", "http://localhost:6969/bff/login/oauth2/code/bookstore", "https://host.docker.internal:6969/bff/login/oauth2/code/bookstore", "http://host.docker.internal:6969/bff/login/oauth2/code/bookstore" ],
+    "webOrigins" : [ "http://127.0.0.1:6969/*", "http://localhost:6969/*", "https://127.0.0.1:6969/*", "https://localhost:6969/*" ],
     "notBefore" : 0,
     "bearerOnly" : false,
     "consentRequired" : false,
@@ -697,13 +670,15 @@
     "serviceAccountsEnabled" : true,
     "authorizationServicesEnabled" : true,
     "publicClient" : false,
-    "frontchannelLogout" : true,
+    "frontchannelLogout" : false,
     "protocol" : "openid-connect",
     "attributes" : {
       "oidc.ciba.grant.enabled" : "false",
       "client.secret.creation.time" : "1717668585",
       "backchannel.logout.session.required" : "true",
-      "post.logout.redirect.uris" : "+",
+      "backchannel.logout.url" : "http://127.0.0.1:6969/bff/logout/connect/back-channel/bookstore",
+      "post.logout.redirect.uris" : "http://localhost:6969/vue-ui/*",
+      "display.on.consent.screen" : "false",
       "oauth2.device.authorization.grant.enabled" : "false",
       "backchannel.logout.revoke.offline.tokens" : "false"
     },
@@ -781,6 +756,34 @@
       "scopes" : [ ],
       "decisionStrategy" : "UNANIMOUS"
     }
+  }, {
+    "id" : "adef976d-0c41-4177-afba-97b8bd0e1b4b",
+    "clientId" : "broker",
+    "name" : "${client_broker}",
+    "surrogateAuthRequired" : false,
+    "enabled" : true,
+    "alwaysDisplayInConsole" : false,
+    "clientAuthenticatorType" : "client-secret",
+    "redirectUris" : [ ],
+    "webOrigins" : [ ],
+    "notBefore" : 0,
+    "bearerOnly" : true,
+    "consentRequired" : false,
+    "standardFlowEnabled" : true,
+    "implicitFlowEnabled" : false,
+    "directAccessGrantsEnabled" : false,
+    "serviceAccountsEnabled" : false,
+    "publicClient" : false,
+    "frontchannelLogout" : false,
+    "protocol" : "openid-connect",
+    "attributes" : {
+      "post.logout.redirect.uris" : "+"
+    },
+    "authenticationFlowBindingOverrides" : { },
+    "fullScopeAllowed" : false,
+    "nodeReRegistrationTimeout" : 0,
+    "defaultClientScopes" : [ "web-origins", "acr", "profile", "roles", "email" ],
+    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   }, {
     "id" : "aab3a90e-6ea8-4866-9b6e-6c58e7869cb7",
     "clientId" : "realm-management",
@@ -1385,6 +1388,7 @@
         "userinfo.token.claim" : "false",
         "user.attribute" : "foo",
         "id.token.claim" : "true",
+        "lightweight.claim" : "false",
         "access.token.claim" : "true",
         "claim.name" : "roles",
         "jsonType.label" : "String"
@@ -1507,7 +1511,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-user-property-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-attribute-mapper", "oidc-usermodel-attribute-mapper", "oidc-full-name-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "saml-user-property-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-full-name-mapper", "oidc-address-mapper", "saml-role-list-mapper", "oidc-usermodel-attribute-mapper" ]
       }
     }, {
       "id" : "bd0a4fc0-c9f2-4c2d-b16e-b6100ab6b7c9",
@@ -1532,7 +1536,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper", "saml-role-list-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-property-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper", "saml-user-property-mapper", "saml-role-list-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper" ]
       }
     }, {
       "id" : "49bb21a3-be6e-4462-b3d9-9e2630808c26",
@@ -1578,8 +1582,8 @@
       "providerId" : "hmac-generated",
       "subComponents" : { },
       "config" : {
-        "kid" : [ "58f14ae5-d39e-4720-adb2-35491824007b" ],
-        "secret" : [ "uFrsHveTrLdn2wUeX9mfNsxcYrK2oVInb0T6XjUNzas8OihRUs67jYZ6kuirZyOyjjrRqy6ebS4JDTF1o0q9Bg" ],
+        "kid" : [ "9292bdc5-9dde-4242-9222-461bb6ff3752" ],
+        "secret" : [ "G9pbOszYiRzZEdhNtXGt_FD8b2ewZDMmk6mRN3FcBNNin2dSCFt00CywGtWKhX-DYoPWbR3Uy9uI49RHjo_-H5q2fEUeCrSfbz_DicG5_lJoPAFAvKwgx7FNbzoG2jwKC1tKm3E1hLzrQAyFQtRSpkMQkafbaPAKOzDSekssLJc" ],
         "priority" : [ "100" ],
         "algorithm" : [ "HS256" ]
       }
@@ -1594,6 +1598,17 @@
         "certificate" : [ "MIIClzCCAX8CBgGP7QUF2zANBgkqhkiG9w0BAQsFADAPMQ0wCwYDVQQDDARjaGF0MB4XDTI0MDYwNjEwMDYyMFoXDTM0MDYwNjEwMDgwMFowDzENMAsGA1UEAwwEY2hhdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAO0yi85eWnLOgXoRxhMUDyI0DLXLZeNYejIe8ThogWFTcijjQRxUEPz3GyRtw1V4xbIn3K0eGEHHiZyZJJlFEsYJlJp2nX5HrnvXs8NNDpciXQ7YfB1bMDJrmUY5prgWzoc6LVwz92xxM9Am/P2D/QTf5Kd9UHRRubgVEBLkQBewcpgLTk935DB+dHAmszfb0mach4PzFycA+ZxoNL6koCqZwOrNk8p3XX7vF8E3qglVsItmgLPwIdFT68n4NJFOEAo9f8W55V8P051mcF2inrKdnICIE+10iB4lK5Ce9NN5H0iryfQ5qOXAK2Zdr5Pqeo+KW4grBQnHkruR+m+xyMECAwEAATANBgkqhkiG9w0BAQsFAAOCAQEABkruEbjzzBzVEJQ19L7gpyce6MluXp09LDE9m6bbHnmyEuVLIkMkpG4V0nrZydXZFzneNvJw/rNNS/PLdAm61ekRdw3d6QVZTXr3SI4C62aExuDiKcZbg18GNpaFdpwlyOMcd/EdKX1SirozGU+VvmDQxWxCs6iMTauimy9wEcCRxTrVdU1wvUkI6dl57v2MUGYxxl5BEIWZwuqTZQ1qYSChZhNPdBdE4BRmEEzI+w9fTJQ/Epa/60Hx7bbKjYZ6cf71N9UaOf/S3jPwXrIkPYswbWnw+OdtVssMu4rv8j6HUtAiO1huZ4ELJMahTqeh1GpA5D4beTY8Nh2ht33bOQ==" ],
         "priority" : [ "100" ],
         "algorithm" : [ "RSA-OAEP" ]
+      }
+    }, {
+      "id" : "ed5385c4-1070-48d7-b9af-fe3a510aac01",
+      "name" : "hmac-generated-hs512",
+      "providerId" : "hmac-generated",
+      "subComponents" : { },
+      "config" : {
+        "kid" : [ "2c7cd56e-ce4c-40db-b80e-a316167c6593" ],
+        "secret" : [ "gKriAp1GZurypActImC_AuYvWv-ij6E9EdGQONTUHmV7JuAjd8VCom2DqrJ3k4akCCQnOw3nssP2E5ABAe0GmlPp-wcw7bai1Ed424Q3b9zQd5eIXP3qE6ABfHOFLwUGCxHtELrQ1qCdSoqAhmz0io8GJfqA0oBn-Q4unKfZbls" ],
+        "priority" : [ "100" ],
+        "algorithm" : [ "HS512" ]
       }
     }, {
       "id" : "fa7bfa45-765d-4bd7-89d8-8a921db19f36",
@@ -2138,6 +2153,14 @@
     "priority" : 80,
     "config" : { }
   }, {
+    "alias" : "delete_credential",
+    "name" : "Delete Credential",
+    "providerId" : "delete_credential",
+    "enabled" : true,
+    "defaultAction" : false,
+    "priority" : 100,
+    "config" : { }
+  }, {
     "alias" : "webauthn-register-passwordless",
     "name" : "Webauthn Register Passwordless",
     "providerId" : "webauthn-register-passwordless",
@@ -2160,13 +2183,13 @@
   "resetCredentialsFlow" : "reset credentials",
   "clientAuthenticationFlow" : "clients",
   "dockerAuthenticationFlow" : "docker auth",
+  "firstBrokerLoginFlow" : "first broker login",
   "attributes" : {
     "cibaBackchannelTokenDeliveryMode" : "poll",
     "cibaAuthRequestedUserHint" : "login_hint",
     "clientOfflineSessionMaxLifespan" : "0",
     "oauth2DevicePollingInterval" : "5",
     "clientSessionIdleTimeout" : "0",
-    "userProfileEnabled" : "true",
     "clientOfflineSessionIdleTimeout" : "0",
     "cibaInterval" : "5",
     "realmReusableOtpCode" : "false",
@@ -2177,7 +2200,7 @@
     "frontendUrl" : "",
     "acr.loa.map" : "{}"
   },
-  "keycloakVersion" : "23.0.7",
+  "keycloakVersion" : "24.0.5",
   "userManagedAccessAllowed" : false,
   "clientProfiles" : {
     "profiles" : [ ]

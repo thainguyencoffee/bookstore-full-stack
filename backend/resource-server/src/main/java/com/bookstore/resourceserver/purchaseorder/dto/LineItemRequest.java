@@ -1,5 +1,6 @@
 package com.bookstore.resourceserver.purchaseorder.dto;
 
+import com.bookstore.resourceserver.purchaseorder.valuetype.BookType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ public class LineItemRequest {
 
     @NotBlank(message = "ISBN is required")
     private String isbn;
+    private BookType bookType;
     @Min(value = 1, message = "Quantity must be greater than 0")
     private Integer quantity;
 

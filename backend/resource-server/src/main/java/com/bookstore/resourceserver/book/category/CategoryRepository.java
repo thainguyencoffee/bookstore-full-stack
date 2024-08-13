@@ -1,13 +1,14 @@
-package com.bookstore.resourceserver.book;
+package com.bookstore.resourceserver.book.category;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CategoryRepository extends CrudRepository<Category, Long> {
+public interface CategoryRepository extends ListCrudRepository<Category, Long> {
 
     List<Category> findAll(Pageable pageable);
 

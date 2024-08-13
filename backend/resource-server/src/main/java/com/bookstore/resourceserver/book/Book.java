@@ -1,14 +1,21 @@
 package com.bookstore.resourceserver.book;
 
+import com.bookstore.resourceserver.book.author.Author;
+import com.bookstore.resourceserver.book.category.Category;
+import com.bookstore.resourceserver.book.valuetype.Language;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.*;
 import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -18,29 +25,23 @@ public class Book {
     @Id
     private Long id;
     private String isbn;
-    @Embedded.Nullable
-    private CategoryRef category;
     private String title;
-    private String author;
     private String publisher;
     private String supplier;
     private String description;
-    private Long price;
-    private Integer inventory;
     private Language language;
-    private CoverType coverType;
-    private Integer numberOfPages;
-    @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL)
-    private Measure measure;
+    private Integer edition;
+    @Embedded.Nullable
+    private CategoryRef category;
+    @MappedCollection(idColumn = "book")
+    private Set<AuthorRef> authors = new HashSet<>();
     private List<String> thumbnails = new ArrayList<>();
-    private Integer purchases;
-    private Instant purchaseAt;
     @CreatedDate
-    private Instant createdAt;
+    private Instant createdDate;
     @CreatedBy
     private String createdBy;
     @LastModifiedDate
-    private Instant lastModifiedAt;
+    private Instant lastModifiedDate;
     @LastModifiedBy
     private String lastModifiedBy;
     @Version
@@ -48,5 +49,17 @@ public class Book {
 
     public void setCategory(Category c) {
         category = new CategoryRef(c.getId(), c.getName());
+    }
+
+    public void setAuthor(Author author) {
+        this.authors.add(new AuthorRef(author.getId(), author.getUserInformation().getFullName()));
+    }
+
+    public void setAuthors(Set<Author> authors) {
+        this.authors = authors.stream().map(author -> new AuthorRef(author.getId(), author.getUserInformation().getFullName())).collect(Collectors.toSet());
+    }
+
+    public Set<Long> getAuthorIds() {
+        return authors.stream().map(AuthorRef::getAuthor).collect(Collectors.toSet());
     }
 }
