@@ -58,7 +58,7 @@ public class DataTest {
         clear();
 
         var categoryList = new ArrayList<Category>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 50; i++) {
             Category category = new Category();
             category.setName(generateRandomName());
             if (i > 0) {
