@@ -51,7 +51,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
     void whenUnauthenticatedSubscribeEmailPreferencesWithCategoryNotfoundThen404(Category category) {
         var dtoRequest = buildDto("demo@gmail.com", category.getId());
 
-        dtoRequest.setCategoryIds(List.of(10000L, 9999999L));
+        dtoRequest.setCategoryIds(List.of(9999998L, 9999999L));
         webTestClient.post().uri("/email-preferences")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(dtoRequest))
@@ -65,7 +65,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
         var dtoRequest = buildDto("demo@gmail.com", category.getId());
 
         dtoRequest.setEmail("");
-        dtoRequest.setCategoryIds(List.of(10000L));
+        dtoRequest.setCategoryIds(List.of(category.getId()));
         webTestClient.post().uri("/email-preferences")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(dtoRequest))
@@ -79,7 +79,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
         var dtoRequest = buildDto("demo@gmail.com", category.getId());
 
         dtoRequest.setEmail("nguyennt11032004"); // invalid email
-        dtoRequest.setCategoryIds(List.of(10000L));
+        dtoRequest.setCategoryIds(List.of(category.getId()));
         webTestClient.post().uri("/email-preferences")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(dtoRequest))
@@ -92,7 +92,7 @@ public class EmailPreferencesIntTests extends IntegrationTestsBase {
     void whenUnauthenticatedSubscribeEmailPreferencesWithBadBody3Then400(Category category) {
         var dtoRequest = buildDto("nguyennt11032004@gmail.com", category.getId());
         dtoRequest.setFirstName("");
-        dtoRequest.setCategoryIds(List.of(10000L));
+        dtoRequest.setCategoryIds(List.of(category.getId()));
         webTestClient.post().uri("/email-preferences")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(dtoRequest))
