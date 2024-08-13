@@ -1,5 +1,6 @@
 package com.bookstore.resourceserver.purchaseorder.dto;
 
+import com.bookstore.resourceserver.core.valuetype.UserInformation;
 import lombok.Getter;
 import lombok.Setter;
 

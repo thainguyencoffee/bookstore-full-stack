@@ -1,8 +1,9 @@
 package com.bookstore.resourceserver.book;
 
 import com.bookstore.resourceserver.awss3.MultiMediaService;
-import com.bookstore.resourceserver.book.dto.book.BookMetadataRequestDto;
-import com.bookstore.resourceserver.book.dto.book.BookMetadataUpdateDto;
+import com.bookstore.resourceserver.book.dto.book.BookRequestDto;
+import com.bookstore.resourceserver.book.dto.book.BookUpdateDto;
+import com.bookstore.resourceserver.book.impl.BookServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -15,15 +16,14 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.Instant;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "api/books", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "books", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 class BookController {
 
-    private final BookService bookService;
+    private final BookServiceImpl bookService;
     private final MultiMediaService multiMediaService;
 
     @Operation(summary = "Get all books")
@@ -38,22 +38,22 @@ class BookController {
         return bookService.findByIsbn(isbn);
     }
 
-    @Operation(summary = "Get best sellers")
-    @GetMapping("/best-sellers")
-    public Page<Book> bestSellers(@RequestParam Instant from, @ParameterObject Pageable pageable) {
-        return bookService.findBestSellers(from, pageable);
-    }
+//    @Operation(summary = "Get best sellers")
+//    @GetMapping("/best-sellers")
+//    public Page<Book> bestSellers(@RequestParam Instant from, @ParameterObject Pageable pageable) {
+//        return bookService.findBestSellers(from, pageable);
+//    }
 
     @Operation(summary = "Create a new book", security = @SecurityRequirement(name = "token"))
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Book save(@Valid @RequestBody BookMetadataRequestDto bookMetadataDto) {
+    public Book save(@Valid @RequestBody BookRequestDto bookMetadataDto) {
         return bookService.save(bookMetadataDto);
     }
 
     @Operation(summary = "Update a book by ISBN", security = @SecurityRequirement(name = "token"))
     @PatchMapping(value = "/{isbn}")
-    public Book update(@PathVariable String isbn, @Valid @RequestBody BookMetadataUpdateDto bookMetadataDto) {
+    public Book update(@PathVariable String isbn, @Valid @RequestBody BookUpdateDto bookMetadataDto) {
         return bookService.updateByIsbn(isbn, bookMetadataDto);
     }
 

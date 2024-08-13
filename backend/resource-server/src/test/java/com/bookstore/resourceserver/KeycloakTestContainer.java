@@ -10,7 +10,7 @@ public class KeycloakTestContainer {
 
     public static KeycloakContainer getInstance() {
         if (container == null) {
-            container = new KeycloakContainer("quay.io/keycloak/keycloak:23.0")
+            container = new KeycloakContainer("quay.io/keycloak/keycloak:24.0")
                     .withRealmImportFile("bookstore-realm.json");
             container.start();
         }

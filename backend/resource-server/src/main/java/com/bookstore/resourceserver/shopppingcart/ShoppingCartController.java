@@ -1,6 +1,6 @@
 package com.bookstore.resourceserver.shopppingcart;
 
-import com.bookstore.resourceserver.book.BookService;
+import com.bookstore.resourceserver.book.impl.BookServiceImpl;
 import com.bookstore.resourceserver.core.exception.CustomNoResultException;
 import com.bookstore.resourceserver.shopppingcart.dto.DeleteAllCartRequest;
 import com.bookstore.resourceserver.core.exception.shoppingcart.ShoppingCartAlreadyExistingException;
@@ -20,13 +20,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "api/shopping-carts", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "shopping-carts", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Slf4j
 public class ShoppingCartController {
 
     private final CartItemService cartItemService;
-    private final BookService bookService;
+    private final BookServiceImpl bookService;
     private final ShoppingCartService shoppingCartService;
 
     @GetMapping("/my-cart")

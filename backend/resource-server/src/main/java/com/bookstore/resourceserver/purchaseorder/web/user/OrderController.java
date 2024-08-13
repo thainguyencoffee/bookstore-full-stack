@@ -1,6 +1,5 @@
 package com.bookstore.resourceserver.purchaseorder.web.user;
 
-import com.bookstore.resourceserver.core.email.EmailService;
 import com.bookstore.resourceserver.purchaseorder.Order;
 import com.bookstore.resourceserver.purchaseorder.OrderService;
 import com.bookstore.resourceserver.purchaseorder.dto.OrderRequest;
@@ -21,13 +20,12 @@ import jakarta.validation.Valid;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "api/orders", produces = "application/json")
+@RequestMapping(path = "orders", produces = "application/json")
 @RequiredArgsConstructor
 public class OrderController {
 
     private static final Logger log = LoggerFactory.getLogger(OrderController.class);
     private final OrderService orderService;
-    private final EmailService emailService;
 
     @GetMapping
     public Page<Order> getAllOrder(@AuthenticationPrincipal Jwt jwt, Pageable pageable) {

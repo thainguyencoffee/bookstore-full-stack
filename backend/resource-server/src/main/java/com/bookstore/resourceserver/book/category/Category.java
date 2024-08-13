@@ -1,4 +1,4 @@
-package com.bookstore.resourceserver.book;
+package com.bookstore.resourceserver.book.category;
 
 import lombok.Getter;
 import lombok.Setter;

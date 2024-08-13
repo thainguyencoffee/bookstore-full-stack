@@ -31,7 +31,7 @@ public class VNPayService {
                 && !order.getStatus().equals(OrderStatus.PAYMENT_FAILED)) {
             throw new OrderStatusNotMatchException(orderId, order.getStatus(), OrderStatus.WAITING_FOR_PAYMENT, OrderStatus.PAYMENT_FAILED);
         }
-        long finalPrice = order.getTotalPrice() * 100L;
+        long finalPrice = order.getTotalPrice().getDiscountedPrice() * 100L;
         String bankCode = request.getParameter("bankCode");
         Map<String, String> vnpParamsMap = getVNPayPayload(orderId);
         vnpParamsMap.put("vnp_Amount", String.valueOf(finalPrice));

@@ -1,15 +1,17 @@
 package com.bookstore.resourceserver;
 
 import com.bookstore.resourceserver.book.*;
-import com.bookstore.resourceserver.book.emailpreferences.EmailPreferences;
+import com.bookstore.resourceserver.book.author.Author;
+import com.bookstore.resourceserver.book.author.AuthorRepository;
+import com.bookstore.resourceserver.book.category.Category;
+import com.bookstore.resourceserver.book.category.CategoryRepository;
+import com.bookstore.resourceserver.book.ebook.EBookRepository;
 import com.bookstore.resourceserver.book.emailpreferences.EmailPreferencesRepository;
-import com.bookstore.resourceserver.book.emailpreferences.EmailTopic;
+import com.bookstore.resourceserver.book.printbook.PrintBookRepository;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +25,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Random;
+import java.util.stream.Stream;
 
 @AutoConfigureWebTestClient(timeout = "36000")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -35,11 +38,17 @@ public abstract class IntegrationTestsBase {
     protected static KeycloakToken employeeToken;
     protected static KeycloakToken customerToken;
     @Autowired
-    private CategoryRepository categoryRepository;
+    protected CategoryRepository categoryRepository;
     @Autowired
-    private BookRepository bookRepository;
+    protected BookRepository bookRepository;
     @Autowired
-    private EmailPreferencesRepository emailPreferencesRepository;
+    protected EBookRepository eBookRepository;
+    @Autowired
+    protected PrintBookRepository printBookRepository;
+    @Autowired
+    protected AuthorRepository authorRepository;
+    @Autowired
+    protected EmailPreferencesRepository emailPreferencesRepository;
 
     @DynamicPropertySource
     static void keycloakProperties(DynamicPropertyRegistry registry) {
@@ -76,8 +85,8 @@ public abstract class IntegrationTestsBase {
         return webClient
                 .post()
                 .body(BodyInserters.fromFormData("grant_type", "password")
-                        .with("client_id", "edge-service")
-                        .with("client_secret", "cT5pq7W3XStcuFVQMhjPbRj57Iqxcu4n")
+                        .with("client_id", "bookstore-confidential")
+                        .with("client_secret", "client-secret")
                         .with("username", username)
                         .with("password", password)
                 )
@@ -86,108 +95,58 @@ public abstract class IntegrationTestsBase {
                 .block();
     }
 
-
-    @BeforeEach
-    void setUp() {
-        // Foreign Books
-        Category foreignCategory = new Category();
-        foreignCategory.setId(10000L);
-        foreignCategory.setName("Foreign Books");
-        categoryRepository.save(foreignCategory);
-
-        Category javaCategory = new Category();
-        javaCategory.setId(10001L);
-        javaCategory.setName("Java Books");
-        javaCategory.setParent(foreignCategory);
-        categoryRepository.save(javaCategory);
-
-        Category springCategory = new Category();
-        springCategory.setId(10002L);
-        springCategory.setName("Spring Books");
-        springCategory.setParent(javaCategory);
-        categoryRepository.save(springCategory);
-
-        // Vietnamese Books
-        Category vietnameseCategory = new Category();
-        vietnameseCategory.setId(10003L);
-        vietnameseCategory.setName("Vietnamese Books");
-        categoryRepository.save(vietnameseCategory);
-
-        Category schoolbookCategory = new Category();
-        schoolbookCategory.setId(10004L);
-        schoolbookCategory.setName("Schoolbook");
-        schoolbookCategory.setParent(vietnameseCategory);
-        categoryRepository.save(schoolbookCategory);
-
-        Category grade1Category = new Category();
-        grade1Category.setId(10005L);
-        grade1Category.setName("Grade 1");
-        grade1Category.setParent(schoolbookCategory);
-        categoryRepository.save(grade1Category);
-
-        Category grade2Category = new Category();
-        grade2Category.setId(10006L);
-        grade2Category.setName("Grade 2");
-        grade2Category.setParent(schoolbookCategory);
-        categoryRepository.save(grade2Category);
-
-        Book springBootInActionBook = new Book();
-        springBootInActionBook.setIsbn("1234567890");
-        springBootInActionBook.setTitle("Spring boot in action");
-        springBootInActionBook.setAuthor("Craig Walls");
-        springBootInActionBook.setPublisher("Manning");
-        springBootInActionBook.setSupplier("Manning");
-        springBootInActionBook.setPrice(1000000L);
-        springBootInActionBook.setLanguage(Language.ENGLISH);
-        springBootInActionBook.setCoverType(CoverType.PAPERBACK);
-        springBootInActionBook.setNumberOfPages(300);
-        springBootInActionBook.setPurchases(10);
-        springBootInActionBook.setInventory(100);
-        springBootInActionBook.setDescription("Spring boot in action");
-        springBootInActionBook.setMeasure(new Measure(300, 400, 100, 170));
-        springBootInActionBook.setCategory(springCategory);
-        bookRepository.save(springBootInActionBook);
-
-        Book grade1MathBook = new Book();
-        grade1MathBook.setIsbn("1234567891");
-        grade1MathBook.setTitle("Grade 1 Math");
-        grade1MathBook.setAuthor("Nguyen Van A");
-        grade1MathBook.setPublisher("NXB Giao Duc");
-        grade1MathBook.setSupplier("NXB Giao Duc");
-        grade1MathBook.setPrice(100000L);
-        grade1MathBook.setLanguage(Language.VIETNAMESE);
-        grade1MathBook.setCoverType(CoverType.PAPERBACK);
-        grade1MathBook.setNumberOfPages(100);
-        grade1MathBook.setPurchases(10);
-        grade1MathBook.setInventory(100);
-        grade1MathBook.setDescription("Grade 1 Math");
-        grade1MathBook.setMeasure(new Measure(300, 400, 100, 170));
-        grade1MathBook.setCategory(grade1Category);
-        bookRepository.save(grade1MathBook);
-
-        EmailPreferences emailPreferences = new EmailPreferences();
-        emailPreferences.setEmail("nguyenntph33935@fpt.edu.vn");
-        emailPreferences.addAllCategories(Set.of(vietnameseCategory, javaCategory));
-        emailPreferences.setFirstName("Nguyen");
-        emailPreferences.setLastName("Thai");
-        emailPreferences.setEmailTopics(List.of(EmailTopic.NEW_RELEASES));
-        emailPreferencesRepository.save(emailPreferences);
-
-        EmailPreferences emailPreferences1 = new EmailPreferences();
-        emailPreferences1.setEmail("nguyennt11032004@gmail.vn");
-        emailPreferences1.addAllCategories(Set.of(vietnameseCategory, javaCategory));
-        emailPreferences1.setFirstName("Nguyen");
-        emailPreferences1.setLastName("Thai");
-        emailPreferences1.setEmailTopics(List.of(EmailTopic.NEW_RELEASES));
-        emailPreferencesRepository.save(emailPreferences1);
-
+    protected Stream<Arguments> provideBooks() {
+        return bookRepository.findAll().stream().map(Arguments::of);
     }
 
-    @AfterEach
-    void tearDown() {
-        bookRepository.deleteAll();
-        categoryRepository.deleteAll();
-        emailPreferencesRepository.deleteAll();
+    protected Stream<Arguments> provideSingleBook() {
+        Random random = new Random();
+        List<Book> all = bookRepository.findAll();
+        int i = random.nextInt(all.size());
+        return Stream.of(Arguments.of(all.get(i)));
+    }
+
+    protected Stream<Arguments> provideDoubleBook() {
+        Random random = new Random();
+        List<Book> all = bookRepository.findAll();
+        int i = random.nextInt(all.size());
+        int j = random.nextInt(all.size());
+        while (j == i) {
+            j = random.nextInt(all.size());
+        }
+        return Stream.of(Arguments.of(all.get(i), all.get(j)));
+    }
+
+    protected Stream<Arguments> provideAuthors() {
+        return authorRepository.findAll().stream().map(Arguments::of);
+    }
+
+    protected Stream<Arguments> provideSingleAuthor() {
+        Random random = new Random();
+        List<Author> all = authorRepository.findAll();
+        int i = random.nextInt(all.size());
+        return Stream.of(Arguments.of(all.get(i)));
+    }
+
+    /*Combination*/
+    protected Stream<Arguments> provideSingleAuthorAndCategory() {
+        Random random = new Random();
+        List<Author> authors = authorRepository.findAll();
+        List<Category> categories = categoryRepository.findAll();
+        int i = random.nextInt(authors.size());
+        int j = random.nextInt(categories.size());
+        return Stream.of(Arguments.of(authors.get(i), categories.get(j)));
+    }
+
+    protected Stream<Arguments> provideSingleAuthorAndCategoryAndBook() {
+        Random random = new Random();
+        List<Author> authors = authorRepository.findAll();
+        List<Category> categories = categoryRepository.findAll();
+        List<Book> books = bookRepository.findAll();
+        int i = random.nextInt(authors.size());
+        int j = random.nextInt(categories.size());
+        int k = random.nextInt(books.size());
+        return Stream.of(Arguments.of(authors.get(i), categories.get(j), books.get(k)));
     }
 
 }

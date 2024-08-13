@@ -1,6 +1,6 @@
 package com.bookstore.resourceserver.book.emailpreferences;
 
-import com.bookstore.resourceserver.book.Category;
+import com.bookstore.resourceserver.book.category.Category;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
