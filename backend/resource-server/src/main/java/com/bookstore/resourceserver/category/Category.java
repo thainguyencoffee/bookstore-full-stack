@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:backend/resource-server/src/main/java/com/bookstore/resourceserver/category/Category.java
 package com.bookstore.resourceserver.category;
-========
-package com.bookstore.resourceserver.book.category;
->>>>>>>> origin:backend/resource-server/src/main/java/com/bookstore/resourceserver/book/category/Category.java
 
 import lombok.Getter;
 import lombok.Setter;

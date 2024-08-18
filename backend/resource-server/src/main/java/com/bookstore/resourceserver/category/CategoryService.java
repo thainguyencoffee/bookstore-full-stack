@@ -1,19 +1,10 @@
-<<<<<<<< HEAD:backend/resource-server/src/main/java/com/bookstore/resourceserver/category/CategoryService.java
 package com.bookstore.resourceserver.category;
-========
-package com.bookstore.resourceserver.book.category;
->>>>>>>> origin:backend/resource-server/src/main/java/com/bookstore/resourceserver/book/category/CategoryService.java
 
 import com.bookstore.resourceserver.awss3.MultiMediaService;
 import com.bookstore.resourceserver.book.Book;
 import com.bookstore.resourceserver.book.BookRepository;
-<<<<<<<< HEAD:backend/resource-server/src/main/java/com/bookstore/resourceserver/category/CategoryService.java
 import com.bookstore.resourceserver.category.dto.CategoryMetadataRequestDto;
 import com.bookstore.resourceserver.category.dto.CategoryMetadataUpdateDto;
-========
-import com.bookstore.resourceserver.book.dto.category.CategoryMetadataRequestDto;
-import com.bookstore.resourceserver.book.dto.category.CategoryMetadataUpdateDto;
->>>>>>>> origin:backend/resource-server/src/main/java/com/bookstore/resourceserver/book/category/CategoryService.java
 import com.bookstore.resourceserver.core.exception.CustomNoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
