@@ -3,7 +3,6 @@ package com.bookstore.resourceserver.purchaseorder.dto;
 import com.bookstore.resourceserver.core.valuetype.AddressInformation;
 import com.bookstore.resourceserver.core.valuetype.UserInformation;
 import com.bookstore.resourceserver.purchaseorder.PaymentMethod;
-import com.bookstore.resourceserver.purchaseorder.valuetype.BookType;
 import lombok.*;
 
 import jakarta.validation.Valid;
@@ -24,8 +23,6 @@ public class OrderRequest {
 
     @Data
     public static class LineItemRequest {
-        @NotNull(message = "Book ID of line item must not be null.")
-        private Long detailId;
         @NotEmpty(message = "Book ISBN of line item must be not empty.")
         @Pattern(regexp = "^([0-9]{10}|[0-9]{13})$", message = "The ISBN of book must contain 13 digits.")
         private String isbn;

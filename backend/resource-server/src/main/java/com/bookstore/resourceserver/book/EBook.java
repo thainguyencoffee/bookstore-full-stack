@@ -6,10 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.*;
 import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.Optional;
-import java.util.function.Supplier;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table("ebook")
 @Getter
@@ -17,13 +18,12 @@ import java.util.function.Supplier;
 public class EBook {
     @Id
     private Long id;
-    @Embedded.Nullable
-    private EBookFile metadata;
+    @MappedCollection(keyColumn = "ebook")
+    private Set<EBookFile> eBookFiles = new HashSet<>();
     @Embedded.Nullable
     private BookProperties properties;
 
-    public EBook updateIfPresent(Supplier<EBook> eBookFunction) {
-
-        return this;
+    public void addEBookFile(EBookFile eBookFile) {
+        this.eBookFiles.add(eBookFile);
     }
 }

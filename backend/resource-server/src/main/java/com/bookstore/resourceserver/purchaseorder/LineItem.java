@@ -41,10 +41,6 @@ public class LineItem {
         return total;
     }
 
-    public Long getDetailId() {
-        return variantBookRef.getDetailId();
-    }
-
     public BookType getBookType() {
         return variantBookRef.getBookType();
     }
@@ -53,8 +49,8 @@ public class LineItem {
         return variantBookRef.getIsbn();
     }
 
-    public void setVariantBook(Long detailId, String isbn, String title) {
-        this.variantBookRef = new VariantBookRef(detailId, isbn, title);
+    public void setVariantBook(String isbn, String title) {
+        this.variantBookRef = new VariantBookRef(isbn, title);
     }
 
     public void setBookType(BookType bookType) {

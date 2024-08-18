@@ -270,9 +270,6 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
         map.put(
                 beanValidationUtils.buildApiErrorFromAttrOfAnnotation(apiErrorBuilder -> apiErrorBuilder
-                        .addInvalid("url", NotEmpty.class, null, "message")
-                        .addInvalid("format", NotEmpty.class, null, "message")
-                        .addInvalid("fileSize", NotNull.class, null, "message")
                         .addInvalid("originalPrice", NotNull.class, null, "message")
                         .addInvalid("numberOfPages", NotNull.class, null, "message")
                         .addInvalid("publicationDate", NotNull.class, null, "message")
@@ -280,9 +277,6 @@ class BookIntegrationTests extends IntegrationTestsBase {
                         .build()
                 ),
                 EBookRequestDto.builder()
-                        .url(null)
-                        .format(null)
-                        .fileSize(null)
                         .originalPrice(null)
                         .discountedPrice(null)
                         .numberOfPages(null)
@@ -293,34 +287,11 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
         map.put(
                 beanValidationUtils.buildApiErrorFromAttrOfAnnotation(apiErrorBuilder -> apiErrorBuilder
-                        .addInvalid("url", NotEmpty.class, "", "message")
-                        .addInvalid("format", NotEmpty.class, "", "message")
-                        .addInvalid("format", Pattern.class, "", "message")
-                        .build()
-                ),
-                EBookRequestDto.builder()
-                        .url("")
-                        .format("")
-                        .fileSize(12000)
-                        .originalPrice(120000L)
-                        .discountedPrice(null)
-                        .numberOfPages(3000)
-                        .publicationDate(Instant.now())
-                        .releaseDate(Instant.now())
-                        .build()
-        );
-
-        map.put(
-                beanValidationUtils.buildApiErrorFromAttrOfAnnotation(apiErrorBuilder -> apiErrorBuilder
-                        .addInvalid("url", NotEmpty.class, "", "message")
                         .addInvalid("originalPrice", VietnamesePriceConstraint.class, 155123L, "message")
                         .addInvalid("discountedPrice", VietnamesePriceConstraint.class, 155123L, "message")
                         .build()
                 ),
                 EBookRequestDto.builder()
-                        .url("")
-                        .format("pdf")
-                        .fileSize(12000)
                         .originalPrice(155123L)
                         .discountedPrice(155123L)
                         .numberOfPages(3000)
@@ -331,15 +302,11 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
         map.put(
                 beanValidationUtils.buildApiErrorFromAttrOfAnnotation(apiErrorBuilder -> apiErrorBuilder
-                        .addInvalid("url", NotEmpty.class, "", "message")
                         .addInvalid("originalPrice", VietnamesePriceConstraint.class, 155123L, "message")
                         .addInvalid("discountedPrice", VietnamesePriceConstraint.class, 155123L, "message")
                         .build()
                 ),
                 EBookRequestDto.builder()
-                        .url("")
-                        .format("epub")
-                        .fileSize(12000)
                         .originalPrice(155123L)
                         .discountedPrice(155123L)
                         .numberOfPages(3000)
@@ -350,16 +317,11 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
         map.put(
                 beanValidationUtils.buildApiErrorFromAttrOfAnnotation(apiErrorBuilder -> apiErrorBuilder
-                        .addInvalid("url", NotEmpty.class, "", "message")
-                        .addInvalid("format", Pattern.class, "nothing", "message")
                         .addInvalid("originalPrice", VietnamesePriceConstraint.class, 155123L, "message")
                         .addInvalid("discountedPrice", VietnamesePriceConstraint.class, 155123L, "message")
                         .build()
                 ),
                 EBookRequestDto.builder()
-                        .url("")
-                        .format("nothing")
-                        .fileSize(12000)
                         .originalPrice(155123L)
                         .discountedPrice(155123L)
                         .numberOfPages(3000)
@@ -370,15 +332,11 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
         map.put(
                 beanValidationUtils.buildApiErrorFromAttrOfAnnotation(apiErrorBuilder -> apiErrorBuilder
-                        .addInvalid("url", NotEmpty.class, "", "message")
                         .addInvalid("originalPrice", VietnamesePriceConstraint.class, 155123L, "message")
                         .addInvalid("discountedPrice", VietnamesePriceConstraint.class, 155123L, "message")
                         .build()
                 ),
                 EBookRequestDto.builder()
-                        .url("")
-                        .format("epub")
-                        .fileSize(12000)
                         .originalPrice(155123L)
                         .discountedPrice(155123L)
                         .numberOfPages(3000)
@@ -407,15 +365,11 @@ class BookIntegrationTests extends IntegrationTestsBase {
         Map<ApiError, EBookUpdateDto> map = new HashMap<>();
         map.put(
                 beanValidationUtils.buildApiErrorFromAttrOfAnnotation(apiErrorBuilder -> apiErrorBuilder
-                        .addInvalid("format", Pattern.class, "pdd", "message")
                         .addInvalid("originalPrice", VietnamesePriceConstraint.class, 123456L, "message")
                         .addInvalid("discountedPrice", VietnamesePriceConstraint.class, 123456L, "message")
                         .build()
                 ),
                 EBookUpdateDto.builder()
-                        .url(null)
-                        .fileSize(null)
-                        .format("pdd")
                         .originalPrice(123456L)
                         .discountedPrice(123456L)
                         .publicationDate(Instant.now())
@@ -429,9 +383,6 @@ class BookIntegrationTests extends IntegrationTestsBase {
                         .build()
                 ),
                 EBookUpdateDto.builder()
-                        .url(null)
-                        .fileSize(null)
-                        .format(null)
                         .originalPrice(null)
                         .discountedPrice(123456L)
                         .build()
@@ -443,9 +394,6 @@ class BookIntegrationTests extends IntegrationTestsBase {
                         .build()
                 ),
                 EBookUpdateDto.builder()
-                        .url(null)
-                        .fileSize(null)
-                        .format(null)
                         .originalPrice(123456L)
                         .discountedPrice(null)
                         .build()
@@ -705,8 +653,8 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.content").isArray()
-                .jsonPath("$.content[*].eBooks").isArray()
-                .jsonPath("$.content[*].printBooks").isArray();
+                .jsonPath("$.content[*].eBook").isNotEmpty()
+                .jsonPath("$.content[*].printBook").isNotEmpty();
     }
 
     @Test
@@ -721,8 +669,8 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .expectBody()
                 .jsonPath("$.content").isArray()
                 .jsonPath("$.content.length()").isEqualTo(10)
-                .jsonPath("$.content[*].eBooks").isArray()
-                .jsonPath("$.content[*].printBooks").isArray();
+                .jsonPath("$.content[*].eBook").isNotEmpty()
+                .jsonPath("$.content[*].printBook").isNotEmpty();
         ;
     }
 
@@ -745,7 +693,8 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .jsonPath("$.description").isEqualTo(book.getDescription())
                 .jsonPath("$.category.category").isEqualTo(book.getCategory().getCategory())
                 .jsonPath("$.category.categoryName").isEqualTo(book.getCategory().getCategoryName())
-                .jsonPath("$.eBooks[*]").isArray();
+                .jsonPath("$.eBook").isNotEmpty()
+                .jsonPath("$.printBook").isNotEmpty();
     }
 
 
@@ -919,7 +868,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .jsonPath("$.language").isEqualTo(book.getLanguage().name())
                 .jsonPath("$.description").isEqualTo(bookReq.description())
                 .jsonPath("$.edition").isEqualTo(bookReq.edition())
-                .jsonPath("$.eBooks[0].id").isNotEmpty();
+                .jsonPath("$.eBook.id").isNotEmpty();
     }
 
     @ParameterizedTest
@@ -973,66 +922,9 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
 
     @Test
-    void whenUnauthenticatedGetAllEBooksButBookNotFoundThen404() {
-        webTestClient
-                .get()
-                .uri("/books/99999999999/ebooks")
-                .exchange()
-                .expectStatus().isNotFound();
-    }
-
-
-    @ParameterizedTest
-    @MethodSource("provideSingleBook")
-    void whenUnauthenticatedGetAllEBooksThen200(Book book) {
-        webTestClient
-                .get()
-                .uri("/books/" + book.getIsbn() + "/ebooks")
-                .exchange().expectStatus()
-                .isOk()
-                .expectBody()
-                .jsonPath("$[*]").isArray();
-    }
-
-
-    @ParameterizedTest
-    @MethodSource("provideSingleBook")
-    void whenUnauthenticatedGetEBookByIdButEBookNotFoundThen404(Book book) {
-        webTestClient
-                .get()
-                .uri("/books/" + book.getIsbn() + "/ebooks/9999999")
-                .exchange()
-                .expectStatus().isNotFound();
-    }
-
-
-    @ParameterizedTest
-    @MethodSource("provideSingleBook")
-    void whenUnauthenticatedGetEBookByIdThen200(Book book) {
-        var eBookId = book.getEBooks().iterator().next().getId();
-        var ebook = book.getEBookById(eBookId);
-
-        webTestClient
-                .get()
-                .uri("/books/" + book.getIsbn() + "/ebooks/" + eBookId)
-                .exchange().expectStatus()
-                .isOk()
-                .expectBody()
-                .jsonPath("$.id").isEqualTo(ebook.getId())
-                .jsonPath("$.metadata.url").isEqualTo(ebook.getMetadata().getUrl())
-                .jsonPath("$.metadata.format").isEqualTo(ebook.getMetadata().getFormat())
-                .jsonPath("$.metadata.fileSize").isEqualTo(ebook.getMetadata().getFileSize())
-                .jsonPath("$.properties.price.originalPrice").isEqualTo(ebook.getProperties().getPrice().getOriginalPrice())
-                .jsonPath("$.properties.price.discountedPrice").isEqualTo(ebook.getProperties().getPrice().getDiscountedPrice())
-                .jsonPath("$.properties.publicationDate").isEqualTo(ebook.getProperties().getPublicationDate().toString())
-                .jsonPath("$.properties.releaseDate").isEqualTo(ebook.getProperties().getReleaseDate().toString());
-    }
-
-
-    @Test
     void whenUnauthenticatedCreateEBookThen401() {
         var eBookReq = EBookRequestDto.builder()
-                .url("demo.pdf").build();
+                .numberOfPages(12).build();
 
         webTestClient.post()
                 .uri("/books/1234567890" + "/ebooks")
@@ -1045,7 +937,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenIsCustomerCreateEBookThen403() {
         var eBookReq = EBookRequestDto.builder()
-                .url("demo.pdf").build();
+                .numberOfPages(12).build();
 
         webTestClient
                 .post()
@@ -1061,9 +953,6 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @MethodSource("provideSingleBook")
     void whenIsEmployeeCreateEBookValidThen201(Book book) {
         var eBookReq = EBookRequestDto.builder()
-                .url("demo.pdf")
-                .format("pdf")
-                .fileSize(120000)
                 .numberOfPages(300)
                 .originalPrice(1200000L)
 //                .discountedPrice(100000L)
@@ -1089,24 +978,19 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .jsonPath("$.description").isEqualTo(book.getDescription())
                 .jsonPath("$.edition").isEqualTo(book.getEdition())
 
-                .jsonPath("$.eBooks[1].id").isNotEmpty()
-                .jsonPath("$.eBooks[1].metadata.url").isEqualTo(eBookReq.url())
-                .jsonPath("$.eBooks[1].metadata.format").isEqualTo(eBookReq.format())
-                .jsonPath("$.eBooks[1].metadata.fileSize").isEqualTo(eBookReq.fileSize())
-                .jsonPath("$.eBooks[1].properties.numberOfPages").isEqualTo(eBookReq.numberOfPages())
-                .jsonPath("$.eBooks[1].properties.price.originalPrice").isEqualTo(eBookReq.originalPrice())
-                .jsonPath("$.eBooks[1].properties.price.discountedPrice").isEqualTo(0L)
-                .jsonPath("$.eBooks[1].properties.publicationDate").isEqualTo(eBookReq.publicationDate().toString())
-                .jsonPath("$.eBooks[1].properties.releaseDate").isEqualTo(eBookReq.releaseDate().toString());
+                .jsonPath("$.eBook.id").isNotEmpty()
+                .jsonPath("$.eBook.ebookFiles").isArray()
+                .jsonPath("$.eBook.properties.numberOfPages").isEqualTo(eBookReq.numberOfPages())
+                .jsonPath("$.eBook.properties.price.originalPrice").isEqualTo(eBookReq.originalPrice())
+                .jsonPath("$.eBook.properties.price.discountedPrice").isEqualTo(0L)
+                .jsonPath("$.eBook.properties.publicationDate").isEqualTo(eBookReq.publicationDate().toString())
+                .jsonPath("$.eBook.properties.releaseDate").isEqualTo(eBookReq.releaseDate().toString());
     }
 
 
     @Test
     void whenIsEmployeeCreateEBookValidButBookNotFoundThen404() {
         var eBookReq = EBookRequestDto.builder()
-                .url("demo.pdf")
-                .format("pdf")
-                .fileSize(120000)
                 .numberOfPages(300)
                 .originalPrice(1200000L)
                 .discountedPrice(100000L)
@@ -1146,9 +1030,6 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenUnauthenticatedUpdateEBookThen401() {
         var eBookUpdate = EBookUpdateDto.builder()
-                .url("url-changed.pdf")
-                .format("pdf")
-                .fileSize(1100000)
                 .numberOfPages(69)
                 .originalPrice(600000L)
                 .discountedPrice(40000L)
@@ -1158,7 +1039,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
         webTestClient
                 .patch()
-                .uri("/books/1234567890/ebooks/1")
+                .uri("/books/1234567890/ebooks")
                 .body(BodyInserters.fromValue(eBookUpdate))
                 .exchange()
                 .expectStatus().isUnauthorized();
@@ -1168,9 +1049,6 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenIsCustomerUpdateEBookThen403() {
         var eBookUpdate = EBookUpdateDto.builder()
-                .url("url-changed.pdf")
-                .format("pdf")
-                .fileSize(1100000)
                 .numberOfPages(69)
                 .originalPrice(600000L)
                 .discountedPrice(40000L)
@@ -1179,7 +1057,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .build();
 
         webTestClient.patch()
-                .uri("/books/1234567890/ebooks/1")
+                .uri("/books/1234567890/ebooks")
                 .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
                 .body(BodyInserters.fromValue(eBookUpdate))
                 .exchange()
@@ -1191,20 +1069,16 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @MethodSource("provideSingleBook")
     void whenIsEmployeeUpdateEbookValidThen200(Book book) {
         var eBookUpdate = EBookUpdateDto.builder()
-                .url("url-changed.pdf")
-                .format("pdf")
-                .fileSize(1100000)
                 .numberOfPages(69)
                 .originalPrice(600000L)
                 .discountedPrice(40000L)
                 .publicationDate(Instant.now().plus(5, ChronoUnit.DAYS))
                 .releaseDate(Instant.now().plus(1, ChronoUnit.DAYS))
                 .build();
-        var eBookUpdateId = book.getEBooks().iterator().next().getId();
 
         webTestClient
                 .patch()
-                .uri("/books/" + book.getIsbn() + "/ebooks/" + eBookUpdateId)
+                .uri("/books/" + book.getIsbn() + "/ebooks")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(eBookUpdate))
                 .exchange()
@@ -1221,15 +1095,13 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .jsonPath("$.description").isEqualTo(book.getDescription())
                 .jsonPath("$.edition").isEqualTo(book.getEdition())
 
-                .jsonPath("$.eBooks[0].id").isNotEmpty()
-                .jsonPath("$.eBooks[0].metadata.url").isEqualTo(eBookUpdate.url())
-                .jsonPath("$.eBooks[0].metadata.format").isEqualTo(eBookUpdate.format())
-                .jsonPath("$.eBooks[0].metadata.fileSize").isEqualTo(eBookUpdate.fileSize())
-                .jsonPath("$.eBooks[0].properties.numberOfPages").isEqualTo(eBookUpdate.numberOfPages())
-                .jsonPath("$.eBooks[0].properties.price.originalPrice").isEqualTo(eBookUpdate.originalPrice())
-                .jsonPath("$.eBooks[0].properties.price.discountedPrice").isEqualTo(eBookUpdate.discountedPrice())
-                .jsonPath("$.eBooks[0].properties.publicationDate").isEqualTo(eBookUpdate.publicationDate().toString())
-                .jsonPath("$.eBooks[0].properties.releaseDate").isEqualTo(eBookUpdate.releaseDate().toString());
+                .jsonPath("$.eBook.id").isNotEmpty()
+                .jsonPath("$.eBook.ebookFiles").isArray()
+                .jsonPath("$.eBook.properties.numberOfPages").isEqualTo(eBookUpdate.numberOfPages())
+                .jsonPath("$.eBook.properties.price.originalPrice").isEqualTo(eBookUpdate.originalPrice())
+                .jsonPath("$.eBook.properties.price.discountedPrice").isEqualTo(eBookUpdate.discountedPrice())
+                .jsonPath("$.eBook.properties.publicationDate").isEqualTo(eBookUpdate.publicationDate().toString())
+                .jsonPath("$.eBook.properties.releaseDate").isEqualTo(eBookUpdate.releaseDate().toString());
     }
 
 
@@ -1237,21 +1109,17 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @MethodSource("provideSingleBook")
     void whenIsEmployeePatchEbookValidThen200(Book book) {
         var eBookUpdate = EBookUpdateDto.builder()
-                .url("url-changed.pdf")
-                .format("pdf")
-//                .fileSize(1100000)
                 .numberOfPages(69)
                 .originalPrice(600000L)
 //                .discountedPrice(40000L)
                 .publicationDate(Instant.now().plus(5, ChronoUnit.DAYS))
                 .releaseDate(Instant.now().plus(1, ChronoUnit.DAYS))
                 .build();
-        EBook eBook = book.getEBooks().iterator().next();
-        var eBookUpdateId = eBook.getId();
+        EBook eBook = book.getEBook();
 
         webTestClient
                 .patch()
-                .uri("/books/" + book.getIsbn() + "/ebooks/" + eBookUpdateId)
+                .uri("/books/" + book.getIsbn() + "/ebooks")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(eBookUpdate))
                 .exchange()
@@ -1268,25 +1136,23 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .jsonPath("$.description").isEqualTo(book.getDescription())
                 .jsonPath("$.edition").isEqualTo(book.getEdition())
 
-                .jsonPath("$.eBooks[0].id").isNotEmpty()
-                .jsonPath("$.eBooks[0].metadata.url").isEqualTo(eBookUpdate.url())
-                .jsonPath("$.eBooks[0].metadata.format").isEqualTo(eBookUpdate.format())
-                .jsonPath("$.eBooks[0].metadata.fileSize").isEqualTo(eBook.getMetadata().getFileSize()) // no change
-                .jsonPath("$.eBooks[0].properties.numberOfPages").isEqualTo(eBookUpdate.numberOfPages())
-                .jsonPath("$.eBooks[0].properties.price.originalPrice").isEqualTo(eBookUpdate.originalPrice())
-                .jsonPath("$.eBooks[0].properties.price.discountedPrice").isEqualTo(eBook.getProperties().getPrice().getDiscountedPrice()) // no change
-                .jsonPath("$.eBooks[0].properties.publicationDate").isEqualTo(eBookUpdate.publicationDate().toString())
-                .jsonPath("$.eBooks[0].properties.releaseDate").isEqualTo(eBookUpdate.releaseDate().toString());
+                .jsonPath("$.eBook.id").isNotEmpty()
+                .jsonPath("$.eBook.ebookFiles").isArray()
+                .jsonPath("$.eBook.properties.numberOfPages").isEqualTo(eBookUpdate.numberOfPages())
+                .jsonPath("$.eBook.properties.price.originalPrice").isEqualTo(eBookUpdate.originalPrice())
+                .jsonPath("$.eBook.properties.price.discountedPrice").isEqualTo(eBook.getProperties().getPrice().getDiscountedPrice()) // no change
+                .jsonPath("$.eBook.properties.publicationDate").isEqualTo(eBookUpdate.publicationDate().toString())
+                .jsonPath("$.eBook.properties.releaseDate").isEqualTo(eBookUpdate.releaseDate().toString());
     }
 
     @ParameterizedTest
     @MethodSource("provideValidBookAndInvalidEBooksForUpdate")
     void whenIsEmployeeUpdateEBookInvalidThen400(Map.Entry<ApiError, EBookUpdateDto> entry, Book book) throws JsonProcessingException {
-        var eBookId = book.getEBooks().iterator().next().getId();
+        var eBookId = book.getEBook();
 
         String responseBody = webTestClient
                 .patch()
-                .uri("/books/" + book.getIsbn() + "/ebooks/" + eBookId)
+                .uri("/books/" + book.getIsbn() + "/ebooks")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(entry.getValue()))
                 .exchange()
@@ -1303,9 +1169,6 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenIsEmployeeUpdateEBookValidButBookNotFoundThen404() {
         var eBookReq = EBookRequestDto.builder()
-                .url("demo.pdf")
-                .format("pdf")
-                .fileSize(120000)
                 .numberOfPages(300)
                 .originalPrice(1200000L)
                 .discountedPrice(100000L)
@@ -1314,7 +1177,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .build();
 
         webTestClient.patch()
-                .uri("/books/9999999999/ebooks/1")
+                .uri("/books/9999999999/ebooks")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(eBookReq))
                 .exchange()
@@ -1325,7 +1188,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenUnauthenticatedDeleteEBookThen401() {
         webTestClient.delete()
-                .uri("/books/9999999999/ebooks/1")
+                .uri("/books/9999999999/ebooks")
                 .exchange()
                 .expectStatus().isUnauthorized();
     }
@@ -1334,28 +1197,17 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenIsCustomerDeleteEbookThen403() {
         webTestClient.delete()
-                .uri("/books/9999999999/ebooks/1")
+                .uri("/books/9999999999/ebooks")
                 .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isForbidden();
     }
 
 
-    @ParameterizedTest
-    @MethodSource("provideSingleBook")
-    void whenIsEmployeeDeleteEBookNotFoundThen404(Book book) {
-        webTestClient.delete()
-                .uri("/books/" + book.getIsbn() + "/ebooks/9999999")
-                .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
-                .exchange()
-                .expectStatus().isNotFound();
-    }
-
-
     @Test
     void whenIsEmployeeDeleteEBookWithBookNotFoundThen404() {
         webTestClient.delete()
-                .uri("/books/9999999999/ebooks/1")
+                .uri("/books/9999999999/ebooks")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isNotFound();
@@ -1365,80 +1217,21 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @ParameterizedTest
     @MethodSource("provideSingleBook")
     void whenIsEmployeeDeleteEBookThen204(Book book) {
-        var eBookUpdateId = book.getEBooks().iterator().next().getId();
-
         webTestClient.delete()
-                .uri("/books/" + book.getIsbn() + "/ebooks/" + eBookUpdateId)
+                .uri("/books/" + book.getIsbn() + "/ebooks")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isNoContent();
 
         webTestClient
                 .get()
-                .uri("/books/" + book.getIsbn() + "/ebooks/" + eBookUpdateId)
+                .uri("/books/" + book.getIsbn())
                 .exchange()
-                .expectStatus().isNotFound();
-    }
-
-
-    @Test
-    void whenUnauthenticatedGetAllPrintBooksButBookNotFoundThen404() {
-        webTestClient
-                .get()
-                .uri("/books/99999999999/print-books")
-                .exchange()
-                .expectStatus().isNotFound();
-    }
-
-
-    @ParameterizedTest
-    @MethodSource("provideSingleBook")
-    void whenUnauthenticatedGetAllPrintBooksThen200(Book book) {
-        webTestClient
-                .get()
-                .uri("/books/" + book.getIsbn() + "/print-books")
-                .exchange().expectStatus()
-                .isOk()
+                .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$[*]").isArray();
+                .jsonPath("$.eBook").isEmpty();
     }
 
-
-    @ParameterizedTest
-    @MethodSource("provideSingleBook")
-    void whenUnauthenticatedGetPrintBookByIdButPrintBookNotFoundThen404(Book book) {
-        webTestClient
-                .get()
-                .uri("/books/" + book.getIsbn() + "/print-books/9999999")
-                .exchange()
-                .expectStatus().isNotFound();
-    }
-
-
-    @ParameterizedTest
-    @MethodSource("provideSingleBook")
-    void whenUnauthenticatedGetPrintBookByIdThen200(Book book) {
-        var printBookId = book.getPrintBooks().iterator().next().getId();
-        var printBook = book.getPrintBookById(printBookId);
-
-        webTestClient
-                .get()
-                .uri("/books/" + book.getIsbn() + "/print-books/" + printBookId)
-                .exchange().expectStatus()
-                .isOk()
-                .expectBody()
-                .jsonPath("$.id").isEqualTo(printBook.getId())
-                .jsonPath("$.coverType").isEqualTo(printBook.getCoverType().name())
-                .jsonPath("$.inventory").isEqualTo(printBook.getInventory())
-                .jsonPath("$.properties.price.originalPrice").isEqualTo(printBook.getProperties().getPrice().getOriginalPrice())
-                .jsonPath("$.properties.price.discountedPrice").isEqualTo(printBook.getProperties().getPrice().getDiscountedPrice())
-                .jsonPath("$.properties.publicationDate").isEqualTo(printBook.getProperties().getPublicationDate().toString())
-                .jsonPath("$.properties.releaseDate").isEqualTo(printBook.getProperties().getReleaseDate().toString())
-                .jsonPath("$.measure.width").isEqualTo(printBook.getMeasure().getWidth())
-                .jsonPath("$.measure.height").isEqualTo(printBook.getMeasure().getHeight())
-                .jsonPath("$.measure.thickness").isEqualTo(printBook.getMeasure().getThickness())
-                .jsonPath("$.measure.weight").isEqualTo(printBook.getMeasure().getWeight());
-    }
 
     @Test
     void whenUnauthenticatedCreatePrintBookThen401() {
@@ -1502,16 +1295,16 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .jsonPath("$.description").isEqualTo(book.getDescription())
                 .jsonPath("$.edition").isEqualTo(book.getEdition())
 
-                .jsonPath("$.printBooks[1].id").isNotEmpty()
-                .jsonPath("$.printBooks[1].measure.width").isEqualTo(printBookReq.width())
-                .jsonPath("$.printBooks[1].measure.height").isEqualTo(printBookReq.height())
-                .jsonPath("$.printBooks[1].measure.thickness").isEqualTo(printBookReq.thickness())
-                .jsonPath("$.printBooks[1].measure.weight").isEqualTo(printBookReq.weight())
-                .jsonPath("$.printBooks[1].properties.numberOfPages").isEqualTo(printBookReq.numberOfPages())
-                .jsonPath("$.printBooks[1].properties.price.originalPrice").isEqualTo(printBookReq.originalPrice())
-                .jsonPath("$.printBooks[1].properties.price.discountedPrice").isEqualTo(0L)
-                .jsonPath("$.printBooks[1].properties.publicationDate").isEqualTo(printBookReq.publicationDate().toString())
-                .jsonPath("$.printBooks[1].properties.releaseDate").isEqualTo(printBookReq.releaseDate().toString());
+                .jsonPath("$.printBook.id").isNotEmpty()
+                .jsonPath("$.printBook.measure.width").isEqualTo(printBookReq.width())
+                .jsonPath("$.printBook.measure.height").isEqualTo(printBookReq.height())
+                .jsonPath("$.printBook.measure.thickness").isEqualTo(printBookReq.thickness())
+                .jsonPath("$.printBook.measure.weight").isEqualTo(printBookReq.weight())
+                .jsonPath("$.printBook.properties.numberOfPages").isEqualTo(printBookReq.numberOfPages())
+                .jsonPath("$.printBook.properties.price.originalPrice").isEqualTo(printBookReq.originalPrice())
+                .jsonPath("$.printBook.properties.price.discountedPrice").isEqualTo(0L)
+                .jsonPath("$.printBook.properties.publicationDate").isEqualTo(printBookReq.publicationDate().toString())
+                .jsonPath("$.printBook.properties.releaseDate").isEqualTo(printBookReq.releaseDate().toString());
     }
 
 
@@ -1567,7 +1360,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
 
         webTestClient
                 .patch()
-                .uri("/books/1234567890/print-books/1")
+                .uri("/books/1234567890/print-books")
                 .body(BodyInserters.fromValue(printBookUpdate))
                 .exchange()
                 .expectStatus().isUnauthorized();
@@ -1581,7 +1374,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .build();
 
         webTestClient.patch()
-                .uri("/books/1234567890/print-books/1")
+                .uri("/books/1234567890/print-books")
                 .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
                 .body(BodyInserters.fromValue(printBookUpdate))
                 .exchange()
@@ -1606,11 +1399,9 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .build();
 
 
-        var printBookUpdateId = book.getPrintBooks().iterator().next().getId();
-
         webTestClient
                 .patch()
-                .uri("/books/" + book.getIsbn() + "/print-books/" + printBookUpdateId)
+                .uri("/books/" + book.getIsbn() + "/print-books")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(printBookUpdate))
                 .exchange()
@@ -1627,16 +1418,16 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .jsonPath("$.description").isEqualTo(book.getDescription())
                 .jsonPath("$.edition").isEqualTo(book.getEdition())
 
-                .jsonPath("$.printBooks[0].id").isNotEmpty()
-                .jsonPath("$.printBooks[0].measure.width").isEqualTo(printBookUpdate.width())
-                .jsonPath("$.printBooks[0].measure.height").isEqualTo(printBookUpdate.height())
-                .jsonPath("$.printBooks[0].measure.thickness").isEqualTo(printBookUpdate.thickness())
-                .jsonPath("$.printBooks[0].measure.weight").isEqualTo(printBookUpdate.weight())
-                .jsonPath("$.printBooks[0].properties.numberOfPages").isEqualTo(printBookUpdate.numberOfPages())
-                .jsonPath("$.printBooks[0].properties.price.originalPrice").isEqualTo(printBookUpdate.originalPrice())
-                .jsonPath("$.printBooks[0].properties.price.discountedPrice").isEqualTo(printBookUpdate.discountedPrice())
-                .jsonPath("$.printBooks[0].properties.publicationDate").isEqualTo(printBookUpdate.publicationDate().toString())
-                .jsonPath("$.printBooks[0].properties.releaseDate").isEqualTo(printBookUpdate.releaseDate().toString());
+                .jsonPath("$.printBook.id").isNotEmpty()
+                .jsonPath("$.printBook.measure.width").isEqualTo(printBookUpdate.width())
+                .jsonPath("$.printBook.measure.height").isEqualTo(printBookUpdate.height())
+                .jsonPath("$.printBook.measure.thickness").isEqualTo(printBookUpdate.thickness())
+                .jsonPath("$.printBook.measure.weight").isEqualTo(printBookUpdate.weight())
+                .jsonPath("$.printBook.properties.numberOfPages").isEqualTo(printBookUpdate.numberOfPages())
+                .jsonPath("$.printBook.properties.price.originalPrice").isEqualTo(printBookUpdate.originalPrice())
+                .jsonPath("$.printBook.properties.price.discountedPrice").isEqualTo(printBookUpdate.discountedPrice())
+                .jsonPath("$.printBook.properties.publicationDate").isEqualTo(printBookUpdate.publicationDate().toString())
+                .jsonPath("$.printBook.properties.releaseDate").isEqualTo(printBookUpdate.releaseDate().toString());
     }
 
 
@@ -1656,12 +1447,11 @@ class BookIntegrationTests extends IntegrationTestsBase {
 //                .weight(50.2)
                 .build();
 
-        var printBook = book.getPrintBooks().iterator().next();
-        var printBookUpdateId = printBook.getId();
+        var printBook = book.getPrintBook();
 
         webTestClient
                 .patch()
-                .uri("/books/" + book.getIsbn() + "/print-books/" + printBookUpdateId)
+                .uri("/books/" + book.getIsbn() + "/print-books")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(printBookUpdate))
                 .exchange()
@@ -1678,26 +1468,25 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .jsonPath("$.description").isEqualTo(book.getDescription())
                 .jsonPath("$.edition").isEqualTo(book.getEdition())
 
-                .jsonPath("$.printBooks[0].id").isNotEmpty()
-                .jsonPath("$.printBooks[0].measure.width").isEqualTo(printBook.getMeasure().getWidth())
-                .jsonPath("$.printBooks[0].measure.height").isEqualTo(printBook.getMeasure().getHeight())
-                .jsonPath("$.printBooks[0].measure.thickness").isEqualTo(printBook.getMeasure().getThickness())
-                .jsonPath("$.printBooks[0].measure.weight").isEqualTo(printBook.getMeasure().getWeight())
-                .jsonPath("$.printBooks[0].properties.numberOfPages").isEqualTo(printBookUpdate.numberOfPages())
-                .jsonPath("$.printBooks[0].properties.price.originalPrice").isEqualTo(printBookUpdate.originalPrice())
-                .jsonPath("$.printBooks[0].properties.price.discountedPrice").isEqualTo(printBookUpdate.discountedPrice())
-                .jsonPath("$.printBooks[0].properties.publicationDate").isEqualTo(printBookUpdate.publicationDate().toString())
-                .jsonPath("$.printBooks[0].properties.releaseDate").isEqualTo(printBookUpdate.releaseDate().toString());
+                .jsonPath("$.printBook.id").isNotEmpty()
+                .jsonPath("$.printBook.measure.width").isEqualTo(printBook.getMeasure().getWidth())
+                .jsonPath("$.printBook.measure.height").isEqualTo(printBook.getMeasure().getHeight())
+                .jsonPath("$.printBook.measure.thickness").isEqualTo(printBook.getMeasure().getThickness())
+                .jsonPath("$.printBook.measure.weight").isEqualTo(printBook.getMeasure().getWeight())
+                .jsonPath("$.printBook.properties.numberOfPages").isEqualTo(printBookUpdate.numberOfPages())
+                .jsonPath("$.printBook.properties.price.originalPrice").isEqualTo(printBookUpdate.originalPrice())
+                .jsonPath("$.printBook.properties.price.discountedPrice").isEqualTo(printBookUpdate.discountedPrice())
+                .jsonPath("$.printBook.properties.publicationDate").isEqualTo(printBookUpdate.publicationDate().toString())
+                .jsonPath("$.printBook.properties.releaseDate").isEqualTo(printBookUpdate.releaseDate().toString());
     }
 
     @ParameterizedTest
     @MethodSource("provideValidBookAndInvalidPrintBookForUpdate")
     void whenIsEmployeeUpdatePrintBookInvalidThen400(Map.Entry<ApiError, PrintBookUpdateDto> entry, Book book) throws JsonProcessingException {
-        var eBookId = book.getEBooks().iterator().next().getId();
 
         String responseBody = webTestClient
                 .patch()
-                .uri("/books/" + book.getIsbn() + "/print-books/" + eBookId)
+                .uri("/books/" + book.getIsbn() + "/print-books")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(entry.getValue()))
                 .exchange()
@@ -1729,7 +1518,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
                 .build();
 
         webTestClient.patch()
-                .uri("/books/9999999999/print-books/1")
+                .uri("/books/9999999999/print-books")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .body(BodyInserters.fromValue(printBookUpdate))
                 .exchange()
@@ -1740,7 +1529,7 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenUnauthenticatedDeletePrintBookThen401() {
         webTestClient.delete()
-                .uri("/books/9999999999/print-books/1")
+                .uri("/books/9999999999/print-books")
                 .exchange()
                 .expectStatus().isUnauthorized();
     }
@@ -1749,28 +1538,17 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @Test
     void whenIsCustomerDeletePrintBookThen403() {
         webTestClient.delete()
-                .uri("/books/9999999999/print-books/1")
+                .uri("/books/9999999999/print-books")
                 .headers(headers -> headers.setBearerAuth(customerToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isForbidden();
     }
 
 
-    @ParameterizedTest
-    @MethodSource("provideSingleBook")
-    void whenIsEmployeeDeletePrintBookNotFoundThen404(Book book) {
-        webTestClient.delete()
-                .uri("/books/" + book.getIsbn() + "/print-books/9999999")
-                .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
-                .exchange()
-                .expectStatus().isNotFound();
-    }
-
-
     @Test
     void whenIsEmployeeDeletePrintBookWithBookNotFoundThen404() {
         webTestClient.delete()
-                .uri("/books/9999999999/print-books/1")
+                .uri("/books/9999999999/print-books")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isNotFound();
@@ -1780,19 +1558,20 @@ class BookIntegrationTests extends IntegrationTestsBase {
     @ParameterizedTest
     @MethodSource("provideSingleBook")
     void whenIsEmployeeDeletePrintBookThen204(Book book) {
-        var printBookUpdateId = book.getPrintBooks().iterator().next().getId();
 
         webTestClient.delete()
-                .uri("/books/" + book.getIsbn() + "/print-books/" + printBookUpdateId)
+                .uri("/books/" + book.getIsbn() + "/print-books")
                 .headers(headers -> headers.setBearerAuth(employeeToken.getAccessToken()))
                 .exchange()
                 .expectStatus().isNoContent();
 
         webTestClient
                 .get()
-                .uri("/books/" + book.getIsbn() + "/print-books/" + printBookUpdateId)
+                .uri("/books/" + book.getIsbn())
                 .exchange()
-                .expectStatus().isNotFound();
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.printBook").isEmpty();
     }
 
 

@@ -69,18 +69,17 @@ public class OrderService {
         }
         for (LineItem lineItem : order.getLineItems()) {
             String isbn = lineItem.getIsbn();
-            Long detailId = lineItem.getDetailId();
             BookType bookType = lineItem.getBookType();
 
             Book book = bookService.findByIsbn(isbn);
 
             if (bookType.equals(BookType.EBOOK)) {
-                var eBook = book.getEBookById(detailId);
+                var eBook = book.getEBook();
                 int currentPurchases = eBook.getProperties().getPurchases();
                 eBook.getProperties().setPurchases(currentPurchases + lineItem.getQuantity());
 
             } else {
-                var printBook = book.getPrintBookById(detailId);
+                var printBook = book.getPrintBook();
                 if (printBook.getInventory() < lineItem.getQuantity()) {
                     throw new BookNotEnoughInventoryException("");
                 }
@@ -152,7 +151,6 @@ public class OrderService {
     }
 
     private LineItem convertLineItemRequestToLineItem(LineItemRequest lineItemRequest) {
-        var detailId = lineItemRequest.getDetailId();
         var isbn = lineItemRequest.getIsbn();
         // find book by isbn (should cache book because many query duplicate)
         var book = bookService.findByIsbn(isbn);
@@ -160,11 +158,11 @@ public class OrderService {
         var lineItem = new LineItem();
 
         if (bookType.equals(BookType.EBOOK)) {
-            EBook eBook = book.getEBookById(detailId);
+            EBook eBook = book.getEBook();
             lineItem.setPrice(eBook.getProperties().getPrice());
             lineItem.setBookType(BookType.EBOOK);
         } else {
-            PrintBook printBook = book.getPrintBookById(detailId);
+            PrintBook printBook = book.getPrintBook();
             lineItem.setPrice(printBook.getProperties().getPrice());
             // if book is print book then check inventory
             if (printBook.getInventory() < lineItemRequest.getQuantity()) {
@@ -172,7 +170,7 @@ public class OrderService {
             }
             lineItem.setBookType(BookType.PRINT_BOOK);
         }
-        lineItem.setVariantBook(detailId, book.getIsbn(), book.getTitle());
+        lineItem.setVariantBook(book.getIsbn(), book.getTitle());
         lineItem.setQuantity(lineItemRequest.getQuantity());
         return lineItem;
     }

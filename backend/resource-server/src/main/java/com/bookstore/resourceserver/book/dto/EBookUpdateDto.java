@@ -5,17 +5,12 @@
 package com.bookstore.resourceserver.book.dto;
 
 import com.bookstore.resourceserver.book.validator.VietnamesePriceConstraint;
-import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 import java.time.Instant;
 
 @Builder
-public record EBookUpdateDto (
-        String url,
-        Integer fileSize,
-        @Pattern(regexp = "(?i)^(pdf|epub)$", message = "The format of ebook invalid.")
-        String format,
+public record EBookUpdateDto(
         Integer numberOfPages,
         @VietnamesePriceConstraint
         Long originalPrice,
@@ -24,4 +19,14 @@ public record EBookUpdateDto (
         Instant publicationDate,
         Instant releaseDate
 ) {
+
+    public EBookRequestDto toEBookRequestDto() {
+        return EBookRequestDto.builder()
+                .numberOfPages(this.numberOfPages)
+                .originalPrice(this.originalPrice)
+                .discountedPrice(this.discountedPrice)
+                .publicationDate(this.publicationDate)
+                .releaseDate(this.releaseDate)
+                .build();
+    }
 }

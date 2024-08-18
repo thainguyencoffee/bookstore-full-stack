@@ -134,16 +134,20 @@ public class DataTest {
 
         String url = "https://bookstore-bucket.sgp1.digitaloceanspaces.com/bookstore-bucket/book/1234567890/files/Thomas%20Vitale%20-%20Cloud%20Native%20Spring%20in%20Action_%20With%20Spring%20Boot%20and%20Kubernetes-Manning.pdf";
         var eBook = new EBook();
-        eBook.setMetadata(new EBookFile(url, 19820, "pdf"));
+        var eBookFile = new EBookFile();
+        eBookFile.setUrl(url);
+        eBookFile.setFileSize(19820);
+        eBookFile.setFormat("pdf");
+        eBook.addEBookFile(eBookFile);
         eBook.setProperties(eBookProps);
-        book.addEbook(eBook);
+        book.setEBook(eBook);
 
         var printBook = new PrintBook();
         printBook.setProperties(printBookProps);
         printBook.setCoverType(CoverType.PAPERBACK);
         printBook.setMeasure(new Measure(12, 12, 12,12));
         printBook.setInventory(120);
-        book.addPrintBook(printBook);
+        book.setPrintBook(printBook);
     }
 
     private void clear() {
