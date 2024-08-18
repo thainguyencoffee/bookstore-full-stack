@@ -1,9 +1,18 @@
+<<<<<<<< HEAD:backend/resource-server/src/main/java/com/bookstore/resourceserver/category/CategoryController.java
 package com.bookstore.resourceserver.category;
 
 import com.bookstore.resourceserver.awss3.MultiMediaService;
 import com.bookstore.resourceserver.book.Book;
 import com.bookstore.resourceserver.category.dto.CategoryMetadataRequestDto;
 import com.bookstore.resourceserver.category.dto.CategoryMetadataUpdateDto;
+========
+package com.bookstore.resourceserver.book.category;
+
+import com.bookstore.resourceserver.awss3.MultiMediaService;
+import com.bookstore.resourceserver.book.Book;
+import com.bookstore.resourceserver.book.dto.category.CategoryMetadataRequestDto;
+import com.bookstore.resourceserver.book.dto.category.CategoryMetadataUpdateDto;
+>>>>>>>> origin:backend/resource-server/src/main/java/com/bookstore/resourceserver/book/category/CategoryController.java
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

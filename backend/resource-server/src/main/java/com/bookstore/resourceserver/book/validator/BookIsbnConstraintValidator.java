@@ -1,6 +1,6 @@
 package com.bookstore.resourceserver.book.validator;
 
-import com.bookstore.resourceserver.book.BookService;
+import com.bookstore.resourceserver.book.impl.BookServiceImpl;
 import com.bookstore.resourceserver.core.exception.CustomNoResultException;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BookIsbnConstraintValidator implements ConstraintValidator<BookIsbnConstraint, String> {
 
-    private final BookService bookService;
+    private final BookServiceImpl bookService;
 
     private String message;
 
