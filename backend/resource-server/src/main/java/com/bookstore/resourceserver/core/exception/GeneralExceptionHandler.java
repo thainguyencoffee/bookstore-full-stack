@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
@@ -28,6 +29,12 @@ import java.util.Objects;
 
 @RestControllerAdvice
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final View error;
+
+    public GeneralExceptionHandler(View error) {
+        this.error = error;
+    }
 
     @ExceptionHandler(CustomNoResultException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -46,7 +53,7 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         List<ApiError.ErrorInfo> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             FieldError fieldError = ((FieldError) error);
-            errors.add(new ApiError.ErrorInfo(error.getObjectName(), fieldError.getField(), fieldError.getRejectedValue(), error.getDefaultMessage()));
+            errors.add(new ApiError.ErrorInfo(error.getObjectName().toLowerCase(), fieldError.getField(), fieldError.getRejectedValue(), error.getDefaultMessage()));
         });
         return new ResponseEntity<>(new ApiError(errors), headers, status);
     }
@@ -133,5 +140,6 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         errorInfo.setMessage(ex.getMessage());
         return new ResponseEntity<>(new ApiError(List.of(errorInfo)), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 
 }

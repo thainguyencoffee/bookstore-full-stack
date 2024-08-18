@@ -9,7 +9,7 @@ import java.util.UUID;
 public class OrderStatusNotMatchException extends RuntimeException {
 
     public OrderStatusNotMatchException(UUID orderId, OrderStatus actualStatus, OrderStatus ... expectedStatus) {
-        super(String.format("Order %s status must be %s, not %s",
+        super(String.format("PurchaseOrder %s status must be %s, not %s",
                 orderId,
                 buildExpectedStatus(Arrays.stream(expectedStatus).toList()),
                 actualStatus));

@@ -12,5 +12,12 @@ import lombok.Setter;
 public class Price {
     private Long originalPrice;
     private Long discountedPrice = 0L;
-    private String currencyPrice;
+
+    public void addOriginalPrice(Long originalPrice) {
+        this.originalPrice += originalPrice;
+    }
+
+    public void addDiscountedPrice(Long discountedPrice) {
+        this.discountedPrice += discountedPrice;
+    }
 }

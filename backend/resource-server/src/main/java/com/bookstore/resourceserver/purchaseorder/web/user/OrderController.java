@@ -1,6 +1,6 @@
 package com.bookstore.resourceserver.purchaseorder.web.user;
 
-import com.bookstore.resourceserver.purchaseorder.Order;
+import com.bookstore.resourceserver.purchaseorder.PurchaseOrder;
 import com.bookstore.resourceserver.purchaseorder.OrderService;
 import com.bookstore.resourceserver.purchaseorder.dto.OrderRequest;
 import com.bookstore.resourceserver.purchaseorder.dto.OrderUpdateDto;
@@ -28,14 +28,14 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public Page<Order> getAllOrder(@AuthenticationPrincipal Jwt jwt, Pageable pageable) {
+    public Page<PurchaseOrder> getAllOrder(@AuthenticationPrincipal Jwt jwt, Pageable pageable) {
         log.info("OrderController attempt retrieve orders.");
         String username = jwt.getClaim(StandardClaimNames.PREFERRED_USERNAME).toString();
         return orderService.findAllByCreatedBy(username, pageable);
     }
 
     @GetMapping("/{orderId}")
-    public Order getOrderById(@PathVariable UUID orderId, @AuthenticationPrincipal Jwt jwt) {
+    public PurchaseOrder getOrderById(@PathVariable UUID orderId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaim(StandardClaimNames.PREFERRED_USERNAME).toString();
         log.info("OrderController attempt retrieve order by {}", username);
         return orderService.findByIdAndUsername(orderId, username);
@@ -43,13 +43,13 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Order submitOrder(@Valid @RequestBody OrderRequest orderRequest) {
+    public PurchaseOrder submitOrder(@Valid @RequestBody OrderRequest orderRequest) {
         log.info("OrderController attempt submit order. {}", orderRequest.toString());
         return orderService.submitOrder(orderRequest);
     }
 
     @PatchMapping("/{orderId}")
-    public ResponseEntity<Order> updateOrder(@PathVariable UUID orderId, @RequestBody OrderUpdateDto orderUpdateDto, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<PurchaseOrder> updateOrder(@PathVariable UUID orderId, @RequestBody OrderUpdateDto orderUpdateDto, @AuthenticationPrincipal Jwt jwt) {
         log.info("OrderController attempt update order by id. {}", orderUpdateDto.getUserInformation().toString());
         String username = jwt.getClaim(StandardClaimNames.PREFERRED_USERNAME).toString();
         if (username.equals(orderUpdateDto.getCreatedBy()) || username.equals("guest")) {

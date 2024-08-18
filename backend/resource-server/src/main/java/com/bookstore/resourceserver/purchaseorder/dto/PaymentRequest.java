@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record PaymentRequest(
-        @NotNull(message = "Order ID is required")
+        @NotNull(message = "PurchaseOrder ID is required")
         UUID orderId
 ) {
 }

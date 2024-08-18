@@ -1,9 +1,8 @@
 package com.bookstore.resourceserver.book;
 
 import com.bookstore.resourceserver.awss3.MultiMediaService;
-import com.bookstore.resourceserver.book.dto.book.BookRequestDto;
-import com.bookstore.resourceserver.book.dto.book.BookUpdateDto;
-import com.bookstore.resourceserver.book.impl.BookServiceImpl;
+import com.bookstore.resourceserver.book.dto.*;
+import com.bookstore.resourceserver.book.dto.view.BookSalesView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -17,13 +16,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "books", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 class BookController {
 
-    private final BookServiceImpl bookService;
+    private final BookService bookService;
     private final MultiMediaService multiMediaService;
 
     @Operation(summary = "Get all books")
@@ -34,15 +34,15 @@ class BookController {
 
     @Operation(summary = "Get book by ISBN")
     @GetMapping("/{isbn}")
-    Book byIsbn(@PathVariable String isbn) {
+    public Book byIsbn(@PathVariable String isbn) {
         return bookService.findByIsbn(isbn);
     }
 
-//    @Operation(summary = "Get best sellers")
-//    @GetMapping("/best-sellers")
-//    public Page<Book> bestSellers(@RequestParam Instant from, @ParameterObject Pageable pageable) {
-//        return bookService.findBestSellers(from, pageable);
-//    }
+    @Operation(summary = "Get best sellers")
+    @GetMapping("/best-sellers")
+    public List<BookSalesView> bestSellers(@RequestParam("top") Integer top) {
+        return bookService.findBestSellers(top);
+    }
 
     @Operation(summary = "Create a new book", security = @SecurityRequirement(name = "token"))
     @PostMapping
@@ -54,7 +54,7 @@ class BookController {
     @Operation(summary = "Update a book by ISBN", security = @SecurityRequirement(name = "token"))
     @PatchMapping(value = "/{isbn}")
     public Book update(@PathVariable String isbn, @Valid @RequestBody BookUpdateDto bookMetadataDto) {
-        return bookService.updateByIsbn(isbn, bookMetadataDto);
+        return bookService.updateBookByIsbn(isbn, bookMetadataDto);
     }
 
     @Operation(summary = "Upload thumbnails for a book by ISBN", security = @SecurityRequirement(name = "token"))
@@ -67,8 +67,67 @@ class BookController {
     @Operation(summary = "Delete a book by ISBN", security = @SecurityRequirement(name = "token"))
     @DeleteMapping("/{isbn}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void delete(@PathVariable String isbn) {
+    public void delete(@PathVariable String isbn) {
         bookService.deleteByIsbn(isbn);
+    }
+
+    @GetMapping("/{isbn}/ebooks")
+    public Set<EBook> getAllEBooksByIsbn(@PathVariable String isbn) {
+        return bookService.findByIsbn(isbn).getEBooks();
+    }
+
+    @GetMapping("/{isbn}/ebooks/{id}")
+    public EBook getEBookByIsbnAndId(@PathVariable String isbn, @PathVariable Long id) {
+        return bookService.findByIsbn(isbn).getEBookById(id);
+    }
+
+    @Operation(summary = "Create a new eBook for isbn", security = @SecurityRequirement(name = "token"))
+    @PostMapping("/{isbn}/ebooks")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Book saveEBook(@PathVariable String isbn, @Valid @RequestBody EBookRequestDto eBookRequestDto) {
+        return bookService.saveEBook(isbn, eBookRequestDto);
+    }
+
+    @PatchMapping("/{isbn}/ebooks/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Book updateEBookByIsbnAndId(@PathVariable String isbn, @PathVariable Long id,
+                                       @Valid @RequestBody EBookUpdateDto eBookUpdateDto) {
+        return bookService.updateEBookByIsbnAndId(isbn, id, eBookUpdateDto);
+    }
+
+    @DeleteMapping("/{isbn}/ebooks/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEBookByIsbnAndId(@PathVariable String isbn, @PathVariable Long id) {
+        bookService.deleteEBookByIsbnAndId(isbn, id);
+    }
+
+    @GetMapping("/{isbn}/print-books")
+    public Set<PrintBook> getAllPrintBooksByIsbn(@PathVariable String isbn) {
+        return bookService.findByIsbn(isbn).getPrintBooks();
+    }
+
+    @GetMapping("/{isbn}/print-books/{id}")
+    public PrintBook getPrintBookByIsbnAndId(@PathVariable String isbn, @PathVariable Long id) {
+        return bookService.findByIsbn(isbn).getPrintBookById(id);
+    }
+
+    @PostMapping("/{isbn}/print-books")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Book savePrintBook(@PathVariable String isbn, @Valid @RequestBody PrintBookRequestDto printBookRequestDto) {
+        return bookService.savePrintBook(isbn, printBookRequestDto);
+    }
+
+    @PatchMapping("/{isbn}/print-books/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Book updatePrintBookByIsbnAndId(@PathVariable String isbn, @PathVariable Long id,
+                                           @Valid @RequestBody PrintBookUpdateDto printBookUpdateDto) {
+        return bookService.updatePrintBookByIsbnAndId(isbn, id, printBookUpdateDto);
+    }
+
+    @DeleteMapping("/{isbn}/print-books/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePrintBookByIsbnAndId(@PathVariable String isbn, @PathVariable Long id) {
+        bookService.deletePrintBookByIsbnAndId(isbn, id);
     }
 
 }

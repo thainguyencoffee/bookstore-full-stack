@@ -70,7 +70,7 @@ async function logout(xsrfToken) {
       </router-link>
 
       <!-- Phần 3: User Dropdown -->
-      <div class="order-lg-last ms-auto">
+      <div class="purchaseOrder-lg-last ms-auto">
         <div class="dropdown">
           <button class="btn btn-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown"
                   aria-expanded="false">

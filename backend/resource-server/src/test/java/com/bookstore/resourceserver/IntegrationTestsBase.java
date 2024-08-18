@@ -1,13 +1,11 @@
 package com.bookstore.resourceserver;
 
 import com.bookstore.resourceserver.book.*;
-import com.bookstore.resourceserver.book.author.Author;
-import com.bookstore.resourceserver.book.author.AuthorRepository;
-import com.bookstore.resourceserver.book.category.Category;
-import com.bookstore.resourceserver.book.category.CategoryRepository;
-import com.bookstore.resourceserver.book.ebook.EBookRepository;
-import com.bookstore.resourceserver.book.emailpreferences.EmailPreferencesRepository;
-import com.bookstore.resourceserver.book.printbook.PrintBookRepository;
+import com.bookstore.resourceserver.author.Author;
+import com.bookstore.resourceserver.author.AuthorRepository;
+import com.bookstore.resourceserver.category.Category;
+import com.bookstore.resourceserver.category.CategoryRepository;
+import com.bookstore.resourceserver.emailpreference.EmailPreferencesRepository;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.*;
@@ -41,10 +39,6 @@ public abstract class IntegrationTestsBase {
     protected CategoryRepository categoryRepository;
     @Autowired
     protected BookRepository bookRepository;
-    @Autowired
-    protected EBookRepository eBookRepository;
-    @Autowired
-    protected PrintBookRepository printBookRepository;
     @Autowired
     protected AuthorRepository authorRepository;
     @Autowired
@@ -95,35 +89,9 @@ public abstract class IntegrationTestsBase {
                 .block();
     }
 
-    protected Stream<Arguments> provideBooks() {
-        return bookRepository.findAll().stream().map(Arguments::of);
-    }
-
     protected Stream<Arguments> provideSingleBook() {
         Random random = new Random();
         List<Book> all = bookRepository.findAll();
-        int i = random.nextInt(all.size());
-        return Stream.of(Arguments.of(all.get(i)));
-    }
-
-    protected Stream<Arguments> provideDoubleBook() {
-        Random random = new Random();
-        List<Book> all = bookRepository.findAll();
-        int i = random.nextInt(all.size());
-        int j = random.nextInt(all.size());
-        while (j == i) {
-            j = random.nextInt(all.size());
-        }
-        return Stream.of(Arguments.of(all.get(i), all.get(j)));
-    }
-
-    protected Stream<Arguments> provideAuthors() {
-        return authorRepository.findAll().stream().map(Arguments::of);
-    }
-
-    protected Stream<Arguments> provideSingleAuthor() {
-        Random random = new Random();
-        List<Author> all = authorRepository.findAll();
         int i = random.nextInt(all.size());
         return Stream.of(Arguments.of(all.get(i)));
     }

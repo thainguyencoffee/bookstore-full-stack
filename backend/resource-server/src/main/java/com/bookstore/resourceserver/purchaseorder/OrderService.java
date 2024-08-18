@@ -1,15 +1,14 @@
 package com.bookstore.resourceserver.purchaseorder;
 
-import com.bookstore.resourceserver.book.ebook.EBook;
-import com.bookstore.resourceserver.book.ebook.impl.EBookServiceImpl;
-import com.bookstore.resourceserver.book.printbook.PrintBook;
-import com.bookstore.resourceserver.book.printbook.impl.PrintBookServiceImpl;
+import com.bookstore.resourceserver.book.Book;
+import com.bookstore.resourceserver.book.BookService;
+import com.bookstore.resourceserver.book.EBook;
+import com.bookstore.resourceserver.book.PrintBook;
 import com.bookstore.resourceserver.core.exception.BookNotEnoughInventoryException;
 import com.bookstore.resourceserver.core.email.EmailService;
 import com.bookstore.resourceserver.core.exception.CustomNoResultException;
-import com.bookstore.resourceserver.core.valuetype.Price;
-import com.bookstore.resourceserver.purchaseorder.dto.LineItemRequest;
 import com.bookstore.resourceserver.purchaseorder.dto.OrderRequest;
+import com.bookstore.resourceserver.purchaseorder.dto.OrderRequest.LineItemRequest;
 import com.bookstore.resourceserver.purchaseorder.dto.OrderUpdateDto;
 import com.bookstore.resourceserver.core.exception.purchaseorder.OrderStatusNotMatchException;
 import com.bookstore.resourceserver.core.exception.purchaseorder.OtpExpiredException;
@@ -34,28 +33,27 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final EBookServiceImpl eBookService;
-    private final PrintBookServiceImpl printBookService;
     private final EmailService emailService;
+    private final BookService bookService;
 
-    public Order findById(UUID id) {
+    public PurchaseOrder findById(UUID id) {
         return orderRepository.findById(id)
-                .orElseThrow(() -> new CustomNoResultException(Order.class, CustomNoResultException.Identifier.ID, id));
+                .orElseThrow(() -> new CustomNoResultException(PurchaseOrder.class, CustomNoResultException.Identifier.ID, id));
     }
 
-    public Order findByIdAndUsername(UUID id, String username) {
+    public PurchaseOrder findByIdAndUsername(UUID id, String username) {
         return orderRepository.findByIdAndCreatedBy(id, username)
-                .orElseThrow(() -> new CustomNoResultException(Order.class, CustomNoResultException.Identifier.ID, id));
+                .orElseThrow(() -> new CustomNoResultException(PurchaseOrder.class, CustomNoResultException.Identifier.ID, id));
     }
 
     @Transactional
-    public Order submitOrder(OrderRequest orderRequest) {
+    public PurchaseOrder submitOrder(OrderRequest orderRequest) {
         List<LineItem> lineItems = new ArrayList<>();
         for (LineItemRequest lineItemRequest : orderRequest.getLineItems()) {
             LineItem lineItem = convertLineItemRequestToLineItem(lineItemRequest);
             lineItems.add(lineItem);
         }
-        Order order = Order.createOrder(lineItems, orderRequest);
+        PurchaseOrder order = createOrder(lineItems, orderRequest);
         orderRepository.save(order);
         log.error("ID: " + order.getId());
         /*===== ORDER WAITING FOR PAYMENT =====*/
@@ -63,31 +61,36 @@ public class OrderService {
     }
 
     @Transactional
-    public Order buildAcceptedOrder(UUID orderId) {
-        Order order = findById(orderId);
+    public PurchaseOrder buildAcceptedOrder(UUID orderId) {
+        PurchaseOrder order = findById(orderId);
         if (!order.getStatus().equals(OrderStatus.WAITING_FOR_PAYMENT)
                 && !order.getStatus().equals(OrderStatus.WAITING_FOR_ACCEPTANCE)) {
             throw new OrderStatusNotMatchException(orderId, order.getStatus(), OrderStatus.WAITING_FOR_PAYMENT, OrderStatus.WAITING_FOR_ACCEPTANCE);
         }
         for (LineItem lineItem : order.getLineItems()) {
-            if (lineItem.getBookType().equals(BookType.EBOOK)) {
-                var eBook = eBookService.findByIsbn(lineItem.getIsbn());
-                eBook.getProperties().setPublicationDate(Instant.now());
+            String isbn = lineItem.getIsbn();
+            Long detailId = lineItem.getDetailId();
+            BookType bookType = lineItem.getBookType();
+
+            Book book = bookService.findByIsbn(isbn);
+
+            if (bookType.equals(BookType.EBOOK)) {
+                var eBook = book.getEBookById(detailId);
                 int currentPurchases = eBook.getProperties().getPurchases();
                 eBook.getProperties().setPurchases(currentPurchases + lineItem.getQuantity());
-                eBookService.save(eBook);
+
             } else {
-                var printBook = printBookService.findByIsbn(lineItem.getIsbn());
+                var printBook = book.getPrintBookById(detailId);
                 if (printBook.getInventory() < lineItem.getQuantity()) {
-                    throw new BookNotEnoughInventoryException(printBook.getIsbn());
+                    throw new BookNotEnoughInventoryException("");
                 }
                 // Update book's inventory and purchases
                 printBook.setInventory(printBook.getInventory() - lineItem.getQuantity());
-                printBook.getProperties().setPublicationDate(Instant.now());
                 int currentPurchases = printBook.getProperties().getPurchases();
                 printBook.getProperties().setPurchases(currentPurchases + lineItem.getQuantity());
-                printBookService.save(printBook);
             }
+
+            bookService.save(book);
         }
         order.setStatus(OrderStatus.ACCEPTED);
         /*===== CREATED ORDER =====*/
@@ -97,18 +100,17 @@ public class OrderService {
         return order;
     }
 
-
     @Transactional
-    public Order buildOrderWithStatus(UUID orderId, OrderStatus status) {
-        Order order = findById(orderId);
+    public PurchaseOrder buildOrderWithStatus(UUID orderId, OrderStatus status) {
+        PurchaseOrder order = findById(orderId);
         order.setStatus(status);
         orderRepository.save(order);
         return order;
     }
 
     @Transactional
-    public Order createOtp(UUID orderId) {
-        Order order = findById(orderId);
+    public PurchaseOrder createOtp(UUID orderId) {
+        PurchaseOrder order = findById(orderId);
         long otp = (long) Math.floor(Math.random() * 900_000L) + 100_000L;
         order.setOtp(otp);
         order.setOtpExpiredAt(Instant.now().plus(5, ChronoUnit.MINUTES));
@@ -117,8 +119,8 @@ public class OrderService {
     }
 
     @Transactional
-    public Order verifyOtp(UUID orderId, long otp) {
-        Order order = orderRepository.findByIdAndOtp(orderId, otp)
+    public PurchaseOrder verifyOtp(UUID orderId, long otp) {
+        PurchaseOrder order = orderRepository.findByIdAndOtp(orderId, otp)
                 .orElseThrow(() -> new OtpIncorrectException(orderId));
         if(!order.getStatus().equals(OrderStatus.WAITING_FOR_ACCEPTANCE)) {
             throw new OrderStatusNotMatchException(orderId, order.getStatus(), OrderStatus.WAITING_FOR_ACCEPTANCE);
@@ -130,36 +132,12 @@ public class OrderService {
         return buildAcceptedOrder(order.getId());
     }
 
-    private LineItem convertLineItemRequestToLineItem(LineItemRequest lineItemRequest) {
-        String isbn = lineItemRequest.getIsbn();
-        BookType bookType = lineItemRequest.getBookType();
-        Price price;
-        if (bookType.equals(BookType.EBOOK)) {
-            EBook eBook = eBookService.findByIsbn(isbn);
-            price = eBook.getProperties().getPrice();
-        } else {
-            PrintBook printBook = printBookService.findByIsbn(isbn);
-            price = printBook.getProperties().getPrice();
-            log.error("price: " + price.toString());
-            if (printBook.getInventory() < lineItemRequest.getQuantity()) {
-                throw new BookNotEnoughInventoryException(lineItemRequest.getIsbn());
-            }
-        }
-
-        LineItem lineItem = new LineItem();
-        lineItem.setBookType(bookType);
-        lineItem.setQuantity(lineItemRequest.getQuantity());
-        lineItem.setPrice(price);
-        lineItem.setIsbn(lineItemRequest.getIsbn());
-        return lineItem;
-    }
-
-    public Page<Order> findAllByCreatedBy(String username, Pageable pageable) {
+    public Page<PurchaseOrder> findAllByCreatedBy(String username, Pageable pageable) {
         return orderRepository.findAllByCreatedBy(username, pageable);
     }
 
-    public Order updateOrder(UUID orderId, OrderUpdateDto orderUpdateDto) {
-        Order order = findById(orderId);
+    public PurchaseOrder updateOrder(UUID orderId, OrderUpdateDto orderUpdateDto) {
+        PurchaseOrder order = findById(orderId);
         order.setUserInformation(orderUpdateDto.getUserInformation());
         if (!orderUpdateDto.getCreatedBy().isEmpty()) {
             order.setCreatedBy(orderUpdateDto.getCreatedBy());
@@ -170,6 +148,46 @@ public class OrderService {
         orderRepository.save(order);
         String emailBody = emailService.buildEmailBody(order, true);
         emailService.sendConfirmationEmail(order.getUserInformation().getEmail(), "The order updated success fully", emailBody);
+        return order;
+    }
+
+    private LineItem convertLineItemRequestToLineItem(LineItemRequest lineItemRequest) {
+        var detailId = lineItemRequest.getDetailId();
+        var isbn = lineItemRequest.getIsbn();
+        // find book by isbn (should cache book because many query duplicate)
+        var book = bookService.findByIsbn(isbn);
+        var bookType = lineItemRequest.getBookType();
+        var lineItem = new LineItem();
+
+        if (bookType.equals(BookType.EBOOK)) {
+            EBook eBook = book.getEBookById(detailId);
+            lineItem.setPrice(eBook.getProperties().getPrice());
+            lineItem.setBookType(BookType.EBOOK);
+        } else {
+            PrintBook printBook = book.getPrintBookById(detailId);
+            lineItem.setPrice(printBook.getProperties().getPrice());
+            // if book is print book then check inventory
+            if (printBook.getInventory() < lineItemRequest.getQuantity()) {
+                throw new BookNotEnoughInventoryException(lineItemRequest.getIsbn());
+            }
+            lineItem.setBookType(BookType.PRINT_BOOK);
+        }
+        lineItem.setVariantBook(detailId, book.getIsbn(), book.getTitle());
+        lineItem.setQuantity(lineItemRequest.getQuantity());
+        return lineItem;
+    }
+
+    private PurchaseOrder createOrder(List<LineItem> lineItems, OrderRequest orderRequest) {
+        PurchaseOrder order = new PurchaseOrder();
+        order.setUserInformation(orderRequest.getUserInformation());
+        order.setAddress(orderRequest.getAddressInformation());
+        order.setPaymentMethod(orderRequest.getPaymentMethod());
+        if (orderRequest.getPaymentMethod() == PaymentMethod.VNPAY) {
+            order.setStatus(OrderStatus.WAITING_FOR_PAYMENT);
+        } else {
+            order.setStatus(OrderStatus.WAITING_FOR_ACCEPTANCE);
+        }
+        order.setLineItems(lineItems);
         return order;
     }
 

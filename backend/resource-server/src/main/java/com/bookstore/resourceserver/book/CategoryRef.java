@@ -7,11 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CategoryRef {
-    private Long categoryId;
+    private Long category;
     private String categoryName;
 
-    public CategoryRef(Long categoryId, String categoryName) {
-        this.categoryId = categoryId;
+    public CategoryRef(Long category, String categoryName) {
+        this.category = category;
         this.categoryName = categoryName;
     }
 }
