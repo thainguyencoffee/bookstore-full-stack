@@ -3,7 +3,6 @@ package com.bookstore.resourceserver.book;
 import com.bookstore.resourceserver.author.Author;
 import com.bookstore.resourceserver.book.valuetype.*;
 import com.bookstore.resourceserver.category.Category;
-import com.bookstore.resourceserver.core.exception.CustomNoResultException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,10 +30,10 @@ public class Book {
     private String description;
     private Language language;
     private Integer edition;
-    @JsonProperty("eBooks")
-    private Set<EBook> eBooks = new HashSet<>();
-    @JsonProperty("printBooks")
-    private Set<PrintBook> printBooks = new HashSet<>();
+    @JsonProperty("eBook")
+    private EBook eBook;
+    @JsonProperty("printBook")
+    private PrintBook printBook;
     private List<String> thumbnails = new ArrayList<>();
     @CreatedDate
     private Instant createdDate;
@@ -67,30 +66,5 @@ public class Book {
         return authors.stream().map(AuthorRef::getAuthor).collect(Collectors.toSet());
     }
 
-    public void addEbook(EBook eBook) {
-        this.eBooks.add(eBook);
-    }
-
-    public void addPrintBook(PrintBook printBook) {
-        this.printBooks.add(printBook);
-    }
-
-    public EBook getEBookById(Long id) {
-        return this.eBooks.stream().filter(eBook -> eBook.getId().equals(id)).findFirst()
-                .orElseThrow(() -> new CustomNoResultException(EBook.class, CustomNoResultException.Identifier.ID, id));
-    }
-
-    public PrintBook getPrintBookById(Long id) {
-        return this.printBooks.stream().filter(printBook -> printBook.getId().equals(id)).findFirst()
-                .orElseThrow(() -> new CustomNoResultException(PrintBook.class, CustomNoResultException.Identifier.ID, id));
-    }
-
-    public void removeEBookById(Long id) {
-        this.getEBooks().remove(getEBookById(id));
-    }
-
-    public void removePrintBookById(Long id) {
-        this.getPrintBooks().remove(getPrintBookById(id));
-    }
 
 }

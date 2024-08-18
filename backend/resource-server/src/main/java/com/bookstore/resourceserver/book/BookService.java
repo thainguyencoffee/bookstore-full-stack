@@ -10,7 +10,6 @@ import com.bookstore.resourceserver.book.valuetype.Language;
 import com.bookstore.resourceserver.category.Category;
 import com.bookstore.resourceserver.category.CategoryService;
 import com.bookstore.resourceserver.core.exception.CustomNoResultException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -99,17 +98,17 @@ public class BookService {
     public Book saveEBook(String isbn, EBookRequestDto eBookRequestDto) {
         Book book = findByIsbn(isbn);
         EBook eBook = eBookRequestDto.buildEBook();
-        book.addEbook(eBook);
+        book.setEBook(eBook);
         return bookRepository.save(book);
     }
 
 
-    public Book updateEBookByIsbnAndId(String isbn, Long id, EBookUpdateDto eBookUpdateDto) {
+    public Book updateEBookByIsbn(String isbn, EBookUpdateDto eBookUpdateDto) {
         Book book = findByIsbn(isbn);
-        var eBook = book.getEBookById(id);
-        Optional.ofNullable(eBookUpdateDto.url()).filter(url -> !url.isBlank()).ifPresent(url -> eBook.getMetadata().setUrl(url));
-        Optional.ofNullable(eBookUpdateDto.format()).filter(format -> !format.isBlank()).ifPresent(format -> eBook.getMetadata().setFormat(format));
-        Optional.ofNullable(eBookUpdateDto.fileSize()).ifPresent(fileSize -> eBook.getMetadata().setFileSize(fileSize));
+        var eBook = book.getEBook();
+        if (eBook == null) {
+            return saveEBook(isbn, eBookUpdateDto.toEBookRequestDto());
+        }
         Optional.ofNullable(eBookUpdateDto.numberOfPages()).ifPresent(pages -> eBook.getProperties().setNumberOfPages(pages));
         Optional.ofNullable(eBookUpdateDto.originalPrice()).ifPresent(op -> eBook.getProperties().getPrice().setOriginalPrice(op));
         Optional.ofNullable(eBookUpdateDto.discountedPrice()).ifPresent(dp -> eBook.getProperties().getPrice().setDiscountedPrice(dp));
@@ -118,22 +117,25 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    public void deleteEBookByIsbnAndId(String isbn, Long id) {
+    public void deleteEBookByIsbnAndId(String isbn) {
         var book = findByIsbn(isbn);
-        book.removeEBookById(id);
+        book.setEBook(null);
         bookRepository.save(book);
     }
 
-    public Book savePrintBook(String isbn, @Valid PrintBookRequestDto printBookRequestDto) {
+    public Book savePrintBook(String isbn, PrintBookRequestDto printBookRequestDto) {
         Book book = findByIsbn(isbn);
         PrintBook printBook = printBookRequestDto.buildPrintBook();
-        book.addPrintBook(printBook);
+        book.setPrintBook(printBook);
         return bookRepository.save(book);
     }
 
-    public Book updatePrintBookByIsbnAndId(String isbn, Long id, PrintBookUpdateDto printBookUpdateDto) {
+    public Book updatePrintBookByIsbnAndId(String isbn, PrintBookUpdateDto printBookUpdateDto) {
         Book book = findByIsbn(isbn);
-        var printBook = book.getPrintBookById(id);
+        var printBook = book.getPrintBook();
+        if (printBook == null) {
+            return savePrintBook(isbn, printBookUpdateDto.toPrintBookRequestDto());
+        }
         Optional.ofNullable(printBookUpdateDto.coverType()).filter(coverType -> !coverType.isBlank()).ifPresent(coverType -> printBook.setCoverType(CoverType.valueOf(coverType)));
         Optional.ofNullable(printBookUpdateDto.inventory()).ifPresent(printBook::setInventory);
         Optional.ofNullable(printBookUpdateDto.numberOfPages()).ifPresent(pages -> printBook.getProperties().setNumberOfPages(pages));
@@ -148,9 +150,9 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    public void deletePrintBookByIsbnAndId(String isbn, Long id) {
+    public void deletePrintBookByIsbnAndId(String isbn) {
         var book = findByIsbn(isbn);
-        book.removePrintBookById(id);
+        book.setPrintBook(null);
         bookRepository.save(book);
     }
 

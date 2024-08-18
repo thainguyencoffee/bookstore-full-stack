@@ -37,4 +37,20 @@ public record PrintBookUpdateDto(
 //        @NotNull(message = "The inventory of print book must not be null.")
         Integer inventory
 ) {
+
+        public PrintBookRequestDto toPrintBookRequestDto() {
+                return PrintBookRequestDto.builder()
+                        .numberOfPages(numberOfPages)
+                        .originalPrice(originalPrice)
+                        .discountedPrice(discountedPrice)
+                        .publicationDate(publicationDate)
+                        .releaseDate(releaseDate)
+                        .coverType(coverType)
+                        .width(width)
+                        .height(height)
+                        .thickness(thickness)
+                        .weight(weight)
+                        .inventory(inventory)
+                        .build();
+        }
 }

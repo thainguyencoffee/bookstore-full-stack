@@ -5,13 +5,11 @@ import lombok.Data;
 
 @Data
 public class VariantBookRef {
-    private Long detailId;
     private String isbn;
     private String title;
     private BookType bookType;
 
-    public VariantBookRef(Long detailId, String isbn, String title) {
-        this.detailId = detailId;
+    public VariantBookRef(String isbn, String title) {
         this.isbn = isbn;
         this.title = title;
     }

@@ -36,17 +36,23 @@ CREATE TABLE book
 
 CREATE TABLE ebook
 (
-    id               BIGSERIAL    NOT NULL PRIMARY KEY,
-    book             BIGSERIAL    not null references book (id) ON DELETE CASCADE,
-    file_size        int          not null,
-    format           VARCHAR(255) not null,
-    url              VARCHAR(255) not null,
-    purchases        int          not null,
-    number_of_pages  int          not null,
-    publication_date timestamp    not null,
-    release_date     timestamp    not null,
-    original_price   bigint       not null,
-    discounted_price bigint       not null default 0
+    id               BIGSERIAL NOT NULL PRIMARY KEY,
+    book             BIGSERIAL not null references book (id) ON DELETE CASCADE,
+    purchases        int       not null,
+    number_of_pages  int       not null,
+    publication_date timestamp not null,
+    release_date     timestamp not null,
+    original_price   bigint    not null,
+    discounted_price bigint    not null default 0
+);
+
+create table ebook_file
+(
+    id        bigserial primary key,
+    ebook     bigserial    not null references ebook (id) on delete cascade,
+    file_size int          not null,
+    format    VARCHAR(255) not null,
+    url       VARCHAR(255) not null
 );
 
 create table print_book
@@ -145,10 +151,9 @@ CREATE table line_item
 (
     id               bigserial primary key,
     purchase_order   uuid         not null references purchase_order (id) ON DELETE CASCADE,
-    detail_id        BIGSERIAL    NOT NULL,
     isbn             varchar(255) not null,
-    title            varchar(255) not null,
     book_type        VARCHAR(255) not null,
+    title            varchar(255) not null,
     quantity         int          not null,
     original_price   bigint       not null,
     discounted_price bigint null,
