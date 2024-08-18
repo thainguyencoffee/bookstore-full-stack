@@ -1,37 +1,24 @@
-import {SET_BEST_SELLERS, SET_BOOKS} from "./mutations.type.js";
+import {SET_BEST_SELLERS} from "./mutations.type.js";
 
 const bookModule = {
     namespaced: true,
     state() {
         return {
-            books: [],
             bestSellers: []
         }
     },
     mutations: {
-        [SET_BOOKS](state, books) {
-          state.books = books;
-        },
-        [SET_BEST_SELLERS](state, books) {
-            state.bestSellers = books;
+        [SET_BEST_SELLERS](state, bookSalesView) {
+            state.bestSellers = bookSalesView;
         }
     },
     actions: {
-        fetchBooks({commit}, payload) {
-            const pageableStr = payload.pageableStr ? payload.pageableStr : '';
-            fetch(`/bff/api/books?${pageableStr}`)
-                .then(response => response.json())
-                .then(bookPage => {
-                    commit(SET_BOOKS, bookPage.content);
-                })
-        },
         fetchBestSellers({commit}, payload) {
-            const from = payload.from;
-            const pageableStr = payload.pageableStr ? payload.pageableStr : '';
-            fetch(`/bff/api/books/best-sellers?from=${from}&${pageableStr}`)
+            const top = payload.top;
+            fetch(`/bff/api/books/best-sellers?top=${top}`)
                 .then(response => response.json())
-                .then(bookPage => {
-                    commit(SET_BEST_SELLERS, bookPage.content);
+                .then(bookSalesView => {
+                    commit(SET_BEST_SELLERS, bookSalesView);
                 })
         }
     },

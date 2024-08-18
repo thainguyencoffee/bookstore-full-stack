@@ -9,13 +9,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface OrderRepository extends ListCrudRepository<Order, UUID> {
+public interface OrderRepository extends ListCrudRepository<PurchaseOrder, UUID> {
 
-    Optional<Order> findByIdAndCreatedBy(UUID id, String createdBy);
+    Optional<PurchaseOrder> findByIdAndCreatedBy(UUID id, String createdBy);
 
-    Page<Order> findAllByCreatedBy(String createdBy, Pageable pageable);
+    Page<PurchaseOrder> findAllByCreatedBy(String createdBy, Pageable pageable);
 
-    Optional<Order> findByIdAndOtp(UUID id, long otp);
+    Optional<PurchaseOrder> findByIdAndOtp(UUID id, long otp);
 
-    Page<Order> findAllByStatus(OrderStatus status, Pageable pageable);
+    Page<PurchaseOrder> findAllByStatus(OrderStatus status, Pageable pageable);
 }

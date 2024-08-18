@@ -17,9 +17,9 @@ This is a full-stack project for managing a bookstore, including frontend, backe
 - Book management (CRUD operations)
 - Read book online on browser directly
 - Review book
-- Checkout order and shopping cart management
+- Checkout purchaseOrder and shopping cart management
 - Integration VNPay
-- Track your purchase order
+- Track your purchase purchaseOrder
 - Inventory management
 
 ## Setup

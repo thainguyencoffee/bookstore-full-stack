@@ -13,19 +13,15 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import java.util.UUID;
 
-@Table("line_items")
+@Table("line_item")
 @Getter
 @Setter
 public class LineItem {
 
     @Id
     private Long id;
-    @NotNull(message = "Book is required")
-    private UUID orderId;
-    private String isbn;
-    private BookType bookType;
+    private VariantBookRef variantBookRef;
     @NotNull(message = "Quantity is required")
     @Min(value = 1, message = "Quantity must be greater than 0")
     private Integer quantity;
@@ -43,6 +39,26 @@ public class LineItem {
         }
         total.setOriginalPrice(price.getOriginalPrice() * quantity);
         return total;
+    }
+
+    public Long getDetailId() {
+        return variantBookRef.getDetailId();
+    }
+
+    public BookType getBookType() {
+        return variantBookRef.getBookType();
+    }
+
+    public String getIsbn() {
+        return variantBookRef.getIsbn();
+    }
+
+    public void setVariantBook(Long detailId, String isbn, String title) {
+        this.variantBookRef = new VariantBookRef(detailId, isbn, title);
+    }
+
+    public void setBookType(BookType bookType) {
+        this.variantBookRef.setBookType(bookType);
     }
 
 }

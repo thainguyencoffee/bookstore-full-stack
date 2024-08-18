@@ -1,15 +1,8 @@
 package com.bookstore.resourceserver.core.email;
 
 import com.bookstore.resourceserver.book.Book;
-import com.bookstore.resourceserver.book.ebook.EBook;
-import com.bookstore.resourceserver.book.ebook.impl.EBookServiceImpl;
-import com.bookstore.resourceserver.book.impl.BookServiceImpl;
-import com.bookstore.resourceserver.book.printbook.PrintBook;
-import com.bookstore.resourceserver.book.printbook.impl.PrintBookServiceImpl;
-import com.bookstore.resourceserver.core.valuetype.Price;
-import com.bookstore.resourceserver.purchaseorder.LineItem;
-import com.bookstore.resourceserver.purchaseorder.Order;
-import com.bookstore.resourceserver.purchaseorder.valuetype.BookType;
+import com.bookstore.resourceserver.book.BookService;
+import com.bookstore.resourceserver.purchaseorder.PurchaseOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -25,9 +18,7 @@ import java.util.Locale;
 public class EmailService {
 
     private final JavaMailSender emailSender;
-    private final EBookServiceImpl eBookService;
-    private final PrintBookServiceImpl printBookService;
-    private final BookServiceImpl bookService;
+    private final BookService bookService;
     @Value("${spring.mail.username}")
     private String from;
 
@@ -48,25 +39,25 @@ public class EmailService {
         return "Mã xác thực của bạn là (Thời hạn 5 phút): " + otp;
     }
 
-    public String buildEmailBody(Order order, boolean notifyUpdate) {
+    public String buildEmailBody(PurchaseOrder order, boolean notifyUpdate) {
         var userInfo = order.getUserInformation();
         var addressInfo = order.getAddress();
         var lineItemsString = new StringBuilder();
-        for (LineItem lineItem : order.getLineItems()) {
-            var book = bookService.findByIsbn(lineItem.getIsbn());
-            Price price;
-            if (lineItem.getBookType().equals(BookType.EBOOK)) {
-                EBook eBook = eBookService.findByIsbn(lineItem.getIsbn());
-                price = eBook.getProperties().getPrice();
-            } else {
-                PrintBook printBook = printBookService.findByIsbn(lineItem.getIsbn());
-                price = printBook.getProperties().getPrice();
-            }
-            lineItemsString.append(book.getTitle())
-                    .append(" x").append(lineItem.getQuantity()).append(" - ")
-                    .append(NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
-                            .format(price.getDiscountedPrice())).append(price.getCurrencyPrice()).append(" \n");
-        }
+//        for (LineItem lineItem : order.getLineItems()) {
+//            var book = bookService.findByIsbn(lineItem.getIsbn());
+//            Price price;
+//            if (lineItem.getBookType().equals(BookType.EBOOK)) {
+//                EBook eBook = eBookService.findByIsbn(lineItem.getIsbn());
+//                price = eBook.getProperties().getPrice();
+//            } else {
+//                PrintBook printBook = printBookService.findByIsbn(lineItem.getIsbn());
+//                price = printBook.getProperties().getPrice();
+//            }
+//            lineItemsString.append(book.getTitle())
+//                    .append(" x").append(lineItem.getQuantity()).append(" - ")
+//                    .append(NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
+//                            .format(price.getDiscountedPrice())).append(price.getCurrencyPrice()).append(" \n");
+//        }
         StringBuilder result;
         if (notifyUpdate) {
             result = new StringBuilder().append("Chào ").append(userInfo.getFullName()).append(", \n\n")

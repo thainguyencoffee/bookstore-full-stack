@@ -8,14 +8,10 @@ const store = useStore();
 
 const emailPreferences = ref('');
 const bestSellers = computed(() => store.getters["books/bestSellers"])
-const bestSellersFrom = computed(() => {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth() - 1, 2);
-})
 
 onMounted(() => {
   // fetch best sellers
-  store.dispatch("books/fetchBestSellers", {from: bestSellersFrom.value.toISOString(), pageableStr: 'page=0&size=10'});
+  store.dispatch("books/fetchBestSellers", {top: 10});
 })
 
 function bookDetailLink(isbn) {
@@ -71,12 +67,11 @@ function bookDetailLink(isbn) {
         </div>
         <div class="mb-3 p-2 rounded bg-dark bg-opacity-10">
           <span class="fs-3 fw-normal">Bestsellers</span> &af;
-          <span class="fs-6">{{ bestSellersFrom.toDateString() }}</span>
           <div>
             <ul style="list-style: decimal">
               <li v-for="book in bestSellers" :key="book.id">
                 <router-link class="best-sellers-item" :to="bookDetailLink(book.isbn)">{{ book.title }} - purchases :
-                  {{ book.purchases }}
+                  {{ book.totalPurchases }}
                 </router-link>
               </li>
             </ul>

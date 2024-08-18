@@ -1,6 +1,6 @@
 package com.bookstore.resourceserver.purchaseorder.vnpay;
 
-import com.bookstore.resourceserver.purchaseorder.Order;
+import com.bookstore.resourceserver.purchaseorder.PurchaseOrder;
 import com.bookstore.resourceserver.purchaseorder.OrderService;
 import com.bookstore.resourceserver.purchaseorder.OrderStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -163,7 +163,7 @@ public enum VNPayStatusCodeEnum {
         return null;
     }
 
-    public Order handleCallback(OrderService orderService, HttpServletRequest request) {
+    public PurchaseOrder handleCallback(OrderService orderService, HttpServletRequest request) {
         return vnPayCallBackFunction.handle(orderService, request);
     }
 

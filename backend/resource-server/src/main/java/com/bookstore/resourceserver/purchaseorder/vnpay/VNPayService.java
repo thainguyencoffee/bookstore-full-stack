@@ -1,7 +1,7 @@
 package com.bookstore.resourceserver.purchaseorder.vnpay;
 
 import com.bookstore.resourceserver.core.config.BookstoreProperties;
-import com.bookstore.resourceserver.purchaseorder.Order;
+import com.bookstore.resourceserver.purchaseorder.PurchaseOrder;
 import com.bookstore.resourceserver.purchaseorder.OrderService;
 import com.bookstore.resourceserver.purchaseorder.OrderStatus;
 import com.bookstore.resourceserver.core.exception.purchaseorder.OrderStatusNotMatchException;
@@ -26,7 +26,7 @@ public class VNPayService {
     private final BookstoreProperties bookstoreProperties;
 
     public String generatePaymentUrl(HttpServletRequest request, UUID orderId) {
-        Order order = orderService.findById(orderId);
+        PurchaseOrder order = orderService.findById(orderId);
         if (!order.getStatus().equals(OrderStatus.WAITING_FOR_PAYMENT)
                 && !order.getStatus().equals(OrderStatus.PAYMENT_FAILED)) {
             throw new OrderStatusNotMatchException(orderId, order.getStatus(), OrderStatus.WAITING_FOR_PAYMENT, OrderStatus.PAYMENT_FAILED);

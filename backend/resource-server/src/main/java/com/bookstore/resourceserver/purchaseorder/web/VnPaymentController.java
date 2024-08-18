@@ -1,7 +1,7 @@
 package com.bookstore.resourceserver.purchaseorder.web;
 
 import com.bookstore.resourceserver.core.config.BookstoreProperties;
-import com.bookstore.resourceserver.purchaseorder.Order;
+import com.bookstore.resourceserver.purchaseorder.PurchaseOrder;
 import com.bookstore.resourceserver.purchaseorder.OrderService;
 import com.bookstore.resourceserver.purchaseorder.OrderStatus;
 import com.bookstore.resourceserver.purchaseorder.dto.PaymentRequest;
@@ -48,7 +48,7 @@ public class VnPaymentController {
         log.info("VnPaymentController attempt to handle payment callback with (request={})", request);
         String status = request.getParameter("vnp_ResponseCode");
         log.info("status is {}", status);
-        Order order = Optional.ofNullable(VNPayStatusCodeEnum.isMember(status))
+        PurchaseOrder order = Optional.ofNullable(VNPayStatusCodeEnum.isMember(status))
                 .map(vnPayStatusCodeEnum -> vnPayStatusCodeEnum.handleCallback(orderService, request))
                 .orElseThrow(() -> new RuntimeException("Status code of VNPAY not matched!!!"));
         URI paymentDetailUrl = URI.create(bookstoreProperties.edgeUrl() + "/order-detail-callback/" + order.getId());

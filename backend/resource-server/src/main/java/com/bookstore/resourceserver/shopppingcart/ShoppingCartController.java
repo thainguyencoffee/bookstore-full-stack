@@ -1,6 +1,6 @@
 package com.bookstore.resourceserver.shopppingcart;
 
-import com.bookstore.resourceserver.book.impl.BookServiceImpl;
+import com.bookstore.resourceserver.book.BookService;
 import com.bookstore.resourceserver.core.exception.CustomNoResultException;
 import com.bookstore.resourceserver.shopppingcart.dto.DeleteAllCartRequest;
 import com.bookstore.resourceserver.core.exception.shoppingcart.ShoppingCartAlreadyExistingException;
@@ -26,7 +26,7 @@ import java.util.UUID;
 public class ShoppingCartController {
 
     private final CartItemService cartItemService;
-    private final BookServiceImpl bookService;
+    private final BookService bookService;
     private final ShoppingCartService shoppingCartService;
 
     @GetMapping("/my-cart")

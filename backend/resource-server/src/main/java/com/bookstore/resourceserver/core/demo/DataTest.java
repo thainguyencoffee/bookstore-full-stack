@@ -1,17 +1,13 @@
 package com.bookstore.resourceserver.core.demo;
 
 import com.bookstore.resourceserver.book.*;
-import com.bookstore.resourceserver.book.author.Author;
-import com.bookstore.resourceserver.book.author.AuthorRepository;
-import com.bookstore.resourceserver.book.category.Category;
-import com.bookstore.resourceserver.book.category.CategoryRepository;
-import com.bookstore.resourceserver.book.ebook.EBook;
-import com.bookstore.resourceserver.book.ebook.EBookRepository;
-import com.bookstore.resourceserver.book.emailpreferences.EmailPreferences;
-import com.bookstore.resourceserver.book.emailpreferences.EmailPreferencesRepository;
-import com.bookstore.resourceserver.book.emailpreferences.EmailTopic;
-import com.bookstore.resourceserver.book.printbook.PrintBook;
-import com.bookstore.resourceserver.book.printbook.PrintBookRepository;
+import com.bookstore.resourceserver.author.Author;
+import com.bookstore.resourceserver.author.AuthorRepository;
+import com.bookstore.resourceserver.category.Category;
+import com.bookstore.resourceserver.category.CategoryRepository;
+import com.bookstore.resourceserver.emailpreference.EmailPreferences;
+import com.bookstore.resourceserver.emailpreference.EmailPreferencesRepository;
+import com.bookstore.resourceserver.emailpreference.EmailTopic;
 import com.bookstore.resourceserver.book.quotation.Quotation;
 import com.bookstore.resourceserver.book.quotation.QuotationRepository;
 import com.bookstore.resourceserver.book.valuetype.*;
@@ -42,8 +38,6 @@ public class DataTest {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final QuotationRepository quotationRepository;
-    private final EBookRepository eBookRepository;
-    private final PrintBookRepository printBookRepository;
     private final CategoryRepository categoryRepository;
     private static final List<String> thumbnailsCategory = List.of(
             "https://cdn0.fahasa.com/media/wysiwyg/Thang-06-2024/icon_ManngaT06.png",
@@ -101,8 +95,8 @@ public class DataTest {
             long timeRandomMillis = ThreadLocalRandom.current().nextLong(start.toEpochMilli(), end.toEpochMilli());
             Instant randomTime = Instant.ofEpochMilli(timeRandomMillis);
             Book book = buildExampleBook(isbn, randomTime, random.nextInt(10) + 5, authorList, categoryList);
-            bookRepository.save(book);
             createTwoVariantOfBook(book);
+            bookRepository.save(book);
             createThreeQuotesOfBook(book);
         }
 
@@ -121,45 +115,39 @@ public class DataTest {
 
     private void createTwoVariantOfBook(Book book) {
         Instant now = Instant.now();
-        Price eBookPrice = new Price(1200000L, 1000000L,
-                Currency.getInstance("VND").getCurrencyCode());
-        Price printBookPrice = new Price(1500000L, 1200000L,
-                Currency.getInstance("VND").getCurrencyCode());
+        Price eBookPrice = new Price(1200000L, 1000000L);
+        Price printBookPrice = new Price(1500000L, 1200000L);
         BookProperties eBookProps = new BookProperties();
         eBookProps.setPrice(eBookPrice);
-        eBookProps.setPurchases(2);
+        eBookProps.setPurchases(random.nextInt(50));
         eBookProps.setNumberOfPages(450);
         eBookProps.setReleaseDate(now);
         eBookProps.setPublicationDate(now.plus(15, ChronoUnit.DAYS));
 
         BookProperties printBookProps = new BookProperties();
         printBookProps.setPrice(printBookPrice);
-        printBookProps.setPurchases(5);
+        printBookProps.setPurchases(random.nextInt(50));
         printBookProps.setNumberOfPages(452);
         printBookProps.setReleaseDate(now);
         printBookProps.setPublicationDate(now.plus(15, ChronoUnit.DAYS));
 
 
-        var eBook = new EBook();
-        eBook.setIsbn(book.getIsbn());
-        eBook.setProperties(eBookProps);
         String url = "https://bookstore-bucket.sgp1.digitaloceanspaces.com/bookstore-bucket/book/1234567890/files/Thomas%20Vitale%20-%20Cloud%20Native%20Spring%20in%20Action_%20With%20Spring%20Boot%20and%20Kubernetes-Manning.pdf";
+        var eBook = new EBook();
         eBook.setMetadata(new EBookFile(url, 19820, "pdf"));
-        eBookRepository.save(eBook);
+        eBook.setProperties(eBookProps);
+        book.addEbook(eBook);
 
         var printBook = new PrintBook();
-        printBook.setIsbn(book.getIsbn());
         printBook.setProperties(printBookProps);
-        printBook.setInventory(120);
         printBook.setCoverType(CoverType.PAPERBACK);
         printBook.setMeasure(new Measure(12, 12, 12,12));
-        printBookRepository.save(printBook);
+        printBook.setInventory(120);
+        book.addPrintBook(printBook);
     }
 
     private void clear() {
         bookRepository.deleteAll();
-        eBookRepository.deleteAll();
-        printBookRepository.deleteAll();
         categoryRepository.deleteAll();
         authorRepository.deleteAll();
         emailPreferencesRepository.deleteAll();
@@ -180,7 +168,7 @@ public class DataTest {
         book.setIsbn(String.valueOf(isbn));
         book.setTitle(generateRandomName() + isbn);
         book.setCategory(categoryList.get(random.nextInt(categoryList.size())));
-        book.setAuthor(generateAuthor(authors));
+        book.addAuthor(generateAuthor(authors));
         book.setPublisher(generateRandomName());
         book.setSupplier(generateRandomName());
         book.setDescription(description);
