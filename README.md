@@ -1,30 +1,33 @@
-## Introduction
-This is a full-stack project for managing a bookstore, including frontend, backend, and database integration.
+# Bookstore project
+
+[![Backend CI with Gradle](https://github.com/thainguyencoffee/bookstore-full-stack/actions/workflows/commit-stage.yml/badge.svg)](https://github.com/thainguyencoffee/bookstore-full-stack/actions/workflows/commit-stage.yml)
 
 ## Techs used & Design patterns
 - Java 17
-- Spring Boot 3.3.0
-- Backend for Frontend (BFF) pattern
-- Keycloak for authentication and authorization
-- Vue.js 3
-- PostgreSQL
-- Paketo Buildpacks
-- Github Actions for CI/CD
-- Kubernetes for deployment
+- Docker
+- Docker compose plugin
+- Bash
 
 ## Features
-- User authentication and authorization
-- Book management (CRUD operations)
-- Read book online on browser directly
-- Review book
-- Checkout purchaseOrder and shopping cart management
-- Integration VNPay
-- Track your purchase purchaseOrder
-- Inventory management
+- Backend with book management, backend for frontend, OAuth2 Keycloak with OIDC Flow
 
-## Setup
-Instructions for setting up the project locally.
+### Check out sources
+```bash
+https://github.com/thainguyencoffee/bookstore-full-stack.git
+```
 
-## Usage
-Instructions on how to use the application.
+### Compile and test; build all JARs, build image container, start docker compose
 
+1. Without angular (recommend when you want to develop frontend)
+```bash
+./build.sh without-angular
+```
+2. With angular (recommend when you want to deploy)
+```bash
+./build.sh
+```
+
+3. If you want to build image
+```bash
+./build.sh native
+```

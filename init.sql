@@ -1,0 +1,2 @@
+CREATE DATABASE bookstore;
+CREATE DATABASE keycloak;
